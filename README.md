@@ -87,7 +87,6 @@ $ git diff code/cmp
 The makefiles are currently set up expecting the gc library to be installed in
 `$(HOME)/local` as shown above.
 
-
 # Junk
 To avoid touching `-I` flags in the makefiles, at least for the initial
 attempts, it might be handy to create a symlink:
@@ -98,19 +97,11 @@ and, similarly, for the library:
 
     cd code && ln -s gc/lib/libgc.a
 
-
-# Symlinks
-
-TODO: Get rid of `make symlinks`.
-
 # Other Notes
 
 Check `howto.install` but bear in mind that some things might be out of
 date or not work.  Makefiles need more updates and clean ups.  Here's
 what I do for now:
-
-
-
 
 # Debugger
 
