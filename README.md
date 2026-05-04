@@ -29,22 +29,66 @@ remove all gc includes from `pclu_sys.h`.
 Unfortunately some C code still *does* peek into the gc internals so a
 public installation of gc cannot be used.
 
-Get a copy of gc-7.2f and configure it with something like:
+Get a copy of libatomic_ops and install it.  Here is how to install
+version 7.10.0 in your home directory's `local` subdirectory.
+```bash
+$ mkdir ~/libatomic_ops
+$ cd ~/libatomic_ops
+$ wget https://github.com/bdwgc/libatomic_ops/releases/download/v7.10.0/libatomic_ops-7.10.0.tar.gz
+$ tar xf libatomic_ops-7.10.0.tar.gz 
+$ mkdir ~/local
+$ cd libatomic_ops-7.10.0
+$ ./configure --prefix=$(echo ~/local)
+$ make
+$ make install
+```
 
-    ./configure \
-        --enable-static=yes --enable-shared=no \
-        --enable-threads=no --with-libatomic-ops=no \
-        --prefix=$CLUHOME/code/gc
+Get a copy of gc and install it.  Here is how to install version 8.2.12 in your home directory's `local` subdirectory.
+```bash
+$ mkdir ~/gc
+$ cd ~/gc
+$ wget https://github.com/bdwgc/bdwgc/releases/download/v8.2.12/gc-8.2.12.tar.gz
+$ tar xf gc-8.2.12.tar.gz 
+$ cd gc-8.2.12/
+$ ./configure --enable-static=yes --enable-shared=no --enable-threads=no --prefix=$(echo ~/local)
+$ make
+$ make install
+```
 
-Build it.  Making and running gctest is a good idea if you are on
-something non-mainstream.  Run make install to get the headers in
-`code/gc/include` the libraries in `code/gc/lib` (and some docs in
-`code/gc/share/gc`).
+To build pclu you need to set `CLUHOME`.  In this directory do
+```bash
+$ export CLUHOME=$(pwd)
+```
 
-Since the code needs private headers you then need to either create a
-symlink `code/gc/include/private` that points to `gc-7.2f/include/private`
-or create that directory and copy over the headers.
+# Bootstrapping the compiler
 
+```bash
+# build the libpclu_opt.a library
+$ (cd $CLUHOME/code; make -w OPT_FLAGS='-g -O0 -Wall -Wextra')
+
+# build the compiler from the pre-generated sources
+$ (cd $CLUHOME/code/cmp; make -w OPT_FLAGS='-g -O0 -Wall -Wextra')
+$ cp $CLUHOME/code/cmp/pclu $CLUHOME/exe/
+
+# dump clu libraries: lowlev.lib  misc.lib  useful.lib
+# (think precompiled headers)
+$ (cd $CLUHOME/lib; make libs)
+
+# dump cmp.lib for the compiler sources
+$ (cd $CLUHOME/cmpclu;make lib)
+# rebuild the compiler
+$ (cd $CLUHOME/cmpclu;make -w OPT_FLAGS='-g -O0 -Wall -Wextra')
+# rebuild the compiler again (probably not needed)
+$ (cd $CLUHOME/cmpclu;make -w OPT_FLAGS='-g -O0 -Wall -Wextra')
+# verify that the compiler produced the same results.  No diff should show.
+$ git diff code/cmp
+```
+
+The makefiles are currently set up expecting the gc library to be installed in
+`$(HOME)/local` as shown above.
+
+
+# Junk
 To avoid touching `-I` flags in the makefiles, at least for the initial
 attempts, it might be handy to create a symlink:
 
@@ -57,49 +101,15 @@ and, similarly, for the library:
 
 # Symlinks
 
-To be able to run the compiler out of the workspace you will need some
-symlinks in place.  I don't want to commit them, at least not yet, so
-I've added top-level "symlinks" target.  Run
+TODO: Get rid of `make symlinks`.
 
-    make symlinks
-
-once after checkout to set things up.  Among other things it takes
-care of the symlinks for gc mentioned above.
-
-
-# Bootstrapping the compiler
+# Other Notes
 
 Check `howto.install` but bear in mind that some things might be out of
 date or not work.  Makefiles need more updates and clean ups.  Here's
 what I do for now:
 
-    export CLUHOME=$PWD
 
-    # build the libpclu_opt.a library
-    cd $CLUHOME/code
-    make -w OPT_FLAGS='-g -O0 -Wall -Wextra'
-
-    # build the compiler from the pre-generated sources
-    cd $CLUHOME/code/cmp
-    make -w OPT_FLAGS='-g -O0 -Wall -Wextra'
-
-    # dump clu libraries: lowlev.lib  misc.lib  useful.lib
-    # (think precompiled headers)
-    cd $CLUHOME/lib
-    make libs
-
-    # rebuild the compiler
-    cd $CLUHOME/cmpclu
-    make lib	# dump cmp.lib for the compiler sources
-    make -w OPT_FLAGS='-g -O0 -Wall -Wextra'
-
-    # rebuild the compiler again
-    make -w OPT_FLAGS='-g -O0 -Wall -Wextra'
-
-    # verify the output is the same (or, if you changed the compiler,
-    # check the effect of your change)
-    cd $CLUHOME/code/cmp
-    hg diff .
 
 
 # Debugger

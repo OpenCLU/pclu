@@ -6,15 +6,6 @@
 /*			_signal			*/
 /*						*/
 
-#ifdef LINUX
-/*
- * Work around a bug in gc-7.x that defines GC_jmp_buf in gc_priv.h
- * instead of declaring it.  Make it work with -fno-common.
- */
-#define GC_jmp_buf GC_jmp_buf_libasm__signal
-#include <gc/private/gc_priv.h>
-#endif
-
 #include <signal.h>
 #undef signal
 
@@ -70,7 +61,7 @@ _signalOPset(CLUREF sig, CLUREF hold)
 	/* vec.sa_flags = SA_STACK; */
 	sigaction(sig.num, &vec, &ovec);
 	if (~(_signalOPflags & (1 << (sig.num - 1)))) {
-	    _signalOPflags |= 1 << (sig.num - 1); 
+	    _signalOPflags |= 1 << (sig.num - 1);
 	    _signalOPohands[sig.num - 1] = ovec.sa_handler;
 	    _signalOPomasks[sig.num - 1] = sigetmask(&ovec.sa_mask);
 	    /* _signalOPomasks[sig.num - 1] = ovec.sa_mask; */

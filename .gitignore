@@ -1,0 +1,6 @@
+*.a
+*.lib
+*.o
+*~
+exe/pclu
+code/cmp/pclu

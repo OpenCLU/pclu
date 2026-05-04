@@ -102,6 +102,12 @@ typedef long bool;
 #define true 1
 #define false 0
 
+/* These numbers come from the garbage collector.  TODO: Get rid of this
+ * depenedency.  The block size should just be the system page size and bytes to
+ * words should probably just be `CLUREFSZ`. */
+#define BYTES_TO_WORDS(x) ((x) >> 3)
+#define HBLKSIZE 4096
+
 /* flexible member kludge */
 #define VARYING_LENGTH 1
 

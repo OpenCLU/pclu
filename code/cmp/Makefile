@@ -14,7 +14,7 @@ CFLAGS	 = -I../include
 CFLAGS	+= $(OPT_FLAGS)
 
 
-LFLAGS = -L${CLUHOME}/code -lpclu_opt -lm -lgc
+LFLAGS = -L${CLUHOME}/code -L$(HOME)/local/lib -lpclu_opt -lm -lgc
 
 O_FILES = build.o cconst.o cdchan.o cdefn1.o cdefn2.o ce.o cenv.o \
 	cexpr1.o cexpr2.o cmpvar.o coper.o cspecs.o cstmt1.o cstmt2.o \

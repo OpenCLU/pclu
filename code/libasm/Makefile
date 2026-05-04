@@ -2,7 +2,7 @@
 
 # Compilation flags for subdirectories of this directory
 
-CFLAGS         = -I../../include -DLINUX
+CFLAGS         = -I../../include -DLINUX -I$(HOME)/local/include
 OPT_FLAGS      = -O2
 DEBUG_FLAGS    = -g
 DEBUGGER_FLAGS ?= ${OPT_FLAGS}
