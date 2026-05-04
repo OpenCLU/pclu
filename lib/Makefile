@@ -10,8 +10,6 @@ SYS_CLU   = ${CLUHOME}/sys/clu
 LIBS 	  = misc.lib lowlev.lib useful.lib
 
 RM        = /bin/rm -f
-FLUFF     = *~ *.old *.bak .*~ .*.old .*.bak
-
 
 MISC_SPECS = ${LIB_DIR}/random.spc
 
@@ -124,9 +122,8 @@ useful.lib: lowlev.lib ${LOW_EQU} ${USE_SPECS} ${USELIB_SOURCES} \
 	    -dump useful.lib
 
 clean:
-	${RM} ${FLUFF}
+	$(RM) -f *.lib
 	cd clu && ${MAKE} clean
 
-veryclean:
-	${RM} ${FLUFF} *.lib
+veryclean: clean
 	cd clu && ${MAKE} veryclean

@@ -9,7 +9,7 @@ CC = gcc
 
 FLUFF = *~ *.old *.bak .*~ .*.old .*.bak
 
-CFLAGS	 = -I../include
+CFLAGS	 = -I../include -Wall -Wextra -Wno-unused-but-set-variable -Wno-unused-parameter
 #CFLAGS	+= -g
 CFLAGS	+= $(OPT_FLAGS)
 
@@ -40,7 +40,6 @@ C_FILES = build.c cconst.c cdchan.c cdefn1.c cdefn2.c ce.c \
 	../cmpasm/version.c
 
 pclu: $(O_FILES)
-	cd ../cmpasm && ${MAKE}
 	${CC} -o pclu $(O_FILES) $(LFLAGS) 
 
 clean:

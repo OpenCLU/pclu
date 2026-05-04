@@ -6,17 +6,15 @@ OPT_FLAGS   = -O2
 DEBUG_FLAGS = -g
 
 RM    = /bin/rm -f
-FLUFF = *~ *.old *.bak .*~ .*.old .*.bak
 
 CFLAGS	 = -I../include
 CFLAGS	+= $(OPT_FLAGS)
 
-SOURCES = _bin_id.c _save_state.c _restore_state.c version.c
-OBJECTS = _bin_id.o _save_state.o _restore_state.o version.o
-
-../cmp/npclu: $(OBJECTS)
+FILES = _bin_id _save_state _restore_state version
+SOURCES = $(patsubst %,%.c,$(FILES))
+OBJECTS = $(patsubst %,%.o,$(FILES))
 
 clean:
-	${RM}  *.o ${FLUFF}
+	${RM} *.o
 
 veryclean: clean

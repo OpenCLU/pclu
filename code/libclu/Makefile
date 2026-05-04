@@ -2,7 +2,7 @@
 
 # Compilation flags for subdirectories of this directory
 
-CFLAGS         = -I../../include
+CFLAGS         = -I../../include -Wall -Wextra -Wno-unused-but-set-variable -Wno-unused-parameter
 OPT_FLAGS      = -O2
 DEBUG_FLAGS    = -g
 DEBUGGER_FLAGS ?= ${OPT_FLAGS}
