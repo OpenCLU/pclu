@@ -67,4 +67,4 @@ if [ "$verbose" ]; then
     PS4=''			# suppress '+' prefix from set -x
     set -x
 fi
-$cc $lflags "$@" -L"${CLUHOME}"/code $libpclu -lm -lgc
+$cc $lflags "$@" -L"${CLUHOME}"/code $libpclu -lm -L"${HOME}"/local/lib -lgc

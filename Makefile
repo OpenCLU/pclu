@@ -136,6 +136,11 @@ cdebugger:
 
 fictitious_file:
 
+test: test-example test-cludent
+test-example:
+	cd example && ${MAKE} test
+test-cludent:
+	cd cludent && ${MAKE} test
 clean:
 	for i in ${CLEANDIRS}; do (cd $$i && ${MAKE} clean); done
 	${RM} ${FLUFF}

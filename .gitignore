@@ -1,6 +1,8 @@
 *.a
 *.lib
 *.o
+*.out
+*.xref
 *~
-exe/pclu
 code/cmp/pclu
+exe/pclu

@@ -16,6 +16,10 @@ factorial: ${OBJS}
 factorial.o: factorial.clu
 	${PCLU} -ext false -spec factorial -opt -cfiles -compile factorial
 
+test: factorial
+	(echo 5;echo)|./factorial>factorial.out
+	diff factorial.out factorial.expect
+
 clean:
 	${RM} ${OBJS} factorial factorial.lib  pclu.xref *.c ${FLUFF}
 	cd debug && ${MAKE} clean

@@ -24,6 +24,10 @@ $(CLUOBJS): _buffered_read.clu _io_buf.clu buf.clu case.clu \
 	$(CLU) -ce *.equ -merge ${LIBS} -spec *.spc *.clu -dump cludent.lib
 	${CLU} -ce *.equ -merge $(LIBS) cludent.lib -opt -compile *.clu
 
+test: cludent
+	./cludent < foo.clu.in > foo.clu.out
+	diff foo.clu foo.clu.out
+
 clean:
 	${RM} ${CFILES} cludent.lib *.o pclu.xref ${FLUFF}
 
