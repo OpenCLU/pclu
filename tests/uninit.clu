@@ -1,0 +1,15 @@
+% Test uninitialized variables
+start_up = proc()
+    po: stream := stream$primary_output()
+
+    saw_failure: bool := false
+    x: int
+    begin
+        y: int := x + 1    
+    end except when failure(why: string):
+        saw_failure := true
+    end
+    if ~saw_failure then
+        signal failure("Oops: No failure seen due to uninitialized variable")
+    end
+    end start_up

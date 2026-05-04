@@ -69,7 +69,7 @@ libpclu_g.a: ${G}
 
 clean:
 	for i in ${CLEANDIRS}; do (cd $$i && ${MAKE} clean); done
-	${RM} ${FLUFF}
+	${RM} *.a
 
 veryclean: clean
 	for i in ${CLEANDIRS} cmp; do (cd $$i && ${MAKE} veryclean); done
