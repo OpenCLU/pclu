@@ -309,7 +309,7 @@ struct OPS *table_of_du_bool_ops __CLU_COMMON;
 static int ceOPcreate_own_init = 0;
 
 errcode
-ceOPcreate(CLUREF *ret_1)
+ceOPcreate(CLUREF xl, CLUREF *ret_1)
 {
     errcode err;
     CLUREF parms;

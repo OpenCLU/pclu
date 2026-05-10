@@ -84,7 +84,7 @@ rep		= record[ids:		idtab,
 			 type_,
 			 cvt_:		typespec]
 
-create = proc () returns (CE)
+create = proc (xl:XLIB) returns (CE)
 	parms: exprlist := exprlist$new()
 	nullt: clutype := clutype${gen:   XLIB$lookup("null"),
 				   parms: parms}

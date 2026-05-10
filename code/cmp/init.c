@@ -100,7 +100,7 @@ initialize_compiler(CLUREF *ret_1)
   LINE(10);
     {
     CLUREF T_1_1;
-    err = ceOPcreate(&T_1_1);
+    err = ceOPcreate(xl, &T_1_1);
     if (err != ERR_ok)
         goto ex_0;
     comp.num = T_1_1.num;
