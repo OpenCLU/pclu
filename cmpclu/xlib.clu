@@ -5,6 +5,7 @@
 
 XLIB = cluster is	create,         % -> xlib
 			lookup,		% pathname -> DU => not_found
+			lookup2,	% xlib,pathname -> DU => not_found
 			bind,		% pathname, DU -> exists
 			get_DU,		% name -> DU
 			dump,		% fname -> fname => not_possible(str)
@@ -19,9 +20,12 @@ libform		= record[path:  pathname,
 			 name:  name,
 			 specs: DUspecs]
 
+own created_before: bool := false
 own tab: rep := rep$create(tabsize, hash, pathname$equal)
 
 create = proc () returns (cvt)
+	if created_before then signal failure("Created twice") end
+	created_before := true
 	bind("null",     DU$create("null"))
 	bind("bool",     DU$create("bool"))
 	bind("int",      DU$create("int"))
@@ -44,6 +48,12 @@ lookup = proc (path: pathname) returns (DU) signals (not_found)
 	return(rep$lookup(tab, path))
 	   resignal not_found
 	end lookup
+
+% A version that doesn't need the own variable
+lookup2 = proc(xl:cvt, path: pathname) returns (DU) signals (not_found)
+	return(rep$lookup(xl, path))
+	   resignal not_found
+        end lookup2
 
 bind = proc (path: pathname, d: DU) signals (exists)
 	rep$bind(tab, path, d)

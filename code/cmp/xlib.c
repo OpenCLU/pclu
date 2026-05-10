@@ -86,6 +86,7 @@ struct OPS *gc_dump_of_array_of_record_name_path_specs_ops __CLU_COMMON;
 extern const struct REQS * const gc_read_of_t_reqs;
 extern const OWN_req gc_read_ownreqs;
 struct OPS *gc_read_of_array_of_record_name_path_specs_ops __CLU_COMMON;
+static CLUREF STR_Created_040twice;
 static CLUREF STR_null;
 static CLUREF STR_bool;
 static CLUREF STR_int;
@@ -105,6 +106,7 @@ static CLUREF STR_nothing_040to_040dump;
 static CLUREF STR__137l_137;
 static int xlib_own_init = 0;
 const OWN_req xlib_ownreqs = { 0, 0 };
+CLUREF xlibOPcreated_before;
 CLUREF xlibOPtab;
 
 errcode
@@ -159,6 +161,7 @@ xlib_own_init_proc(void)
         find_prociter_instance(gc_dump, 1, &gc_dump_ownreqs, &(gc_dump_of_array_of_record_name_path_specs_ops));
         add_parm_info_type(0, (const struct OPS *)array_of_record_name_path_specs_ops, gc_read_of_t_reqs);
         find_prociter_instance(gc_read, 1, &gc_read_ownreqs, &(gc_read_of_array_of_record_name_path_specs_ops));
+        stringOPcons("Created twice", CLU_1, CLUREF_make_num(13), &STR_Created_040twice);
         stringOPcons("null", CLU_1, CLUREF_make_num(4), &STR_null);
         stringOPcons("bool", CLU_1, CLUREF_make_num(4), &STR_bool);
         stringOPcons("int", CLU_1, CLUREF_make_num(3), &STR_int);
@@ -177,6 +180,9 @@ xlib_own_init_proc(void)
         stringOPcons("nothing to dump", CLU_1, CLUREF_make_num(15), &STR_nothing_040to_040dump);
         stringOPcons("_l_", CLU_1, CLUREF_make_num(3), &STR__137l_137);
         xlib_own_init = 1;
+        {
+        xlibOPcreated_before.tf = false;
+        }
         {
         CLUREF T_0_1;
         CLUREF T_0_2;
@@ -227,9 +233,24 @@ xlibOPcreate(CLUREF *ret_1)
         }
         xlibOPcreate_own_init = 1;
     }
-    enter_proc(24);
+    enter_proc(26);
 
-  LINE(25);
+  LINE(27);
+    { /* if */
+    if (xlibOPcreated_before.num == true) { /* if */
+        { /* signal */
+            elist[0] = STR_Created_040twice;
+            signal(ERR_failure);
+        }
+    }
+    } /* end if */
+
+  LINE(28);
+    {
+    xlibOPcreated_before.tf = true;
+    }
+
+  LINE(29);
     {
     CLUREF T_1_1;
     err = duOPcreate(STR_null, &T_1_1);
@@ -240,7 +261,7 @@ xlibOPcreate(CLUREF *ret_1)
         goto ex_0;
     }
 
-  LINE(26);
+  LINE(30);
     {
     CLUREF T_1_1;
     err = duOPcreate(STR_bool, &T_1_1);
@@ -251,7 +272,7 @@ xlibOPcreate(CLUREF *ret_1)
         goto ex_0;
     }
 
-  LINE(27);
+  LINE(31);
     {
     CLUREF T_1_1;
     err = duOPcreate(STR_int, &T_1_1);
@@ -262,7 +283,7 @@ xlibOPcreate(CLUREF *ret_1)
         goto ex_0;
     }
 
-  LINE(28);
+  LINE(32);
     {
     CLUREF T_1_1;
     err = duOPcreate(STR_real, &T_1_1);
@@ -273,7 +294,7 @@ xlibOPcreate(CLUREF *ret_1)
         goto ex_0;
     }
 
-  LINE(29);
+  LINE(33);
     {
     CLUREF T_1_1;
     err = duOPcreate(STR_char, &T_1_1);
@@ -284,7 +305,7 @@ xlibOPcreate(CLUREF *ret_1)
         goto ex_0;
     }
 
-  LINE(30);
+  LINE(34);
     {
     CLUREF T_1_1;
     err = duOPcreate(STR_string, &T_1_1);
@@ -295,7 +316,7 @@ xlibOPcreate(CLUREF *ret_1)
         goto ex_0;
     }
 
-  LINE(31);
+  LINE(35);
     {
     CLUREF T_1_1;
     err = duOPcreate(STR_array, &T_1_1);
@@ -306,7 +327,7 @@ xlibOPcreate(CLUREF *ret_1)
         goto ex_0;
     }
 
-  LINE(32);
+  LINE(36);
     {
     CLUREF T_1_1;
     err = duOPcreate(STR_record, &T_1_1);
@@ -317,7 +338,7 @@ xlibOPcreate(CLUREF *ret_1)
         goto ex_0;
     }
 
-  LINE(33);
+  LINE(37);
     {
     CLUREF T_1_1;
     err = duOPcreate(STR_oneof, &T_1_1);
@@ -328,7 +349,7 @@ xlibOPcreate(CLUREF *ret_1)
         goto ex_0;
     }
 
-  LINE(34);
+  LINE(38);
     {
     CLUREF T_1_1;
     err = duOPcreate(STR_sequence, &T_1_1);
@@ -339,7 +360,7 @@ xlibOPcreate(CLUREF *ret_1)
         goto ex_0;
     }
 
-  LINE(35);
+  LINE(39);
     {
     CLUREF T_1_1;
     err = duOPcreate(STR_struct, &T_1_1);
@@ -350,7 +371,7 @@ xlibOPcreate(CLUREF *ret_1)
         goto ex_0;
     }
 
-  LINE(36);
+  LINE(40);
     {
     CLUREF T_1_1;
     err = duOPcreate(STR_variant, &T_1_1);
@@ -361,7 +382,7 @@ xlibOPcreate(CLUREF *ret_1)
         goto ex_0;
     }
 
-  LINE(37);
+  LINE(41);
     {
     CLUREF T_1_1;
     err = duOPcreate(STR_proctype, &T_1_1);
@@ -372,7 +393,7 @@ xlibOPcreate(CLUREF *ret_1)
         goto ex_0;
     }
 
-  LINE(38);
+  LINE(42);
     {
     CLUREF T_1_1;
     err = duOPcreate(STR_itertype, &T_1_1);
@@ -383,7 +404,7 @@ xlibOPcreate(CLUREF *ret_1)
         goto ex_0;
     }
 
-  LINE(39);
+  LINE(43);
     {
     CLUREF T_1_1;
     err = duOPcreate(STR_type, &T_1_1);
@@ -394,7 +415,7 @@ xlibOPcreate(CLUREF *ret_1)
         goto ex_0;
     }
 
-  LINE(40);
+  LINE(44);
     { /* return */
     {
     ret_1->num = xlibOPtab.num;
@@ -433,9 +454,9 @@ xlibOPlookup(CLUREF path, CLUREF *ret_1)
         }
         xlibOPlookup_own_init = 1;
     }
-    enter_proc(43);
+    enter_proc(47);
 
-  LINE(44);
+  LINE(48);
     { /* return */
     {
     CLUREF T_2_1;
@@ -472,6 +493,62 @@ xlibOPlookup(CLUREF path, CLUREF *ret_1)
 /**** END PROCEDURE lookup ****/
 
 
+/**** BEGIN PROCEDURE lookup2 ****/
+
+struct OPS *table_of_string_du_ops __CLU_COMMON;
+static int xlibOPlookup2_own_init = 0;
+
+errcode
+xlibOPlookup2(CLUREF xl, CLUREF path, CLUREF *ret_1)
+{
+    errcode err;
+    if (xlibOPlookup2_own_init == 0) {
+        if (xlib_own_init == 0) {
+            err = xlib_own_init_proc();
+            if (err != ERR_ok)
+                goto ex_0;
+        }
+        xlibOPlookup2_own_init = 1;
+    }
+    enter_proc(53);
+
+  LINE(54);
+    { /* return */
+    {
+    CLUREF T_2_1;
+    generic_CLU_proc.type_owns = table_of_string_du_ops->type_owns;
+    generic_CLU_proc.proc = tableOPlookup;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = tableOPlookup(xl, path, &T_2_1);
+    if (err != ERR_ok)
+        goto ex_1;
+    ret_1->num = T_2_1.num;
+    }
+    signal (ERR_ok);
+    }
+    goto end_1;
+  ex_1: /* resignal */
+    __CLU_EX_HANDLER;
+    if (err == ERR_not_found)
+        signal(err);
+    else
+        goto ex_0;
+  end_1:;
+
+    goto end_0;
+  ex_0:
+    __CLU_EX_HANDLER;
+    if (err != ERR_failure)
+        elist[0] = _pclu_erstr(err);
+    signal(ERR_failure);
+  end_0:
+    elist[0] = no_return_values_STRING;
+    signal(ERR_failure);
+}
+
+/**** END PROCEDURE lookup2 ****/
+
+
 /**** BEGIN PROCEDURE bind ****/
 
 struct OPS *table_of_string_du_ops __CLU_COMMON;
@@ -489,9 +566,9 @@ xlibOPbind(CLUREF path, CLUREF d)
         }
         xlibOPbind_own_init = 1;
     }
-    enter_proc(48);
+    enter_proc(58);
 
-  LINE(49);
+  LINE(59);
     {
     generic_CLU_proc.type_owns = table_of_string_du_ops->type_owns;
     generic_CLU_proc.proc = tableOPbind;
@@ -540,9 +617,9 @@ xlibOPget_du(CLUREF n, CLUREF *ret_1)
         }
         xlibOPget_du_own_init = 1;
     }
-    enter_proc(53);
+    enter_proc(63);
 
-  LINE(54);
+  LINE(64);
     { /* return */
     {
     CLUREF T_2_1;
@@ -561,7 +638,7 @@ xlibOPget_du(CLUREF n, CLUREF *ret_1)
     __CLU_EX_HANDLER;
     if (err == ERR_not_found) {
 
-  LINE(55);
+  LINE(65);
         {
         CLUREF T_2_1;
         err = duOPcreate(n, &T_2_1);
@@ -570,7 +647,7 @@ xlibOPget_du(CLUREF n, CLUREF *ret_1)
         d.num = T_2_1.num;
         }
 
-  LINE(56);
+  LINE(66);
         {
         generic_CLU_proc.type_owns = table_of_string_du_ops->type_owns;
         generic_CLU_proc.proc = tableOPbind;
@@ -580,7 +657,7 @@ xlibOPget_du(CLUREF n, CLUREF *ret_1)
             goto ex_0;
         }
 
-  LINE(57);
+  LINE(67);
         { /* return */
         {
         ret_1->num = d.num;
@@ -652,9 +729,9 @@ xlibOPdump(CLUREF fn, CLUREF *ret_1)
         }
         xlibOPdump_own_init = 1;
     }
-    enter_proc(61);
+    enter_proc(71);
 
-  LINE(62);
+  LINE(72);
     {
     CLUREF T_1_1;
     locals.err = arrayOPnew(&T_1_1);
@@ -663,7 +740,7 @@ xlibOPdump(CLUREF fn, CLUREF *ret_1)
     locals.list.num = T_1_1.num;
     }
 
-  LINE(63);
+  LINE(73);
     { /* for */
         generic_CLU_proc.type_owns = table_of_string_du_ops->type_owns;
         generic_CLU_proc.proc = tableOPelements;
@@ -684,13 +761,13 @@ xlibOPdump(CLUREF fn, CLUREF *ret_1)
             goto ex_0;
     }
 
-  LINE(71);
+  LINE(81);
     { /* if */
     CLUREF T_1_1;
     T_1_1.num = (locals.list.array->ext_size == 0);
     if (T_1_1.num == true) { /* if */
 
-  LINE(72);
+  LINE(82);
         { /* signal */
             elist[0] = STR_nothing_040to_040dump;
             signal(ERR_not_possible);
@@ -698,7 +775,7 @@ xlibOPdump(CLUREF fn, CLUREF *ret_1)
     }
     } /* end if */
 
-  LINE(73);
+  LINE(83);
     {
     CLUREF T_2_1;
     CLUREF T_2_2;
@@ -731,7 +808,7 @@ xlibOPdump(CLUREF fn, CLUREF *ret_1)
         goto ex_0;
   end_1:;
 
-  LINE(76);
+  LINE(86);
     {
     CLUREF T_2_1;
     CLUREF T_2_2;
@@ -759,7 +836,7 @@ xlibOPdump(CLUREF fn, CLUREF *ret_1)
     if (locals.err == ERR_not_possible) {
         locals.why.num = elist[0].num;
 
-  LINE(78);
+  LINE(88);
         {
         locals.err = delete_file(locals.nfn);
         if (locals.err != ERR_ok)
@@ -775,7 +852,7 @@ xlibOPdump(CLUREF fn, CLUREF *ret_1)
         }
       end_3:;
 
-  LINE(80);
+  LINE(90);
         { /* signal */
             elist[0] = locals.why;
             signal(ERR_not_possible);
@@ -786,7 +863,7 @@ xlibOPdump(CLUREF fn, CLUREF *ret_1)
     }
   end_2:;
 
-  LINE(82);
+  LINE(92);
     { /* return */
     {
     CLUREF T_1_1;
@@ -831,9 +908,9 @@ xlibOPdump_IB_1(CLUREF iv_1, CLUREF iv_2, xlibOPdump_LOCALS_t *locals, errcode *
 {
     locals->path.num = iv_1.num;
     locals->d.num = iv_2.num;
-    enter_iter_body_proc(64);
+    enter_iter_body_proc(74);
 
-  FB_LINE(64);
+  FB_LINE(74);
     {
     CLUREF T_1_1;
     CLUREF T_1_2;
@@ -844,7 +921,7 @@ xlibOPdump_IB_1(CLUREF iv_1, CLUREF iv_2, xlibOPdump_LOCALS_t *locals, errcode *
     locals->ok.num = T_1_2.num;
     }
 
-  FB_LINE(65);
+  FB_LINE(75);
     { /* if */
     CLUREF T_1_1;
     CLUREF T_1_2;
@@ -857,7 +934,7 @@ xlibOPdump_IB_1(CLUREF iv_1, CLUREF iv_2, xlibOPdump_LOCALS_t *locals, errcode *
     }
     if (T_1_1.num == true) { /* if */
 
-  FB_LINE(66);
+  FB_LINE(76);
         {
         CLUREF T_2_1;
         CLUREF T_2_2;
@@ -930,9 +1007,9 @@ xlibOPmerge(CLUREF fn)
         }
         xlibOPmerge_own_init = 1;
     }
-    enter_proc(85);
+    enter_proc(95);
 
-  LINE(86);
+  LINE(96);
     { /* for array$elements */
     CLUREF T_2_1;
     CLUREF T_2_2;
@@ -955,7 +1032,7 @@ xlibOPmerge(CLUREF fn)
         }
         form.num = T_2_4.array->store->data[T_2_2.num - T_2_4.array->ext_low + T_2_4.array->int_low];
 
-  LINE(87);
+  LINE(97);
         {
         CLUREF T_4_1;
         CLUREF T_4_2;
@@ -973,7 +1050,7 @@ xlibOPmerge(CLUREF fn)
         __CLU_EX_HANDLER;
         if (err == ERR_not_found) {
 
-  LINE(89);
+  LINE(99);
             {
             CLUREF T_4_1;
             CLUREF T_4_2;
@@ -984,7 +1061,7 @@ xlibOPmerge(CLUREF fn)
             d.num = T_4_2.num;
             }
 
-  LINE(90);
+  LINE(100);
             {
             CLUREF T_4_1;
             err = duOPget_unique(d, &T_4_1);
@@ -1003,7 +1080,7 @@ xlibOPmerge(CLUREF fn)
         }
       end_2:;
 
-  LINE(92);
+  LINE(102);
         {
         CLUREF T_3_1;
         T_3_1.num = form.vec->data[2];
@@ -1012,7 +1089,7 @@ xlibOPmerge(CLUREF fn)
             goto ex_1;
         }
 
-  LINE(93);
+  LINE(103);
         { /* if */
         CLUREF T_3_1;
         CLUREF T_3_2;
@@ -1027,7 +1104,7 @@ xlibOPmerge(CLUREF fn)
         T_3_4.num = !T_3_3.num;
         if (T_3_4.num == true) { /* if */
 
-  LINE(94);
+  LINE(104);
             {
             CLUREF T_4_1;
             CLUREF T_4_2;
@@ -1099,9 +1176,9 @@ xlibOPunmerge(CLUREF fn)
         }
         xlibOPunmerge_own_init = 1;
     }
-    enter_proc(98);
+    enter_proc(108);
 
-  LINE(99);
+  LINE(109);
     { /* for array$elements */
     CLUREF T_2_1;
     CLUREF T_2_2;
@@ -1124,7 +1201,7 @@ xlibOPunmerge(CLUREF fn)
         }
         form.num = T_2_4.array->store->data[T_2_2.num - T_2_4.array->ext_low + T_2_4.array->int_low];
 
-  LINE(100);
+  LINE(110);
         {
         CLUREF T_4_1;
         CLUREF T_4_2;
@@ -1177,7 +1254,7 @@ typedef struct {
     long count;
     OWNPTR type_owns;
     OWNPTR op_owns;
-    struct OP_ENTRY entry[7];
+    struct OP_ENTRY entry[8];
 } xlib_OPS;
 
 static CLU_proc xlib_oe_bind = { .proc = xlibOPbind };
@@ -1185,15 +1262,17 @@ static CLU_proc xlib_oe_create = { .proc = xlibOPcreate };
 static CLU_proc xlib_oe_dump = { .proc = xlibOPdump };
 static CLU_proc xlib_oe_get_du = { .proc = xlibOPget_du };
 static CLU_proc xlib_oe_lookup = { .proc = xlibOPlookup };
+static CLU_proc xlib_oe_lookup2 = { .proc = xlibOPlookup2 };
 static CLU_proc xlib_oe_merge = { .proc = xlibOPmerge };
 static CLU_proc xlib_oe_unmerge = { .proc = xlibOPunmerge };
 
-static xlib_OPS xlib_ops_actual = {7, (OWNPTR)&xlib_own_init, (OWNPTR)&xlib_own_init, {
+static xlib_OPS xlib_ops_actual = {8, (OWNPTR)&xlib_own_init, (OWNPTR)&xlib_own_init, {
     {&xlib_oe_bind, "bind"},
     {&xlib_oe_create, "create"},
     {&xlib_oe_dump, "dump"},
     {&xlib_oe_get_du, "get_du"},
     {&xlib_oe_lookup, "lookup"},
+    {&xlib_oe_lookup2, "lookup2"},
     {&xlib_oe_merge, "merge"},
     {&xlib_oe_unmerge, "unmerge"}}};
 
