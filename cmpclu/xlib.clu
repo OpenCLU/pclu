@@ -3,7 +3,7 @@
 %
 %	CLU Compiler Version 3:  hack library
 
-XLIB = cluster is	init,		% ->
+XLIB = cluster is	create,         % -> xlib
 			lookup,		% pathname -> DU => not_found
 			bind,		% pathname, DU -> exists
 			get_DU,		% name -> DU
@@ -21,7 +21,7 @@ libform		= record[path:  pathname,
 
 own tab: rep := rep$create(tabsize, hash, pathname$equal)
 
-init = proc ()
+create = proc () returns (cvt)
 	bind("null",     DU$create("null"))
 	bind("bool",     DU$create("bool"))
 	bind("int",      DU$create("int"))
@@ -37,7 +37,8 @@ init = proc ()
 	bind("proctype", DU$create("proctype"))
 	bind("itertype", DU$create("itertype"))
 	bind("type",     DU$create("type"))
-	end init
+	return (tab)
+	end create
 
 lookup = proc (path: pathname) returns (DU) signals (not_found)
 	return(rep$lookup(tab, path))

@@ -14,7 +14,7 @@ extern errcode get_compiler_version();
 extern errcode cmpvarOPset_date();
 extern errcode dateOPunparse();
 extern errcode now();
-extern errcode xlibOPinit();
+extern errcode xlibOPcreate();
 extern errcode ceOPcreate();
 extern errcode file_nameOPparse();
 extern errcode nul_dev();
@@ -39,6 +39,7 @@ errcode
 initialize_compiler(CLUREF *ret_1)
 {
     errcode err;
+    CLUREF xl;
     CLUREF comp;
     CLUREF fn;
     CLUREF inst;
@@ -89,9 +90,11 @@ initialize_compiler(CLUREF *ret_1)
 
   LINE(9);
     {
-    err = xlibOPinit();
+    CLUREF T_1_1;
+    err = xlibOPcreate(&T_1_1);
     if (err != ERR_ok)
         goto ex_0;
+    xl.num = T_1_1.num;
     }
 
   LINE(10);

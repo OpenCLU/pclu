@@ -6,7 +6,7 @@
 initialize_compiler = proc () returns (bool)
     cmpvar$set_version(str$append(get_compiler_version(), 'X'))
     cmpvar$set_date(date$unparse(now()))
-    XLIB$init()
+    xl: XLIB := XLIB$create()
     comp: CE := CE$create()
     fn: fname := fname$parse(nul_dev())
     inst: stream := stream$open(fn, "read")
