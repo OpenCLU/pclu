@@ -39,7 +39,6 @@ create = proc () returns (xlib)
 	return (xl)
 	end create
 
-% A version that doesn't need the own variable
 lookup = proc(xl:cvt, path: pathname) returns (DU) signals (not_found)
 	return(rep$lookup(xl, path))
 	   resignal not_found
