@@ -20,7 +20,7 @@ cludent: $(CLUOBJS) $(COBJS)
 	${LINK} -opt -o cludent ${CLUOBJS} ${COBJS}
 
 $(CLUOBJS): _buffered_read.clu _io_buf.clu buf.clu case.clu \
-		ienv.clu spiffy.clu start_up.clu ind.equ
+		ienv.clu spiffy.clu start_up.clu ind.equ $(CLU)
 	$(CLU) -ce *.equ -merge ${LIBS} -spec *.spc *.clu -dump cludent.lib
 	${CLU} -ce *.equ -merge $(LIBS) cludent.lib -opt -compile *.clu
 

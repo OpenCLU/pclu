@@ -13,7 +13,7 @@ FLUFF = *~ *.old *.bak .*~ .*.old .*.bak
 factorial: ${OBJS}
 	${PLINK} -opt -o $@ ${OBJS}
 
-factorial.o: factorial.clu
+factorial.o: factorial.clu $(PCLU)
 	${PCLU} -ext false -spec factorial -opt -cfiles -compile factorial
 
 test: factorial
