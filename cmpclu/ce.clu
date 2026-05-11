@@ -34,7 +34,8 @@ CE = cluster is		create,			% -> CE
 			get_iter_,		% CE -> DU
 			get_type,		% CE, typeabs -> typespec, bool
 			add_du,			% CE, DU -> DU
-			all_dus			% CE --> DU
+			all_dus,		% CE --> DU
+			get_xlib                % CE -> xlib
 
 typestack	= array[typespec]
 
@@ -82,7 +83,8 @@ rep		= record[ids:		idtab,
 			 str,
 			 any_,
 			 type_,
-			 cvt_:		typespec]
+			 cvt_:		typespec,
+			 xlib:          xlib]
 
 create = proc (xl:XLIB) returns (CE)
 	parms: exprlist := exprlist$new()
@@ -126,7 +128,8 @@ create = proc (xl:XLIB) returns (CE)
 		       str:       typespec$create(typeabs$make_cluster_(strt), 0),
 		       type_:     typespec$create(typeabs$make_type_(typet), 0),
 		       cvt_:      typespec$create(typeabs$make_cvt_(nil), 0),
-		       any_:      typespec$create(typeabs$make_any_(nil), 0)}
+		       any_:      typespec$create(typeabs$make_any_(nil), 0),
+		       xlib:      xl}
 	fixup(e, e.unknown)
 	fixup(e, e.null_)
 	fixup(e, e.bool_)
@@ -378,6 +381,10 @@ all_dus = iter (e: cvt) yields (DU)
 		yield(d)
 		end
 	end all_dus
+
+get_xlib = proc (e: cvt) returns (xlib)
+	return (e.xlib)
+	end get_xlib
 
 end CE
 

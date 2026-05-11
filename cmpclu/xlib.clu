@@ -4,7 +4,6 @@
 %	CLU Compiler Version 3:  hack library
 
 XLIB = cluster is	create,         % -> xlib
-			get2,           % -> xlib
 			lookup,	% xlib,pathname -> DU => not_found
 			bind,		% pathname, DU -> exists
 			get_DU,		% name -> DU
@@ -43,11 +42,6 @@ create = proc () returns (cvt)
 	bind("type",     DU$create("type"))
 	return (tab)
 	end create
-
-get2 = proc () returns (cvt)
-	if ~created_before then signal failure("get before create") end
-        return (tab)
-        end get2
 
 % A version that doesn't need the own variable
 lookup = proc(xl:cvt, path: pathname) returns (DU) signals (not_found)

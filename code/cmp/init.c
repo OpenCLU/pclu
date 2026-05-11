@@ -222,7 +222,7 @@ initialize_compiler(CLUREF *ret_1)
 
   LINE(34);
     {
-    err = initialize_specs();
+    err = initialize_specs(comp);
     if (err != ERR_ok)
         goto ex_0;
     }
@@ -248,7 +248,7 @@ initialize_compiler(CLUREF *ret_1)
   LINE(37);
     { /* return */
     {
-    ret_1->tf = true;
+    ret_1->num = comp.num;
     }
     signal (ERR_ok);
     }
@@ -290,7 +290,7 @@ static CLUREF STR__136;
 static int initialize_specs_own_init = 0;
 
 errcode
-initialize_specs(void)
+initialize_specs(CLUREF comp)
 {
     errcode err;
     CLUREF fn;
@@ -377,7 +377,7 @@ initialize_specs(void)
     err = fake_stream(&T_1_2);
     if (err != ERR_ok)
         goto ex_0;
-    err = process_commands(T_1_1, T_1_2, CLU_1, &T_1_3);
+    err = process_commands(T_1_1, T_1_2, CLU_1, comp, &T_1_3);
     if (err != ERR_ok)
         goto ex_0;
     }

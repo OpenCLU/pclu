@@ -3,7 +3,7 @@
 %
 %	CLU Compiler: initialization routines
 
-initialize_compiler = proc () returns (bool)
+initialize_compiler = proc () returns (CE)
     cmpvar$set_version(str$append(get_compiler_version(), 'X'))
     cmpvar$set_date(date$unparse(now()))
     xl: XLIB := XLIB$create()
@@ -31,19 +31,19 @@ initialize_compiler = proc () returns (bool)
 		       exts:        exts,
 		       undefs:      undefs}
     cmpvar$set_stuffs(e)
-    initialize_specs()
+    initialize_specs(comp)
     e.genv := maybe_g_env$make_one(g_env$create(comp, outst, fn, fn))
     save_compiler()
-    return(true)
+    return(comp)
     end initialize_compiler
 
-initialize_specs = proc ()
+initialize_specs = proc (comp:CE)
     fn: fname := basic_name()
     if ~file_exists(fn) then
        signal failure ("Can't find basic.types: please setenv CLUHOME to an appropriate value") end
     ofn: fname := fname$make_output(fn, "junk")
     jcl: str := "#specs " || fname$unparse(fn) || "^" || fname$unparse(ofn)
-    process_commands(str$s2ac(jcl), fake_stream(), command_line_)
+    process_commands(str$s2ac(jcl), fake_stream(), command_line_, comp)
     ce$keep(cmpvar$stuffs().ce)
     DU$keep()
     end initialize_specs
