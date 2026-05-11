@@ -789,7 +789,7 @@ c_xtypeset(CLUREF e, CLUREF set, CLUREF *ret_1)
 
 extern errcode c_envOPget_du();
 extern errcode xlibOPlookup();
-extern errcode xlibOPget2();
+extern errcode c_envOPget_xlib();
 extern errcode xlibOPget_du();
 extern errcode c_get_idnkind();
 
@@ -805,7 +805,7 @@ c_pathname(CLUREF e, CLUREF path, CLUREF *ret_1)
     CLUREF T_2_1;
     CLUREF T_2_2;
     CLUREF T_2_3;
-    err = xlibOPget2(&T_2_1);
+    err = c_envOPget_xlib(e, &T_2_1);
     if (err != ERR_ok)
         goto ex_1;
     err = xlibOPlookup(T_2_1, path, &T_2_2);

@@ -86,7 +86,8 @@ c_env = cluster is	create,			% CE, stream -> c_env
 			push_handlers,		% c_env, exceptstmt ->
 			push_resigs,		% c_env, namelist ->
 			pop_handlers,		% c_env ->
-			add_cond		% c_env, exception ->
+			add_cond,		% c_env, exception ->
+			get_xlib                % c_env -> xlib
 
 m1		= -1
 
@@ -140,7 +141,8 @@ rep		= record[ce:        CE,
 			 eqstack:   eqstack,
 			 equates:   bool,
 			 condstack: condstack,
-			 failure:   exception]
+			 failure:   exception,
+			 xlib:      xlib]
 
 create = proc (comp: CE, errst: stream) returns (cvt)
 	ut: typespec := comp.unknown_type
@@ -172,7 +174,8 @@ create = proc (comp: CE, errst: stream) returns (cvt)
 		    equates:	false,
 		    condstack:	condstack$predict(1, -5),
 		    failure:	exception${name:  "failure",
-					   types: typelist$[comp.str_type]}})
+					   types: typelist$[comp.str_type]},
+		    xlib:       xlib$get2()})
 	end create
 
 reset = proc (e: cvt, comp: CE, errst: stream, src: string)
@@ -813,5 +816,9 @@ add_cond = proc (e: cvt, cond: exception, is_exit: bool)
 	if is_exit
 	   then err(up(e), qs$["exit '", cn, "' not caught"]) end
 	end add_cond
+
+get_xlib = proc (e: cvt) returns (xlib)
+	return (e.xlib)
+	end get_xlib
 
 end c_env
