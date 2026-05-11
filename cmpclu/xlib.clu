@@ -55,10 +55,10 @@ bind = proc (xl: cvt, path: pathname, d: DU) signals (exists)
 	   resignal exists
 	end bind
 
-get_DU = proc (n: name) returns (DU)
-	return(rep$lookup(tab, n))
+get_DU = proc (xl: cvt, n: name) returns (DU)
+	return(rep$lookup(xl, n))
 	   except when not_found: d: DU := DU$create(n)
-				  rep$bind(tab, n, d)
+				  rep$bind(xl, n, d)
 				  return(d)
 		  end
 	end get_DU

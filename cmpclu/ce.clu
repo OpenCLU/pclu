@@ -370,7 +370,7 @@ add_du = proc (e: cvt, mod: DU) returns (DU)
 	return(d)
 	end
 	except when not_found:
-			d: DU := XLIB$get_DU(mod.unique)
+			d: DU := XLIB$get_DU(e.xlib, mod.unique)
 			DUtab$bind(e.dus, d, true)
 			return(d)
 	       end

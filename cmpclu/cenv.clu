@@ -745,7 +745,7 @@ lookup2 = proc (e: rep, i: idn, want: int)
 			return
 		  end
 	if idnkind$is_unknown(k)
-	   then gen: DU := CE$add_du(e.ce, XLIB$get_DU(i.str))
+	   then gen: DU := CE$add_du(e.ce, XLIB$get_DU(e.ce.xlib, i.str))
 		k := c_get_idnkind(up(e), gen, want)
 		tagcase gen.mspecs
 		   tag specs (specs: DUspecs):

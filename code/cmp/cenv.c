@@ -137,6 +137,7 @@ extern errcode c_equateval();
 extern errcode c_parm_type();
 extern errcode ceOPlookup();
 extern errcode xlibOPget_du();
+extern errcode ceOPget_xlib();
 extern errcode c_get_idnkind();
 extern errcode duOPget_mspecs();
 extern errcode arrayOPaddl();
@@ -147,7 +148,6 @@ extern errcode stringOPequal();
 extern errcode c_when_assn();
 extern errcode oneofOPis_1();
 extern errcode c_resig_catch();
-extern errcode ceOPget_xlib();
 static CLUREF STR_failure;
 static CLUREF STR__040of_040wrong_040type;
 static CLUREF STR__011expected_040type_072_040;
@@ -5614,17 +5614,23 @@ c_envOPlookup2(CLUREF e, CLUREF i, CLUREF want)
         CLUREF T_2_2;
         CLUREF T_2_3;
         CLUREF T_2_4;
+        CLUREF T_2_5;
+        CLUREF T_2_6;
         T_2_1.num = e.vec->data[1];
-        err = idnOPget_str(i, &T_2_2);
+        T_2_2.num = e.vec->data[1];
+        err = ceOPget_xlib(T_2_2, &T_2_3);
         if (err != ERR_ok)
             goto ex_0;
-        err = xlibOPget_du(T_2_2, &T_2_3);
+        err = idnOPget_str(i, &T_2_4);
         if (err != ERR_ok)
             goto ex_0;
-        err = ceOPadd_du(T_2_1, T_2_3, &T_2_4);
+        err = xlibOPget_du(T_2_3, T_2_4, &T_2_5);
         if (err != ERR_ok)
             goto ex_0;
-        gen.num = T_2_4.num;
+        err = ceOPadd_du(T_2_1, T_2_5, &T_2_6);
+        if (err != ERR_ok)
+            goto ex_0;
+        gen.num = T_2_6.num;
         }
 
   LINE(749);

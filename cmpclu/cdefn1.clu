@@ -250,7 +250,7 @@ c_new_module = proc (e: c_env, mod: idn, want: int) returns (DU, mspecs)
 	   end
 	gen: DU := c_module_idn(mod)
 	   except when no_du:
-			gen := c_env$get_du(e, XLIB$get_DU(mod.str))
+			gen := c_env$get_du(e, XLIB$get_DU(e.xlib, mod.str))
 			c_env$declare(e, mod, c_get_idnkind(e, gen, want))
 		  end
 	e.mod_gen := gen

@@ -825,13 +825,17 @@ c_pathname(CLUREF e, CLUREF path, CLUREF *ret_1)
         {
         CLUREF T_2_1;
         CLUREF T_2_2;
-        err = xlibOPget_du(path, &T_2_1);
+        CLUREF T_2_3;
+        err = c_envOPget_xlib(e, &T_2_1);
         if (err != ERR_ok)
             goto ex_0;
-        err = c_envOPget_du(e, T_2_1, &T_2_2);
+        err = xlibOPget_du(T_2_1, path, &T_2_2);
         if (err != ERR_ok)
             goto ex_0;
-        gen.num = T_2_2.num;
+        err = c_envOPget_du(e, T_2_2, &T_2_3);
+        if (err != ERR_ok)
+            goto ex_0;
+        gen.num = T_2_3.num;
         }
 
   LINE(91);

@@ -85,8 +85,8 @@ extern errcode idnOPget_kind();
 extern errcode tableOPget_pair();
 extern errcode recordOPset_2();
 extern errcode xlibOPget_du();
-extern errcode duOPget_unique();
 extern errcode recordOPget_26();
+extern errcode duOPget_unique();
 extern const struct REQS * const sequence_of_t_reqs;
 extern struct OPS *expr_ops;
 extern const OWN_req sequence_ownreqs;
@@ -3118,13 +3118,15 @@ ceOPadd_du(CLUREF e, CLUREF mod, CLUREF *ret_1)
         {
         CLUREF T_2_1;
         CLUREF T_2_2;
-        err = duOPget_unique(mod, &T_2_1);
+        CLUREF T_2_3;
+        T_2_1.num = e.vec->data[25];
+        err = duOPget_unique(mod, &T_2_2);
         if (err != ERR_ok)
             goto ex_0;
-        err = xlibOPget_du(T_2_1, &T_2_2);
+        err = xlibOPget_du(T_2_1, T_2_2, &T_2_3);
         if (err != ERR_ok)
             goto ex_0;
-        d.num = T_2_2.num;
+        d.num = T_2_3.num;
         }
 
   LINE(374);

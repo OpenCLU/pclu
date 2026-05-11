@@ -555,7 +555,7 @@ struct OPS *table_of_string_du_ops __CLU_COMMON;
 static int xlibOPget_du_own_init = 0;
 
 errcode
-xlibOPget_du(CLUREF n, CLUREF *ret_1)
+xlibOPget_du(CLUREF xl, CLUREF n, CLUREF *ret_1)
 {
     errcode err;
     CLUREF d;
@@ -576,7 +576,7 @@ xlibOPget_du(CLUREF n, CLUREF *ret_1)
     generic_CLU_proc.type_owns = table_of_string_du_ops->type_owns;
     generic_CLU_proc.proc = tableOPlookup;
     CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = tableOPlookup(xlibOPtab, n, &T_2_1);
+    err = tableOPlookup(xl, n, &T_2_1);
     if (err != ERR_ok)
         goto ex_1;
     ret_1->num = T_2_1.num;
@@ -602,7 +602,7 @@ xlibOPget_du(CLUREF n, CLUREF *ret_1)
         generic_CLU_proc.type_owns = table_of_string_du_ops->type_owns;
         generic_CLU_proc.proc = tableOPbind;
         CUR_PROC_VAR.proc = &generic_CLU_proc;
-        err = tableOPbind(xlibOPtab, n, d);
+        err = tableOPbind(xl, n, d);
         if (err != ERR_ok)
             goto ex_0;
         }
