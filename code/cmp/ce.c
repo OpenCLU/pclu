@@ -8,7 +8,7 @@
 /**** BEGIN CLUSTER ce ****/
 
 extern errcode sequenceOPnew();
-extern errcode xlibOPlookup2();
+extern errcode xlibOPlookup();
 extern errcode tableOPcreate();
 extern errcode hash();
 extern errcode stringOPequal();
@@ -346,7 +346,7 @@ ceOPcreate(CLUREF xl, CLUREF *ret_1)
     CLUREF T_1_1;
     CLUREF T_1_2;
     RecordAlloc(2, T_1_1);
-    err = xlibOPlookup2(xl, STR_null, &T_1_2);
+    err = xlibOPlookup(xl, STR_null, &T_1_2);
     if (err != ERR_ok)
         goto ex_0;
     T_1_1.vec->data[0] = T_1_2.num;
@@ -359,7 +359,7 @@ ceOPcreate(CLUREF xl, CLUREF *ret_1)
     CLUREF T_1_1;
     CLUREF T_1_2;
     RecordAlloc(2, T_1_1);
-    err = xlibOPlookup2(xl, STR_bool, &T_1_2);
+    err = xlibOPlookup(xl, STR_bool, &T_1_2);
     if (err != ERR_ok)
         goto ex_0;
     T_1_1.vec->data[0] = T_1_2.num;
@@ -372,7 +372,7 @@ ceOPcreate(CLUREF xl, CLUREF *ret_1)
     CLUREF T_1_1;
     CLUREF T_1_2;
     RecordAlloc(2, T_1_1);
-    err = xlibOPlookup2(xl, STR_int, &T_1_2);
+    err = xlibOPlookup(xl, STR_int, &T_1_2);
     if (err != ERR_ok)
         goto ex_0;
     T_1_1.vec->data[0] = T_1_2.num;
@@ -385,7 +385,7 @@ ceOPcreate(CLUREF xl, CLUREF *ret_1)
     CLUREF T_1_1;
     CLUREF T_1_2;
     RecordAlloc(2, T_1_1);
-    err = xlibOPlookup2(xl, STR_real, &T_1_2);
+    err = xlibOPlookup(xl, STR_real, &T_1_2);
     if (err != ERR_ok)
         goto ex_0;
     T_1_1.vec->data[0] = T_1_2.num;
@@ -398,7 +398,7 @@ ceOPcreate(CLUREF xl, CLUREF *ret_1)
     CLUREF T_1_1;
     CLUREF T_1_2;
     RecordAlloc(2, T_1_1);
-    err = xlibOPlookup2(xl, STR_char, &T_1_2);
+    err = xlibOPlookup(xl, STR_char, &T_1_2);
     if (err != ERR_ok)
         goto ex_0;
     T_1_1.vec->data[0] = T_1_2.num;
@@ -411,7 +411,7 @@ ceOPcreate(CLUREF xl, CLUREF *ret_1)
     CLUREF T_1_1;
     CLUREF T_1_2;
     RecordAlloc(2, T_1_1);
-    err = xlibOPlookup2(xl, STR_string, &T_1_2);
+    err = xlibOPlookup(xl, STR_string, &T_1_2);
     if (err != ERR_ok)
         goto ex_0;
     T_1_1.vec->data[0] = T_1_2.num;
@@ -424,7 +424,7 @@ ceOPcreate(CLUREF xl, CLUREF *ret_1)
     CLUREF T_1_1;
     CLUREF T_1_2;
     RecordAlloc(2, T_1_1);
-    err = xlibOPlookup2(xl, STR_type, &T_1_2);
+    err = xlibOPlookup(xl, STR_type, &T_1_2);
     if (err != ERR_ok)
         goto ex_0;
     T_1_1.vec->data[0] = T_1_2.num;
@@ -547,35 +547,35 @@ ceOPcreate(CLUREF xl, CLUREF *ret_1)
     if (err != ERR_ok)
         goto ex_0;
     T_1_1.vec->data[5] = T_1_17.num;
-    err = xlibOPlookup2(xl, STR_array, &T_1_18);
+    err = xlibOPlookup(xl, STR_array, &T_1_18);
     if (err != ERR_ok)
         goto ex_0;
     T_1_1.vec->data[1] = T_1_18.num;
-    err = xlibOPlookup2(xl, STR_record, &T_1_19);
+    err = xlibOPlookup(xl, STR_record, &T_1_19);
     if (err != ERR_ok)
         goto ex_0;
     T_1_1.vec->data[14] = T_1_19.num;
-    err = xlibOPlookup2(xl, STR_oneof, &T_1_20);
+    err = xlibOPlookup(xl, STR_oneof, &T_1_20);
     if (err != ERR_ok)
         goto ex_0;
     T_1_1.vec->data[11] = T_1_20.num;
-    err = xlibOPlookup2(xl, STR_sequence, &T_1_21);
+    err = xlibOPlookup(xl, STR_sequence, &T_1_21);
     if (err != ERR_ok)
         goto ex_0;
     T_1_1.vec->data[15] = T_1_21.num;
-    err = xlibOPlookup2(xl, STR_struct, &T_1_22);
+    err = xlibOPlookup(xl, STR_struct, &T_1_22);
     if (err != ERR_ok)
         goto ex_0;
     T_1_1.vec->data[17] = T_1_22.num;
-    err = xlibOPlookup2(xl, STR_variant, &T_1_23);
+    err = xlibOPlookup(xl, STR_variant, &T_1_23);
     if (err != ERR_ok)
         goto ex_0;
     T_1_1.vec->data[23] = T_1_23.num;
-    err = xlibOPlookup2(xl, STR_proctype, &T_1_24);
+    err = xlibOPlookup(xl, STR_proctype, &T_1_24);
     if (err != ERR_ok)
         goto ex_0;
     T_1_1.vec->data[12] = T_1_24.num;
-    err = xlibOPlookup2(xl, STR_itertype, &T_1_25);
+    err = xlibOPlookup(xl, STR_itertype, &T_1_25);
     if (err != ERR_ok)
         goto ex_0;
     T_1_1.vec->data[8] = T_1_25.num;

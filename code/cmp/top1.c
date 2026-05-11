@@ -1887,7 +1887,7 @@ extern errcode xlibOPmerge();
 extern errcode streamOPputc();
 extern errcode arrayOPelements();
 extern errcode duOPforget_specs();
-extern errcode xlibOPlookup2();
+extern errcode xlibOPlookup();
 extern errcode xlibOPget2();
 extern errcode xlibOPunmerge();
 static errcode execute_command_IB_1();
@@ -3755,7 +3755,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo)
             locals.err = xlibOPget2(&T_5_1);
             if (locals.err != ERR_ok)
                 goto ex_7;
-            locals.err = xlibOPlookup2(T_5_1, locals.nm, &T_5_2);
+            locals.err = xlibOPlookup(T_5_1, locals.nm, &T_5_2);
             if (locals.err != ERR_ok)
                 goto ex_7;
             locals.err = duOPforget_specs(T_5_2);

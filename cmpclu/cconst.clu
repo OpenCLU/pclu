@@ -85,7 +85,7 @@ c_xtypeset = proc (e: c_env, set: xtypeset) returns (typeset)
 	end c_xtypeset
 
 c_pathname = proc (e: c_env, path: pathname) returns (idnkind)
-	gen: DU := c_env$get_du(e, XLIB$lookup2(xlib$get2(), path))
+	gen: DU := c_env$get_du(e, XLIB$lookup(xlib$get2(), path))
 	   except when not_found:
 			gen := c_env$get_du(e, XLIB$get_DU(path))
 			return(c_get_idnkind(e, gen, want_val))

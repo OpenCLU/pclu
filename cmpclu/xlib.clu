@@ -5,7 +5,7 @@
 
 XLIB = cluster is	create,         % -> xlib
 			get2,           % -> xlib
-			lookup2,	% xlib,pathname -> DU => not_found
+			lookup,	% xlib,pathname -> DU => not_found
 			bind,		% pathname, DU -> exists
 			get_DU,		% name -> DU
 			dump,		% fname -> fname => not_possible(str)
@@ -50,10 +50,10 @@ get2 = proc () returns (cvt)
         end get2
 
 % A version that doesn't need the own variable
-lookup2 = proc(xl:cvt, path: pathname) returns (DU) signals (not_found)
+lookup = proc(xl:cvt, path: pathname) returns (DU) signals (not_found)
 	return(rep$lookup(xl, path))
 	   resignal not_found
-        end lookup2
+        end lookup
 
 bind = proc (path: pathname, d: DU) signals (exists)
 	rep$bind(tab, path, d)

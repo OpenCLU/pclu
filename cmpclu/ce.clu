@@ -86,19 +86,19 @@ rep		= record[ids:		idtab,
 
 create = proc (xl:XLIB) returns (CE)
 	parms: exprlist := exprlist$new()
-	nullt: clutype := clutype${gen:   XLIB$lookup2(xl, "null"),
+	nullt: clutype := clutype${gen:   XLIB$lookup(xl, "null"),
 				   parms: parms}
-	boolt: clutype := clutype${gen:   XLIB$lookup2(xl, "bool"),
+	boolt: clutype := clutype${gen:   XLIB$lookup(xl, "bool"),
 				   parms: parms}
-	intt:  clutype := clutype${gen:   XLIB$lookup2(xl, "int"),
+	intt:  clutype := clutype${gen:   XLIB$lookup(xl, "int"),
 				   parms: parms}
-	realt: clutype := clutype${gen:   XLIB$lookup2(xl, "real"),
+	realt: clutype := clutype${gen:   XLIB$lookup(xl, "real"),
 				   parms: parms}
-	chart: clutype := clutype${gen:   XLIB$lookup2(xl, "char"),
+	chart: clutype := clutype${gen:   XLIB$lookup(xl, "char"),
 				   parms: parms}
-	strt:  clutype := clutype${gen:   XLIB$lookup2(xl, "string"),
+	strt:  clutype := clutype${gen:   XLIB$lookup(xl, "string"),
 				   parms: parms}
-	typet: clutype := clutype${gen:   XLIB$lookup2(xl, "type"),
+	typet: clutype := clutype${gen:   XLIB$lookup(xl, "type"),
 				   parms: parms}
 	e: rep := rep${ids:       idtab$create(tabsize, hash, str$equal),
 		       lent:	  entry${kind: idnkind$make_unknown(nil),
@@ -109,14 +109,14 @@ create = proc (xl:XLIB) returns (CE)
 		       type_seed: 1,
 		       type_keep: 0,
 		       dus:       DUtab$create(tabsize, hash_du, DU$similar),
-		       array_:    XLIB$lookup2(xl, "array"),
-		       record_:   XLIB$lookup2(xl, "record"),
-		       oneof_:    XLIB$lookup2(xl, "oneof"),
-		       seq:	  XLIB$lookup2(xl, "sequence"),
-		       struct_:   XLIB$lookup2(xl, "struct"),
-		       variant_:  XLIB$lookup2(xl, "variant"),
-		       proctype_: XLIB$lookup2(xl, "proctype"),
-		       itertype_: XLIB$lookup2(xl, "itertype"),
+		       array_:    XLIB$lookup(xl, "array"),
+		       record_:   XLIB$lookup(xl, "record"),
+		       oneof_:    XLIB$lookup(xl, "oneof"),
+		       seq:	  XLIB$lookup(xl, "sequence"),
+		       struct_:   XLIB$lookup(xl, "struct"),
+		       variant_:  XLIB$lookup(xl, "variant"),
+		       proctype_: XLIB$lookup(xl, "proctype"),
+		       itertype_: XLIB$lookup(xl, "itertype"),
 		       unknown:   typespec$create(typeabs$make_unknown(nil), 0),
 		       null_:     typespec$create(typeabs$make_cluster_(nullt), 0),
 		       bool_:     typespec$create(typeabs$make_cluster_(boolt), 0),

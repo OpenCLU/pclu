@@ -390,7 +390,7 @@ execute_command = proc (cmnd: str, args: as, tyo: stream)
 			end
 	elseif prefix(cmnd, "forget", 4)
 	   then for nm: str in as$elements(args) do
-			DU$forget_specs(XLIB$lookup2(xlib$get2(), nm))
+			DU$forget_specs(XLIB$lookup(xlib$get2(), nm))
 			    except when not_found:
 					stream$puts(tyo, nm)
 					stream$putl(tyo, ": not found")
