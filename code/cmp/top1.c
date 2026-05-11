@@ -1883,6 +1883,7 @@ extern errcode cmpvarOPdir();
 extern errcode cmpvarOPset_suffix();
 extern errcode duOPreset();
 extern errcode xlibOPdump();
+extern errcode ceOPget_xlib();
 extern errcode g_xrefOPlookup();
 extern errcode all_input_names();
 extern errcode xlibOPmerge();
@@ -1890,7 +1891,6 @@ extern errcode streamOPputc();
 extern errcode arrayOPelements();
 extern errcode duOPforget_specs();
 extern errcode xlibOPlookup();
-extern errcode ceOPget_xlib();
 extern errcode xlibOPunmerge();
 static errcode execute_command_IB_1();
 static errcode execute_command_IB_2();
@@ -3566,10 +3566,14 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
   LINE(363);
                 {
                 CLUREF T_6_1;
-                locals.err = xlibOPdump(locals.fn, &T_6_1);
+                CLUREF T_6_2;
+                locals.err = ceOPget_xlib(locals.comp, &T_6_1);
                 if (locals.err != ERR_ok)
                     goto ex_5;
-                locals.fn.num = T_6_1.num;
+                locals.err = xlibOPdump(T_6_1, locals.fn, &T_6_2);
+                if (locals.err != ERR_ok)
+                    goto ex_5;
+                locals.fn.num = T_6_2.num;
                 }
 
   LINE(364);
@@ -3904,7 +3908,11 @@ execute_command_IB_1(CLUREF iv_1, execute_command_LOCALS_t *locals, errcode *iec
 
   FB_LINE(385);
     {
-    locals->err = xlibOPmerge(locals->fn);
+    CLUREF T_2_1;
+    locals->err = ceOPget_xlib(locals->comp, &T_2_1);
+    if (locals->err != ERR_ok)
+        goto ex_1;
+    locals->err = xlibOPmerge(T_2_1, locals->fn);
     if (locals->err != ERR_ok)
         goto ex_1;
     }
@@ -3985,7 +3993,11 @@ execute_command_IB_2(CLUREF iv_1, execute_command_LOCALS_t *locals, errcode *iec
 
   FB_LINE(405);
     {
-    locals->err = xlibOPunmerge(locals->fn);
+    CLUREF T_2_1;
+    locals->err = ceOPget_xlib(locals->comp, &T_2_1);
+    if (locals->err != ERR_ok)
+        goto ex_1;
+    locals->err = xlibOPunmerge(T_2_1, locals->fn);
     if (locals->err != ERR_ok)
         goto ex_1;
     }

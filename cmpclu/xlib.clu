@@ -63,9 +63,9 @@ get_DU = proc (xl: cvt, n: name) returns (DU)
 		  end
 	end get_DU
 
-dump = proc (fn: fname) returns (fname) signals (not_possible(str))
+dump = proc (xl: cvt, fn: fname) returns (fname) signals (not_possible(str))
 	list: liblist := liblist$new()
-	for path: pathname, d: DU in rep$elements(tab) do
+	for path: pathname, d: DU in rep$elements(xl) do
 		specs: DUspecs, ok: bool := DU$get_dump_info(d)
 		if ok  cand  ~DUspecs$is_none(specs)
 		   then liblist$addh(list, libform${path:  path,
@@ -87,22 +87,22 @@ dump = proc (fn: fname) returns (fname) signals (not_possible(str))
 	return(fname$create(nfn.dir, nfn.name, fn.suffix, ""))
 	end dump
 
-merge = proc (fn: fname) signals (not_possible(str))
+merge = proc (xl: cvt, fn: fname) signals (not_possible(str))
 	for form: libform in liblist$elements(gc_read[liblist](fn)) do
-		d: DU := rep$lookup(tab, form.name)
+		d: DU := rep$lookup(xl, form.name)
 		   except when not_found:
 				d := DU$create(form.name)
-				rep$bind(tab, d.unique, d)
+				rep$bind(xl, d.unique, d)
 			  end
 		DU$update_specs(d, form.specs)
 		if d.unique ~= form.path
-		   then rep$mbind(tab, form.path, d) end
+		   then rep$mbind(xl, form.path, d) end
 		end resignal not_possible
 	end merge
 
-unmerge = proc (fn: fname) signals (not_possible(str))
+unmerge = proc (xl: cvt, fn: fname) signals (not_possible(str))
 	for form: libform in liblist$elements(gc_read[liblist](fn)) do
-		DU$forget_specs(rep$lookup(tab, form.name))
+		DU$forget_specs(rep$lookup(xl, form.name))
 		   except when not_found: end
 		end resignal not_possible
 	end unmerge

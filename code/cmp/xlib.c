@@ -663,13 +663,15 @@ typedef struct {
     CLUREF ok;
     CLUREF nfn;
     CLUREF why;
+    CLUREF xl;
     CLUREF fn;
 } xlibOPdump_LOCALS_t;
 
 errcode
-xlibOPdump(CLUREF fn, CLUREF *ret_1)
+xlibOPdump(CLUREF xl, CLUREF fn, CLUREF *ret_1)
 {
     xlibOPdump_LOCALS_t locals;
+    locals.xl = xl;
     locals.fn = fn;
     if (xlibOPdump_own_init == 0) {
         if (xlib_own_init == 0) {
@@ -695,7 +697,7 @@ xlibOPdump(CLUREF fn, CLUREF *ret_1)
         generic_CLU_proc.type_owns = table_of_string_du_ops->type_owns;
         generic_CLU_proc.proc = tableOPelements;
         CUR_PROC_VAR.proc = &generic_CLU_proc;
-        locals.err = tableOPelements(xlibOPtab, xlibOPdump_IB_1, &locals, &locals.ecode2);
+        locals.err = tableOPelements(locals.xl, xlibOPdump_IB_1, &locals, &locals.ecode2);
 
         if (locals.err == ERR_iterbodyreturn) {
             ret_1->num = elist[0].num;
@@ -944,7 +946,7 @@ struct OPS *table_of_string_du_ops __CLU_COMMON;
 static int xlibOPmerge_own_init = 0;
 
 errcode
-xlibOPmerge(CLUREF fn)
+xlibOPmerge(CLUREF xl, CLUREF fn)
 {
     errcode err;
     CLUREF form;
@@ -990,7 +992,7 @@ xlibOPmerge(CLUREF fn)
         generic_CLU_proc.type_owns = table_of_string_du_ops->type_owns;
         generic_CLU_proc.proc = tableOPlookup;
         CUR_PROC_VAR.proc = &generic_CLU_proc;
-        err = tableOPlookup(xlibOPtab, T_4_1, &T_4_2);
+        err = tableOPlookup(xl, T_4_1, &T_4_2);
         if (err != ERR_ok)
             goto ex_2;
         d.num = T_4_2.num;
@@ -1020,7 +1022,7 @@ xlibOPmerge(CLUREF fn)
             generic_CLU_proc.type_owns = table_of_string_du_ops->type_owns;
             generic_CLU_proc.proc = tableOPbind;
             CUR_PROC_VAR.proc = &generic_CLU_proc;
-            err = tableOPbind(xlibOPtab, T_4_1, d);
+            err = tableOPbind(xl, T_4_1, d);
             if (err != ERR_ok)
                 goto ex_1;
             }
@@ -1062,7 +1064,7 @@ xlibOPmerge(CLUREF fn)
             generic_CLU_proc.type_owns = table_of_string_du_ops->type_owns;
             generic_CLU_proc.proc = tableOPmbind;
             CUR_PROC_VAR.proc = &generic_CLU_proc;
-            err = tableOPmbind(xlibOPtab, T_4_1, d, &T_4_2);
+            err = tableOPmbind(xl, T_4_1, d, &T_4_2);
             if (err != ERR_ok)
                 goto ex_1;
             }
@@ -1114,7 +1116,7 @@ struct OPS *table_of_string_du_ops __CLU_COMMON;
 static int xlibOPunmerge_own_init = 0;
 
 errcode
-xlibOPunmerge(CLUREF fn)
+xlibOPunmerge(CLUREF xl, CLUREF fn)
 {
     errcode err;
     CLUREF form;
@@ -1159,7 +1161,7 @@ xlibOPunmerge(CLUREF fn)
         generic_CLU_proc.type_owns = table_of_string_du_ops->type_owns;
         generic_CLU_proc.proc = tableOPlookup;
         CUR_PROC_VAR.proc = &generic_CLU_proc;
-        err = tableOPlookup(xlibOPtab, T_4_1, &T_4_2);
+        err = tableOPlookup(xl, T_4_1, &T_4_2);
         if (err != ERR_ok)
             goto ex_2;
         err = duOPforget_specs(T_4_2);
