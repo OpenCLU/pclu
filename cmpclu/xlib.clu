@@ -19,13 +19,8 @@ libform		= record[path:  pathname,
 			 name:  name,
 			 specs: DUspecs]
 
-own created_before: bool := false
-own tab: rep := rep$create(tabsize, hash, pathname$equal)
-
 create = proc () returns (xlib)
-	if created_before then signal failure("Created twice") end
-	created_before := true
-        xl: xlib := up(tab)
+        xl: xlib := up(rep$create(tabsize, hash, pathname$equal))
 	bind(xl, "null",     DU$create("null"))
 	bind(xl, "bool",     DU$create("bool"))
 	bind(xl, "int",      DU$create("int"))
