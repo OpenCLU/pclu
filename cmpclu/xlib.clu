@@ -22,25 +22,26 @@ libform		= record[path:  pathname,
 own created_before: bool := false
 own tab: rep := rep$create(tabsize, hash, pathname$equal)
 
-create = proc () returns (cvt)
+create = proc () returns (xlib)
 	if created_before then signal failure("Created twice") end
 	created_before := true
-	bind("null",     DU$create("null"))
-	bind("bool",     DU$create("bool"))
-	bind("int",      DU$create("int"))
-	bind("real",     DU$create("real"))
-	bind("char",     DU$create("char"))
-	bind("string",   DU$create("string"))
-	bind("array",    DU$create("array"))
-	bind("record",   DU$create("record"))
-	bind("oneof",    DU$create("oneof"))
-	bind("sequence", DU$create("sequence"))
-	bind("struct",   DU$create("struct"))
-	bind("variant",  DU$create("variant"))
-	bind("proctype", DU$create("proctype"))
-	bind("itertype", DU$create("itertype"))
-	bind("type",     DU$create("type"))
-	return (tab)
+        xl: xlib := up(tab)
+	bind(xl, "null",     DU$create("null"))
+	bind(xl, "bool",     DU$create("bool"))
+	bind(xl, "int",      DU$create("int"))
+	bind(xl, "real",     DU$create("real"))
+	bind(xl, "char",     DU$create("char"))
+	bind(xl, "string",   DU$create("string"))
+	bind(xl, "array",    DU$create("array"))
+	bind(xl, "record",   DU$create("record"))
+	bind(xl, "oneof",    DU$create("oneof"))
+	bind(xl, "sequence", DU$create("sequence"))
+	bind(xl, "struct",   DU$create("struct"))
+	bind(xl, "variant",  DU$create("variant"))
+	bind(xl, "proctype", DU$create("proctype"))
+	bind(xl, "itertype", DU$create("itertype"))
+	bind(xl, "type",     DU$create("type"))
+	return (xl)
 	end create
 
 % A version that doesn't need the own variable
@@ -49,8 +50,8 @@ lookup = proc(xl:cvt, path: pathname) returns (DU) signals (not_found)
 	   resignal not_found
         end lookup
 
-bind = proc (path: pathname, d: DU) signals (exists)
-	rep$bind(tab, path, d)
+bind = proc (xl: cvt, path: pathname, d: DU) signals (exists)
+	rep$bind(xl, path, d)
 	   resignal exists
 	end bind
 
