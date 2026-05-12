@@ -199,7 +199,7 @@ open_stream = proc (fn: fname, mode: str, tyo: stream) returns (stream)
 		  end
 	end open_stream
 
-execute_command = proc (cmnd: str, args: as, tyo: stream, comp: ce)
+execute_command = proc (cmnd: str, args: as, tyo: stream, comp: CE)
 	as$set_low(args, 1)
 	nargs: int := as$size(args)
 	if prefix(cmnd, "xfile", 2)

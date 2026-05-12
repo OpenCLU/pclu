@@ -4,8 +4,8 @@
 %	CLU Compiler Version 3:  hack library
 
 XLIB = cluster is	create,         % -> xlib
-			lookup,	% xlib,pathname -> DU => not_found
-			bind,		% pathname, DU -> exists
+			lookup,		% xlib, pathname -> DU => not_found
+			bind,		% pathname, DU => exists
 			get_DU,		% name -> DU
 			dump,		% fname -> fname => not_possible(str)
 			merge,		% fname => not_possible(str)
@@ -39,10 +39,10 @@ create = proc () returns (xlib)
 	return (xl)
 	end create
 
-lookup = proc(xl:cvt, path: pathname) returns (DU) signals (not_found)
+lookup = proc(xl: cvt, path: pathname) returns (DU) signals (not_found)
 	return(rep$lookup(xl, path))
 	   resignal not_found
-        end lookup
+	end lookup
 
 bind = proc (xl: cvt, path: pathname, d: DU) signals (exists)
 	rep$bind(xl, path, d)

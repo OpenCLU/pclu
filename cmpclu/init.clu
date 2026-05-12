@@ -37,7 +37,7 @@ initialize_compiler = proc () returns (CE)
     return(comp)
     end initialize_compiler
 
-initialize_specs = proc (comp:CE)
+initialize_specs = proc (comp: CE)
     fn: fname := basic_name()
     if ~file_exists(fn) then
        signal failure ("Can't find basic.types: please setenv CLUHOME to an appropriate value") end
