@@ -1951,6 +1951,7 @@ extern errcode c_envOPpop_undefined();
 extern errcode c_module_idn();
 extern errcode c_envOPget_du();
 extern errcode xlibOPget_du();
+extern errcode c_envOPget_xlib();
 extern errcode c_envOPdeclare();
 extern errcode c_get_idnkind();
 extern errcode c_envOPset_mod_gen();
@@ -2010,16 +2011,20 @@ c_new_module(CLUREF e, CLUREF mod, CLUREF want, CLUREF *ret_1, CLUREF *ret_2)
         CLUREF T_2_1;
         CLUREF T_2_2;
         CLUREF T_2_3;
-        err = idnOPget_str(mod, &T_2_1);
+        CLUREF T_2_4;
+        err = c_envOPget_xlib(e, &T_2_1);
         if (err != ERR_ok)
             goto ex_0;
-        err = xlibOPget_du(T_2_1, &T_2_2);
+        err = idnOPget_str(mod, &T_2_2);
         if (err != ERR_ok)
             goto ex_0;
-        err = c_envOPget_du(e, T_2_2, &T_2_3);
+        err = xlibOPget_du(T_2_1, T_2_2, &T_2_3);
         if (err != ERR_ok)
             goto ex_0;
-        gen.num = T_2_3.num;
+        err = c_envOPget_du(e, T_2_3, &T_2_4);
+        if (err != ERR_ok)
+            goto ex_0;
+        gen.num = T_2_4.num;
         }
 
   LINE(254);

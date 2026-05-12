@@ -3,9 +3,9 @@
 %
 %	CLU Compiler Version 3:  hack library
 
-XLIB = cluster is	init,		% ->
-			lookup,		% pathname -> DU => not_found
-			bind,		% pathname, DU -> exists
+XLIB = cluster is	create,         % -> xlib
+			lookup,		% xlib, pathname -> DU => not_found
+			bind,		% pathname, DU => exists
 			get_DU,		% name -> DU
 			dump,		% fname -> fname => not_possible(str)
 			merge,		% fname => not_possible(str)
@@ -19,47 +19,47 @@ libform		= record[path:  pathname,
 			 name:  name,
 			 specs: DUspecs]
 
-own tab: rep := rep$create(tabsize, hash, pathname$equal)
+create = proc () returns (xlib)
+        xl: xlib := up(rep$create(tabsize, hash, pathname$equal))
+	bind(xl, "null",     DU$create("null"))
+	bind(xl, "bool",     DU$create("bool"))
+	bind(xl, "int",      DU$create("int"))
+	bind(xl, "real",     DU$create("real"))
+	bind(xl, "char",     DU$create("char"))
+	bind(xl, "string",   DU$create("string"))
+	bind(xl, "array",    DU$create("array"))
+	bind(xl, "record",   DU$create("record"))
+	bind(xl, "oneof",    DU$create("oneof"))
+	bind(xl, "sequence", DU$create("sequence"))
+	bind(xl, "struct",   DU$create("struct"))
+	bind(xl, "variant",  DU$create("variant"))
+	bind(xl, "proctype", DU$create("proctype"))
+	bind(xl, "itertype", DU$create("itertype"))
+	bind(xl, "type",     DU$create("type"))
+	return (xl)
+	end create
 
-init = proc ()
-	bind("null",     DU$create("null"))
-	bind("bool",     DU$create("bool"))
-	bind("int",      DU$create("int"))
-	bind("real",     DU$create("real"))
-	bind("char",     DU$create("char"))
-	bind("string",   DU$create("string"))
-	bind("array",    DU$create("array"))
-	bind("record",   DU$create("record"))
-	bind("oneof",    DU$create("oneof"))
-	bind("sequence", DU$create("sequence"))
-	bind("struct",   DU$create("struct"))
-	bind("variant",  DU$create("variant"))
-	bind("proctype", DU$create("proctype"))
-	bind("itertype", DU$create("itertype"))
-	bind("type",     DU$create("type"))
-	end init
-
-lookup = proc (path: pathname) returns (DU) signals (not_found)
-	return(rep$lookup(tab, path))
+lookup = proc(xl: cvt, path: pathname) returns (DU) signals (not_found)
+	return(rep$lookup(xl, path))
 	   resignal not_found
 	end lookup
 
-bind = proc (path: pathname, d: DU) signals (exists)
-	rep$bind(tab, path, d)
+bind = proc (xl: cvt, path: pathname, d: DU) signals (exists)
+	rep$bind(xl, path, d)
 	   resignal exists
 	end bind
 
-get_DU = proc (n: name) returns (DU)
-	return(rep$lookup(tab, n))
+get_DU = proc (xl: cvt, n: name) returns (DU)
+	return(rep$lookup(xl, n))
 	   except when not_found: d: DU := DU$create(n)
-				  rep$bind(tab, n, d)
+				  rep$bind(xl, n, d)
 				  return(d)
 		  end
 	end get_DU
 
-dump = proc (fn: fname) returns (fname) signals (not_possible(str))
+dump = proc (xl: cvt, fn: fname) returns (fname) signals (not_possible(str))
 	list: liblist := liblist$new()
-	for path: pathname, d: DU in rep$elements(tab) do
+	for path: pathname, d: DU in rep$elements(xl) do
 		specs: DUspecs, ok: bool := DU$get_dump_info(d)
 		if ok  cand  ~DUspecs$is_none(specs)
 		   then liblist$addh(list, libform${path:  path,
@@ -81,22 +81,22 @@ dump = proc (fn: fname) returns (fname) signals (not_possible(str))
 	return(fname$create(nfn.dir, nfn.name, fn.suffix, ""))
 	end dump
 
-merge = proc (fn: fname) signals (not_possible(str))
+merge = proc (xl: cvt, fn: fname) signals (not_possible(str))
 	for form: libform in liblist$elements(gc_read[liblist](fn)) do
-		d: DU := rep$lookup(tab, form.name)
+		d: DU := rep$lookup(xl, form.name)
 		   except when not_found:
 				d := DU$create(form.name)
-				rep$bind(tab, d.unique, d)
+				rep$bind(xl, d.unique, d)
 			  end
 		DU$update_specs(d, form.specs)
 		if d.unique ~= form.path
-		   then rep$mbind(tab, form.path, d) end
+		   then rep$mbind(xl, form.path, d) end
 		end resignal not_possible
 	end merge
 
-unmerge = proc (fn: fname) signals (not_possible(str))
+unmerge = proc (xl: cvt, fn: fname) signals (not_possible(str))
 	for form: libform in liblist$elements(gc_read[liblist](fn)) do
-		DU$forget_specs(rep$lookup(tab, form.name))
+		DU$forget_specs(rep$lookup(xl, form.name))
 		   except when not_found: end
 		end resignal not_possible
 	end unmerge

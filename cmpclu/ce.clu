@@ -34,7 +34,8 @@ CE = cluster is		create,			% -> CE
 			get_iter_,		% CE -> DU
 			get_type,		% CE, typeabs -> typespec, bool
 			add_du,			% CE, DU -> DU
-			all_dus			% CE --> DU
+			all_dus,		% CE --> DU
+			get_xlib                % CE -> xlib
 
 typestack	= array[typespec]
 
@@ -82,23 +83,24 @@ rep		= record[ids:		idtab,
 			 str,
 			 any_,
 			 type_,
-			 cvt_:		typespec]
+			 cvt_:		typespec,
+			 xlib:          xlib]
 
-create = proc () returns (CE)
+create = proc (xl: XLIB) returns (CE)
 	parms: exprlist := exprlist$new()
-	nullt: clutype := clutype${gen:   XLIB$lookup("null"),
+	nullt: clutype := clutype${gen:   XLIB$lookup(xl, "null"),
 				   parms: parms}
-	boolt: clutype := clutype${gen:   XLIB$lookup("bool"),
+	boolt: clutype := clutype${gen:   XLIB$lookup(xl, "bool"),
 				   parms: parms}
-	intt:  clutype := clutype${gen:   XLIB$lookup("int"),
+	intt:  clutype := clutype${gen:   XLIB$lookup(xl, "int"),
 				   parms: parms}
-	realt: clutype := clutype${gen:   XLIB$lookup("real"),
+	realt: clutype := clutype${gen:   XLIB$lookup(xl, "real"),
 				   parms: parms}
-	chart: clutype := clutype${gen:   XLIB$lookup("char"),
+	chart: clutype := clutype${gen:   XLIB$lookup(xl, "char"),
 				   parms: parms}
-	strt:  clutype := clutype${gen:   XLIB$lookup("string"),
+	strt:  clutype := clutype${gen:   XLIB$lookup(xl, "string"),
 				   parms: parms}
-	typet: clutype := clutype${gen:   XLIB$lookup("type"),
+	typet: clutype := clutype${gen:   XLIB$lookup(xl, "type"),
 				   parms: parms}
 	e: rep := rep${ids:       idtab$create(tabsize, hash, str$equal),
 		       lent:	  entry${kind: idnkind$make_unknown(nil),
@@ -109,14 +111,14 @@ create = proc () returns (CE)
 		       type_seed: 1,
 		       type_keep: 0,
 		       dus:       DUtab$create(tabsize, hash_du, DU$similar),
-		       array_:    XLIB$lookup("array"),
-		       record_:   XLIB$lookup("record"),
-		       oneof_:    XLIB$lookup("oneof"),
-		       seq:	  XLIB$lookup("sequence"),
-		       struct_:   XLIB$lookup("struct"),
-		       variant_:  XLIB$lookup("variant"),
-		       proctype_: XLIB$lookup("proctype"),
-		       itertype_: XLIB$lookup("itertype"),
+		       array_:    XLIB$lookup(xl, "array"),
+		       record_:   XLIB$lookup(xl, "record"),
+		       oneof_:    XLIB$lookup(xl, "oneof"),
+		       seq:	  XLIB$lookup(xl, "sequence"),
+		       struct_:   XLIB$lookup(xl, "struct"),
+		       variant_:  XLIB$lookup(xl, "variant"),
+		       proctype_: XLIB$lookup(xl, "proctype"),
+		       itertype_: XLIB$lookup(xl, "itertype"),
 		       unknown:   typespec$create(typeabs$make_unknown(nil), 0),
 		       null_:     typespec$create(typeabs$make_cluster_(nullt), 0),
 		       bool_:     typespec$create(typeabs$make_cluster_(boolt), 0),
@@ -126,7 +128,8 @@ create = proc () returns (CE)
 		       str:       typespec$create(typeabs$make_cluster_(strt), 0),
 		       type_:     typespec$create(typeabs$make_type_(typet), 0),
 		       cvt_:      typespec$create(typeabs$make_cvt_(nil), 0),
-		       any_:      typespec$create(typeabs$make_any_(nil), 0)}
+		       any_:      typespec$create(typeabs$make_any_(nil), 0),
+		       xlib:      xl}
 	fixup(e, e.unknown)
 	fixup(e, e.null_)
 	fixup(e, e.bool_)
@@ -367,7 +370,7 @@ add_du = proc (e: cvt, mod: DU) returns (DU)
 	return(d)
 	end
 	except when not_found:
-			d: DU := XLIB$get_DU(mod.unique)
+			d: DU := XLIB$get_DU(e.xlib, mod.unique)
 			DUtab$bind(e.dus, d, true)
 			return(d)
 	       end
@@ -378,6 +381,10 @@ all_dus = iter (e: cvt) yields (DU)
 		yield(d)
 		end
 	end all_dus
+
+get_xlib = proc (e: cvt) returns (xlib)
+	return (e.xlib)
+	end get_xlib
 
 end CE
 

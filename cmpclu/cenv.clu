@@ -86,7 +86,8 @@ c_env = cluster is	create,			% CE, stream -> c_env
 			push_handlers,		% c_env, exceptstmt ->
 			push_resigs,		% c_env, namelist ->
 			pop_handlers,		% c_env ->
-			add_cond		% c_env, exception ->
+			add_cond,		% c_env, exception ->
+			get_xlib                % c_env -> xlib
 
 m1		= -1
 
@@ -744,7 +745,7 @@ lookup2 = proc (e: rep, i: idn, want: int)
 			return
 		  end
 	if idnkind$is_unknown(k)
-	   then gen: DU := CE$add_du(e.ce, XLIB$get_DU(i.str))
+	   then gen: DU := CE$add_du(e.ce, XLIB$get_DU(e.ce.xlib, i.str))
 		k := c_get_idnkind(up(e), gen, want)
 		tagcase gen.mspecs
 		   tag specs (specs: DUspecs):
@@ -813,5 +814,9 @@ add_cond = proc (e: cvt, cond: exception, is_exit: bool)
 	if is_exit
 	   then err(up(e), qs$["exit '", cn, "' not caught"]) end
 	end add_cond
+
+get_xlib = proc (e: cvt) returns (xlib)
+	return (e.ce.xlib)
+	end get_xlib
 
 end c_env

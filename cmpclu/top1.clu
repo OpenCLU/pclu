@@ -5,12 +5,13 @@
 
 start_up = proc ()
 	own init: bool := false
+        own comp: CE
 	allok: bool := true
 	if ~init
 	   then restore_compiler()
 		if ~init
 		   then init := true
-			initialize_compiler()
+			comp := initialize_compiler()
 		   end
 	   end
 	line: ac := str$s2ac(get_jcl())
@@ -20,7 +21,7 @@ start_up = proc ()
 		   then addl_chars(line, "clu ") end
 		tyo: stream := fake_stream()
 		stream$reset(tyo)
-		allok := process_commands(line, tyo, jcl_line_)
+		allok := process_commands(line, tyo, jcl_line_, comp)
 		if allok then _exit(0) else _exit(-1) end
 		% return
 	   end
@@ -42,7 +43,7 @@ start_up = proc ()
 		    line := str$s2ac(stream$getl(tyi))
 		  end
 		stream$putl(tyo, "")
-		allok := process_commands(line, tyo, command_line_)
+		allok := process_commands(line, tyo, command_line_, comp)
 		end except when end_of_file: end
 	if allok then _exit(0) else _exit(-1) end
 	end start_up
@@ -55,7 +56,7 @@ addl_chars = proc (line: ac, chars: str)
 		end
 	end addl_chars
 
-process_commands = proc (line: ac, tyo: stream, from: int) returns
+process_commands = proc (line: ac, tyo: stream, from: int, comp: CE) returns
 (bool)
 	allok: bool := true
 	comms: commandlist, rfs: str, rhave: bool := parse_command_line(line)
@@ -81,7 +82,7 @@ process_commands = proc (line: ac, tyo: stream, from: int) returns
 		   end
 		mode: int := get_command_mode(comm.cmnd)
 		if mode = execute_
-		   then execute_command(comm.cmnd, comm.args, rtyo)
+		   then execute_command(comm.cmnd, comm.args, rtyo, comp)
 		elseif ~as$empty(comm.args)  cor  mode = ce_
 		   then allok1: bool := compile(mode, comm.args, rtyo)
 			if ~allok1 then allok := false end
@@ -198,11 +199,11 @@ open_stream = proc (fn: fname, mode: str, tyo: stream) returns (stream)
 		  end
 	end open_stream
 
-execute_command = proc (cmnd: str, args: as, tyo: stream)
+execute_command = proc (cmnd: str, args: as, tyo: stream, comp: CE)
 	as$set_low(args, 1)
 	nargs: int := as$size(args)
 	if prefix(cmnd, "xfile", 2)
-	   then	xfile_execute(args, tyo)
+	   then	xfile_execute(args, tyo, comp)
 	elseif prefix(cmnd, "dir", 2)
 	   then if nargs = 0
 		   then set_dir("", tyo)
@@ -359,7 +360,7 @@ execute_command = proc (cmnd: str, args: as, tyo: stream)
 		   then stream$putl(tyo, "DUMP expects 1 argument")
 		   else begin
 			fn: fname := file_name_fill(fname$parse(args[1]), "lib")
-			fn := XLIB$dump(fn)
+			fn := XLIB$dump(comp.xlib, fn)
 			stream$puts(tyo, "Dumped to ")
 			stream$putl(tyo, fname$unparse(fn))
 			end except when bad_format: stream$putl(tyo, "bad format file name")
@@ -381,7 +382,7 @@ execute_command = proc (cmnd: str, args: as, tyo: stream)
 			stream$puts(tyo, "Merging ")
 			stream$puts(tyo, fname$unparse(fn))
 			stream$flush(tyo)
-			XLIB$merge(fn)
+			XLIB$merge(comp.xlib, fn)
 			    except when not_possible (why: str):
 					 stream$puts(tyo, ": ")
 					 stream$puts(tyo, why)
@@ -390,7 +391,7 @@ execute_command = proc (cmnd: str, args: as, tyo: stream)
 			end
 	elseif prefix(cmnd, "forget", 4)
 	   then for nm: str in as$elements(args) do
-			DU$forget_specs(XLIB$lookup(nm))
+			DU$forget_specs(XLIB$lookup(comp.xlib, nm))
 			    except when not_found:
 					stream$puts(tyo, nm)
 					stream$putl(tyo, ": not found")
@@ -401,7 +402,7 @@ execute_command = proc (cmnd: str, args: as, tyo: stream)
 			stream$puts(tyo, "Un-Merging ")
 			stream$puts(tyo, fname$unparse(fn))
 			stream$flush(tyo)
-			XLIB$unmerge(fn)
+			XLIB$unmerge(comp.xlib, fn)
 			    except when not_possible (why: str):
 					 stream$puts(tyo, ": ")
 					 stream$puts(tyo, why)
@@ -414,7 +415,7 @@ execute_command = proc (cmnd: str, args: as, tyo: stream)
 	end except when not_possible (*): end
 	end execute_command
 
-xfile_execute = proc (args: as, tyo: stream)
+xfile_execute = proc (args: as, tyo: stream, comp: CE)
 	for fn: fname in all_input_names(args, "xfile", tyo) do
 		st: stream := open_stream(fn, "read", tyo)
 		    except when open_failed: continue end
@@ -422,7 +423,7 @@ xfile_execute = proc (args: as, tyo: stream)
 			inl: str := stream$getl(st)
 			stream$putl(tyo, inl)
 			    except when not_possible (*): end
-			process_commands(str$s2ac(inl), tyo, xfile_line_)
+			process_commands(str$s2ac(inl), tyo, xfile_line_, comp)
 			end
 		    except when end_of_file: end
 		stream$close(st)

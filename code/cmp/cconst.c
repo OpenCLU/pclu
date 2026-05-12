@@ -789,6 +789,7 @@ c_xtypeset(CLUREF e, CLUREF set, CLUREF *ret_1)
 
 extern errcode c_envOPget_du();
 extern errcode xlibOPlookup();
+extern errcode c_envOPget_xlib();
 extern errcode xlibOPget_du();
 extern errcode c_get_idnkind();
 
@@ -803,13 +804,17 @@ c_pathname(CLUREF e, CLUREF path, CLUREF *ret_1)
     {
     CLUREF T_2_1;
     CLUREF T_2_2;
-    err = xlibOPlookup(path, &T_2_1);
+    CLUREF T_2_3;
+    err = c_envOPget_xlib(e, &T_2_1);
     if (err != ERR_ok)
         goto ex_1;
-    err = c_envOPget_du(e, T_2_1, &T_2_2);
+    err = xlibOPlookup(T_2_1, path, &T_2_2);
     if (err != ERR_ok)
         goto ex_1;
-    gen.num = T_2_2.num;
+    err = c_envOPget_du(e, T_2_2, &T_2_3);
+    if (err != ERR_ok)
+        goto ex_1;
+    gen.num = T_2_3.num;
     }
     goto end_1;
   ex_1: /* except */
@@ -820,13 +825,17 @@ c_pathname(CLUREF e, CLUREF path, CLUREF *ret_1)
         {
         CLUREF T_2_1;
         CLUREF T_2_2;
-        err = xlibOPget_du(path, &T_2_1);
+        CLUREF T_2_3;
+        err = c_envOPget_xlib(e, &T_2_1);
         if (err != ERR_ok)
             goto ex_0;
-        err = c_envOPget_du(e, T_2_1, &T_2_2);
+        err = xlibOPget_du(T_2_1, path, &T_2_2);
         if (err != ERR_ok)
             goto ex_0;
-        gen.num = T_2_2.num;
+        err = c_envOPget_du(e, T_2_2, &T_2_3);
+        if (err != ERR_ok)
+            goto ex_0;
+        gen.num = T_2_3.num;
         }
 
   LINE(91);
