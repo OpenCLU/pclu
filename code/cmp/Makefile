@@ -16,7 +16,7 @@ CFLAGS	+= $(OPT_FLAGS)
 
 LFLAGS = -L${CLUHOME}/code -L$(HOME)/local/lib -lpclu_opt -lm -lgc
 
-O_FILES = build.o cconst.o cdchan.o cdefn1.o cdefn2.o ce.o cenv.o \
+O_FILES = build.o cconst.o cdefn1.o cdefn2.o ce.o cenv.o \
 	cexpr1.o cexpr2.o cmpvar.o coper.o cspecs.o cstmt1.o cstmt2.o \
 	du.o eval1.o eval2.o gconst.o gdbg.o genv.o giter.o gparm.o \
 	gdefn.o gstmt.o gtbl.o gexpr.o gopt1.o gtypes.o gutil.o gvars.o \
@@ -27,7 +27,7 @@ O_FILES = build.o cconst.o cdchan.o cdefn1.o cdefn2.o ce.o cenv.o \
 	../cmpasm/_bin_id.o ../cmpasm/_save_state.o \
 	../cmpasm/_restore_state.o ../cmpasm/version.o
 
-C_FILES = build.c cconst.c cdchan.c cdefn1.c cdefn2.c ce.c \
+C_FILES = build.c cconst.c cdefn1.c cdefn2.c ce.c \
 	cenv.c cexpr1.c cexpr2.c cmpvar.c coper.c cspecs.c \
 	cstmt1.c cstmt2.c du.c eval1.c eval2.c \
 	gconst.c gdbg.c genv.c giter.c gparm.c gdefn.c gstmt.c \
