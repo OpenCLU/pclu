@@ -91,8 +91,8 @@ MOVE_FORWARD_WORD	= 17
 MOVE_BACKWARD_WORD	= 18
 
 WAIT			= .3	% Time to wait for additional characters that
- 				% could be part of a single command (in sec)
-				% This is about the lowest possible number.
+% could be part of a single command (in sec)
+% This is about the lowest possible number.
 MAX_HIST		= 30	% Number of history records to keep.
 WORD_DELIMS		= " :;.,/|"	% What characters separate words
 
@@ -100,7 +100,7 @@ keytable = stable[ int ]
 hist = array[ string ]
 
 fill = proc( substring: string, times: int ) returns( string )
-% effects:	returns a string which is the substring repeated times times.
+    % effects:	returns a string which is the substring repeated times times.
 
     dum:string := ""
     for i:int in int$from_to( 1, times ) do
@@ -111,106 +111,106 @@ fill = proc( substring: string, times: int ) returns( string )
 
 
 insert_text = proc( str: stream, text_to_insert, current_text: string,
-	current_pos: int ) returns( string, int )
-% modifies:	str, the output stream
-% effects:	from the current cursor position, prints the text_to_insert,
-%		moving to the right the remaining portion of the current_text,
-%		positions the cursor at the end of the inserted text, and then
-%		returns the new text string and the new position in that text.
+		    current_pos: int ) returns( string, int )
+    % modifies:	str, the output stream
+    % effects:	from the current cursor position, prints the text_to_insert,
+    %		moving to the right the remaining portion of the current_text,
+    %		positions the cursor at the end of the inserted text, and then
+    %		returns the new text string and the new position in that text.
 
     if current_pos <= string$size( current_text ) then
-	rest_of_line: string := string$rest( current_text, current_pos )
-	stream$puts( str, text_to_insert || rest_of_line ||
-	    	fill( BS, string$size( rest_of_line ) ) )
-	new_text: string := string$substr( current_text, 1, current_pos -1 ) ||
-	    	text_to_insert || rest_of_line
-	return( new_text, current_pos + string$size( text_to_insert ) )
-    else					% at end of line already
-	stream$puts( str, text_to_insert )
-	return( current_text || text_to_insert,
-	    current_pos + string$size( text_to_insert ) )
-	end % if
+       rest_of_line: string := string$rest( current_text, current_pos )
+       stream$puts( str, text_to_insert || rest_of_line ||
+			 fill( BS, string$size( rest_of_line ) ) )
+       new_text: string := string$substr( current_text, 1, current_pos -1 ) ||
+			   text_to_insert || rest_of_line
+       return( new_text, current_pos + string$size( text_to_insert ) )
+       else                                        % at end of line already
+	    stream$puts( str, text_to_insert )
+	    return( current_text || text_to_insert,
+		    current_pos + string$size( text_to_insert ) )
+       end % if
 
     end insert_text
 
 
 delete_text = proc( str: stream, current_text: string,
-	current_pos, del_start, del_end: int ) returns( string, int )
-% modifies:	str, the output stream
-% effects:	Deletes all text from position del_start to del_end (inclusive)
-%		in the text current_text, moving all remaining text left to
-%		fill in the place of the deleted text, and covering the old
-%		position with spaces.  Returns the new text string with the
-%		proper section deleted, and the new position in that text.
+		    current_pos, del_start, del_end: int ) returns( string, int )
+    % modifies:	str, the output stream
+    % effects:	Deletes all text from position del_start to del_end (inclusive)
+    %		in the text current_text, moving all remaining text left to
+    %		fill in the place of the deleted text, and covering the old
+    %		position with spaces.  Returns the new text string with the
+    %		proper section deleted, and the new position in that text.
 
     if del_end >= del_start then
-	rest_of_line: string := string$substr(current_text, del_end + 1,
-	    string$size( current_text ) ) except when bounds:
-	    				rest_of_line:=""
-					end % when
-	get_to_start:string:=""
+       rest_of_line: string := string$substr(current_text, del_end + 1,
+					     string$size( current_text ) ) except when bounds:
+										       rest_of_line:=""
+										  end % when
+       get_to_start:string:=""
 
-	if current_pos > del_start then
-	    get_to_start:= fill( BS, current_pos - del_start )
-	else
-	    get_to_start:= string$substr( current_text, current_pos,
-		del_start - current_pos )
-	    	% Can't use FW since it won't wrap around to the next line.
-	    end % if
+       if current_pos > del_start then
+	  get_to_start:= fill( BS, current_pos - del_start )
+	  else
+	       get_to_start:= string$substr( current_text, current_pos,
+					     del_start - current_pos )
+	       % Can't use FW since it won't wrap around to the next line.
+	  end % if
 
-	new_pos:int
-	if current_pos <= del_start then
-	    new_pos:= current_pos
+       new_pos:int
+       if current_pos <= del_start then
+	  new_pos:= current_pos
 	elseif current_pos > del_end then
-	    new_pos:= current_pos -del_end + del_start - 1
+	  new_pos:= current_pos -del_end + del_start - 1
 	else
-	    new_pos:= del_start
-	    end % if
+	     new_pos:= del_start
+	end % if
 
-	if new_pos <= string$size( current_text ) then
-	    stream$puts( str, get_to_start || rest_of_line ||
-	    	fill( " ", del_end - del_start + 1 ) ||
-		fill(  BS, string$size( current_text ) - new_pos + 1) )
-	    end % if
+       if new_pos <= string$size( current_text ) then
+	  stream$puts( str, get_to_start || rest_of_line ||
+			    fill( " ", del_end - del_start + 1 ) ||
+			    fill(  BS, string$size( current_text ) - new_pos + 1) )
+	  end % if
 
-	new_text: string := string$substr( current_text, 1, del_start - 1 ) ||
-	    rest_of_line
-	return( new_text, new_pos )
+       new_text: string := string$substr( current_text, 1, del_start - 1 ) ||
+			   rest_of_line
+       return( new_text, new_pos )
 
-    else					% no text to delete!
-        return( current_text, current_pos )
-	end % if del_end > del_start
+       else                                        % no text to delete!
+	    return( current_text, current_pos )
+       end % if del_end > del_start
     end delete_text
 
 
 find_word = proc( current_text:string, current_pos:int, delim:string )
-    returns( int, int )
-% effects:	returns the beginning and ending positions in current_text
-%		of the word encompassing current_pos.  Words are separated by
-%		any of the delimiters in delim.  The word is considered to
-%		include its trailing delimiter or a sequence of trailing
-%		delimiters, but not its preceding delimiter.
+	      returns( int, int )
+    % effects:	returns the beginning and ending positions in current_text
+    %		of the word encompassing current_pos.  Words are separated by
+    %		any of the delimiters in delim.  The word is considered to
+    %		include its trailing delimiter or a sequence of trailing
+    %		delimiters, but not its preceding delimiter.
 
     if current_pos > string$size( current_text ) then
-	current_pos := string$size( current_text )
-	end % beginning past the last char is same as being on the last char.
+       current_pos := string$size( current_text )
+       end % beginning past the last char is same as being on the last char.
 
     beg:int:=1
     for i: int in int$from_to_by( current_pos, 1, -1 ) do
 	if string$indexc( current_text[ i ], delim ) = 0 then
-	    beg:= i
-	elseif beg ~= 1 then
-	    exit got_it
-	    end % if
+	   beg:= i
+	 elseif beg ~= 1 then
+	   exit got_it
+	 end % if
 	end except when got_it: end
     
     ending: int:=0
     for i: int in int$from_to( current_pos, string$size(current_text) ) do
 	if string$indexc( current_text[ i ], delim ) ~= 0 then
-	    ending := i
-	elseif ending ~= 0 then
-	    return( beg, ending )
-	    end % if
+	   ending := i
+	 elseif ending ~= 0 then
+	   return( beg, ending )
+	 end % if
 	end % for
 
     return( beg, string$size( current_text ) )	% if found no ending delim
@@ -218,21 +218,21 @@ find_word = proc( current_text:string, current_pos:int, delim:string )
 
 
 getc_noeof = proc( str: stream ) returns( char )
-% modifies:	str, the output stream
-% effects:	returns one character from the screen.
+    % modifies:	str, the output stream
+    % effects:	returns one character from the screen.
 
     return( stream$getc_image( str ) ) except when end_of_file:
-	stream$set_eof_flag( str, FALSE )
-	return( char$i2c( 4 ) )
-	end % when
-    		% ctrl-D causes end_of_file error.
+						   stream$set_eof_flag( str, FALSE )
+						   return( char$i2c( 4 ) )
+					      end % when
+    % ctrl-D causes end_of_file error.
     end getc_noeof
 
 get_key_press = proc( str: stream ) returns( int, int )
-% modifies:	str, the output stream
-% effects:	returns the command that is to be executed and the parameter
-%		for that command.  Most commands will ignore the value of the
-%		parameter.
+    % modifies:	str, the output stream
+    % effects:	returns the command that is to be executed and the parameter
+    %		for that command.  Most commands will ignore the value of the
+    %		parameter.
 
     own bindings: keytable := setup_keytable()
     
@@ -241,30 +241,30 @@ get_key_press = proc( str: stream ) returns( int, int )
     last_exact: string := ""
     ismore, first_time, exact, partial: bool
     first_time := TRUE
-    	% Normal printable characters should be returned immediately if pressed
-	% alone, right away.  However, should not return them if they are part
-	% of some keybinding.  This is really just an optimization, since
-	% normal characters shouldn't have any keybindings.
+    % Normal printable characters should be returned immediately if pressed
+    % alone, right away.  However, should not return them if they are part
+    % of some keybinding.  This is really just an optimization, since
+    % normal characters shouldn't have any keybindings.
 
     while TRUE do
-		% If there are partial key expansions, then continue getting
-		% characters as long as you haven't found anything exact or
-		% more characters are waiting in the stream.
+	% If there are partial key expansions, then continue getting
+	% characters as long as you haven't found anything exact or
+	% more characters are waiting in the stream.
 	key_press:char := getc_noeof( str )
 
 	if key_press >= ' ' cand key_press <= '~' cand first_time then
-	    return( INSERT_CHARACTER, char$c2i( key_press ) )
-	    end % if
+	   return( INSERT_CHARACTER, char$c2i( key_press ) )
+	   end % if
 
 	so_far := so_far || string$c2s( key_press )
 	exact, partial:= keytable$completions( bindings, so_far )
 
 	if exact then			% if this one's exact, record it.
-	    last_exact := so_far
-	    put_back := ""
-	elseif last_exact ~= "" then
-	    put_back := put_back || string$c2s( key_press )
-	    end % if
+	   last_exact := so_far
+	   put_back := ""
+	 elseif last_exact ~= "" then
+	   put_back := put_back || string$c2s( key_press )
+	 end % if
 	% If this is not exact, but we had an exact one earlier, then keep
 	% track of these characters, so we can resort back to the last_exact
 	% if we don't get another exact match.  If we resort to last_exact,
@@ -272,10 +272,10 @@ get_key_press = proc( str: stream ) returns( int, int )
 	% around.
 
 	if partial cand last_exact ~= "" then
-	    a: time := run_time()
-	    while ~stream$pending( str ) cand time$t2r(run_time()-a) < WAIT do
-		end % while
-	    end % if
+	   a: time := run_time()
+	   while ~stream$pending( str ) cand time$t2r(run_time()-a) < WAIT do
+	       end % while
+	   end % if
 	% The above loop is necessary because stream$pending does not always
 	% know that another key has been typed for a few milliseconds.  If the
 	% addition of more characters could make a valid command, then wait up
@@ -288,15 +288,15 @@ get_key_press = proc( str: stream ) returns( int, int )
 	first_time := FALSE
 
 	if ~partial cor (last_exact ~= "" cand ~ismore ) then
-	    if exact then
-		return( keytable$lookup( bindings, so_far ), 1 )
-	      elseif last_exact ~= "" then
-		stream$set_rescan( str, put_back || stream$get_rescan( str ) )
-		return( keytable$lookup( bindings, last_exact ), 1 )
-	      else
-		return( UNKNOWN_KEY, 1 )
-		end % if
+	   if exact then
+	      return( keytable$lookup( bindings, so_far ), 1 )
+	    elseif last_exact ~= "" then
+	      stream$set_rescan( str, put_back || stream$get_rescan( str ) )
+	      return( keytable$lookup( bindings, last_exact ), 1 )
+	    else
+		 return( UNKNOWN_KEY, 1 )
 	    end % if
+	   end % if
 
 	end % while
 
@@ -331,36 +331,36 @@ setup_default_keytable = proc() returns( keytable )
     end setup_default_keytable
 
 setup_keytable = proc() returns( keytable )
-%  effects:	Returns a key table with keys or sequences of keys bound to
-%		lineedit commands.  Any keys not specified in the user's
-%		~/.lineedit.keys will be bound to the keys specified in the
-%		user's ~/.inputrc file (provided for compatibility with
-%		the user's gnu keys), and any keys not bound in one of those
-%		two files will be bound to the system default keys, which are
-%		found in the file lineedit.keys in the system root directory.
+    %  effects:	Returns a key table with keys or sequences of keys bound to
+    %		lineedit commands.  Any keys not specified in the user's
+    %		~/.lineedit.keys will be bound to the keys specified in the
+    %		user's ~/.inputrc file (provided for compatibility with
+    %		the user's gnu keys), and any keys not bound in one of those
+    %		two files will be bound to the system default keys, which are
+    %		found in the file lineedit.keys in the system root directory.
 
     temp_table: keytable := keytable$create()
     hd: string := _home_dir( "" )
     overload_keytable_file( temp_table,
-	file_name$parse( _system_root() || "/lineedit.keys" ) )
-			except when not_found:
-				    temp_table:= setup_default_keytable()
-				    end % when
+			    file_name$parse( _system_root() || "/lineedit.keys" ) )
+       except when not_found:
+		   temp_table:= setup_default_keytable()
+	      end % when
     overload_keytable_file( temp_table,
-	file_name$parse(hd||"/.inputrc" )) except when not_found: end % when
+			    file_name$parse(hd||"/.inputrc" )) except when not_found: end % when
     overload_keytable_file( temp_table,
-	file_name$parse(hd||"/.lineedit.keys"))except when not_found: end %when
+			    file_name$parse(hd||"/.lineedit.keys"))except when not_found: end %when
     return( temp_table )
     end setup_keytable
 
 
 overload_keytable_file = proc( tbl:keytable, fn:file_name )signals( not_found )
-%  modifies:	tbl, the keytable passed
-%  effects:	reads the keytable file fn and inserts or replaces the file's
-%		key bindings in the keytable tbl.
+    %  modifies:	tbl, the keytable passed
+    %  effects:	reads the keytable file fn and inserts or replaces the file's
+    %		key bindings in the keytable tbl.
 
     str: stream := stream$open( fn, "read" ) except when
-	not_possible( why: string ): signal not_found end % when
+						    not_possible( why: string ): signal not_found end % when
     
     while TRUE do
 	line:string:= replace( " ", "",  stream$getl( str ))
@@ -368,17 +368,17 @@ overload_keytable_file = proc( tbl:keytable, fn:file_name )signals( not_found )
 	% remove spaces and tab characters from the line.
 
 	if line = "" cor line[ 1 ] = '%' cor line[ 1 ] = '#' then
-	    break	% ignore blank lines or comments
-	    end % if
+	   break       % ignore blank lines or comments
+	   end % if
 	
 	pos: int := string$indexc( ':', line )
 
 	if pos = 0 then
-	    stream$putl( stream$error_output(), "format error in "||
-		file_name$unparse( fn ) )
-	    stream$putl( stream$error_output(), "line: " || line )
-	    break	% skip this iteration if line has no colon
-	    end % if
+	   stream$putl( stream$error_output(), "format error in "||
+					       file_name$unparse( fn ) )
+	   stream$putl( stream$error_output(), "line: " || line )
+	   break       % skip this iteration if line has no colon
+	   end % if
 
 	key: string:= string$substr( line, 1, pos - 1 )
 	command: string := upper_case( string$rest( line, pos + 1 ) )
@@ -414,13 +414,13 @@ overload_keytable_file = proc( tbl:keytable, fn:file_name )signals( not_found )
 	    first_ctrl: int := string$indexs( "C-", key )
 	    ctrl_what: char := upper_case( key )[ first_ctrl + 2 ]
 	    if ctrl_what >= 'A' cand ctrl_what <= 'Z' then
-		key:= string$substr( key, 1, first_ctrl - 1 ) ||
-			string$c2s( char$i2c( char$c2i( ctrl_what ) - 64 ) ) ||
-			string$rest( key, first_ctrl + 3 )
-	      else
-		key:= ""
-		% Signal error in key if have C-something, not a letter.
-		end % if
+	       key:= string$substr( key, 1, first_ctrl - 1 ) ||
+		     string$c2s( char$i2c( char$c2i( ctrl_what ) - 64 ) ) ||
+		     string$rest( key, first_ctrl + 3 )
+	       else
+		    key:= ""
+		    % Signal error in key if have C-something, not a letter.
+	       end % if
 	    end except when bounds: key:="" end % when
 	% signals bounds if string ends in C-.
 	% At this point, the string key contains the exact characters that
@@ -429,62 +429,62 @@ overload_keytable_file = proc( tbl:keytable, fn:file_name )signals( not_found )
 	command:=replace( "-", "_", command )
 	com:int := UNKNOWN_KEY
 	if key ~= "" then
-	    if command = "BEGINNING_OF_LINE" then
-	    	com:= MOVE_TO_BOL
-	      elseif command = "END_OF_LINE" then
-	    	com:= MOVE_TO_EOL
-	      elseif command = "FORWARD_CHAR" then
-		com:= MOVE_FORWARD
-	      elseif command = "BACKWARD_CHAR" then
-		com:= MOVE_BACKWARD
-	      elseif command = "FORWARD_WORD" then
-		com:= MOVE_FORWARD_WORD
-	      elseif command = "BACKWARD_WORD" then
-		com:= MOVE_BACKWARD_WORD
-	      elseif command = "ACCEPT_LINE" then
-		com:= COMPLETE_ENTRY
-	      elseif command = "PREVIOUS_HISTORY" then
-		com:= HISTORY_BACKWARD
-	      elseif command = "NEXT_HISTORY" then
-		com:= HISTORY_FORWARD
-	      elseif command = "BEGINNING_OF_HISTORY" then
-		com:= UNKNOWN_KEY
-	      elseif command = "END_OF_HISTORY" then
-		com:= UNKNOWN_KEY
-	      elseif command = "DELETE_CHAR" then
-		com:= DELETE_CURRENT
-	      elseif command = "BACKWARD_DELETE_CHAR" then
-		com:= DELETE_BACK
-	      elseif command = "QUOTED_INSERT" then
-		com:= UNKNOWN_KEY
-	      elseif command = "UPCASE_WORD" then
-		com:= UNKNOWN_KEY
-	      elseif command = "DOWNCASE_WORD" then
-		com:= UNKNOWN_KEY
-	      elseif command = "KILL_LINE" then
-		com:= DELETE_TO_EOL
-	      elseif command = "KILL_WORD" then
-		com:= DELETE_WORD
-	      elseif command = "YANK" then
-		com:= INSERT_BUFFER
-	      elseif command = "DELETE_LINE" then
-		com:= DELETE_LINE
-	      else
-		com:= UNKNOWN_KEY
-		end % if
+	   if command = "BEGINNING_OF_LINE" then
+	      com:= MOVE_TO_BOL
+	    elseif command = "END_OF_LINE" then
+	      com:= MOVE_TO_EOL
+	    elseif command = "FORWARD_CHAR" then
+	      com:= MOVE_FORWARD
+	    elseif command = "BACKWARD_CHAR" then
+	      com:= MOVE_BACKWARD
+	    elseif command = "FORWARD_WORD" then
+	      com:= MOVE_FORWARD_WORD
+	    elseif command = "BACKWARD_WORD" then
+	      com:= MOVE_BACKWARD_WORD
+	    elseif command = "ACCEPT_LINE" then
+	      com:= COMPLETE_ENTRY
+	    elseif command = "PREVIOUS_HISTORY" then
+	      com:= HISTORY_BACKWARD
+	    elseif command = "NEXT_HISTORY" then
+	      com:= HISTORY_FORWARD
+	    elseif command = "BEGINNING_OF_HISTORY" then
+	      com:= UNKNOWN_KEY
+	    elseif command = "END_OF_HISTORY" then
+	      com:= UNKNOWN_KEY
+	    elseif command = "DELETE_CHAR" then
+	      com:= DELETE_CURRENT
+	    elseif command = "BACKWARD_DELETE_CHAR" then
+	      com:= DELETE_BACK
+	    elseif command = "QUOTED_INSERT" then
+	      com:= UNKNOWN_KEY
+	    elseif command = "UPCASE_WORD" then
+	      com:= UNKNOWN_KEY
+	    elseif command = "DOWNCASE_WORD" then
+	      com:= UNKNOWN_KEY
+	    elseif command = "KILL_LINE" then
+	      com:= DELETE_TO_EOL
+	    elseif command = "KILL_WORD" then
+	      com:= DELETE_WORD
+	    elseif command = "YANK" then
+	      com:= INSERT_BUFFER
+	    elseif command = "DELETE_LINE" then
+	      com:= DELETE_LINE
+	    else
+		 com:= UNKNOWN_KEY
+	    end % if
 
-	    if com ~= UNKNOWN_KEY then
-		keytable$insert( tbl, key, com ) except when duplicate:
-		    keytable$delete( tbl, key )
-		    keytable$insert( tbl, key, com )
-		    end % when
-		end % if
-	  else
-	    stream$putl( stream$error_output(),
-		" Indecipherable control sequence in " ||
-		file_name$unparse( fn ) )
-	    stream$putl( stream$error_output(), "line: " || line )
-	    end % key ~= ""
+	   if com ~= UNKNOWN_KEY then
+	      keytable$insert( tbl, key, com ) except when duplicate:
+							   keytable$delete( tbl, key )
+							   keytable$insert( tbl, key, com )
+						      end % when
+	      end % if
+	   else
+		stream$putl( stream$error_output(),
+			     " Indecipherable control sequence in " ||
+			     file_name$unparse( fn ) )
+		stream$putl( stream$error_output(), "line: " || line )
+	   end % key ~= ""
 	end except when end_of_file: end
     
     stream$close( str )
@@ -492,18 +492,18 @@ overload_keytable_file = proc( tbl:keytable, fn:file_name )signals( not_found )
 
 
 replace = proc( look_for, new, from: string ) returns( string )
-%  effects:	returns the string from with all instances of the string key
-%		replaced with the string new.  Replace ignores the case of the
-%		text.
+    %  effects:	returns the string from with all instances of the string key
+    %		replaced with the string new.  Replace ignores the case of the
+    %		text.
     match_beg: int:= string$indexs( upper_case( look_for), upper_case( from ) )
 
     if match_beg = 0 then
-	return( from )
-      else
-	return( string$substr( from, 1, match_beg - 1 ) || new ||
-	    replace( look_for, new,
-		string$rest( from, match_beg + string$size( look_for ) ) ) )
-	end % if
+       return( from )
+       else
+	    return( string$substr( from, 1, match_beg - 1 ) || new ||
+		    replace( look_for, new,
+			     string$rest( from, match_beg + string$size( look_for ) ) ) )
+       end % if
 
     end replace
     
@@ -527,151 +527,151 @@ replace = proc( look_for, new, from: string ) returns( string )
 
 lineedit = proc( str: stream, prompt: string ) returns( string )
 
-%  modifies:   scr, the screen object,  k, the keyboard object
-%  effects:    It will wait for input from either the keyboard or the mouse.
-%              If the mouse is clicked, it  will check to see if it is done in
-%              a legitimate place.  Returns the text entered in the first
-%	       string.  If mouse was clicked and more information is required,
-%	       returned in second string.  Otherwise, second string is blank.
+    %  modifies:   scr, the screen object,  k, the keyboard object
+    %  effects:    It will wait for input from either the keyboard or the mouse.
+    %              If the mouse is clicked, it  will check to see if it is done in
+    %              a legitimate place.  Returns the text entered in the first
+    %	       string.  If mouse was clicked and more information is required,
+    %	       returned in second string.  Otherwise, second string is blank.
 
-  own history: hist:= hist$new()
-  scripted_streams: array[ stream ] := array[ stream ]$new()
-  kill_ring: string:= ""
-  input_line: string:= ""
-  current_pos: int:= 1
-  curr_hist: int := hist$high( history ) + 1
+    own history: hist:= hist$new()
+    scripted_streams: array[ stream ] := array[ stream ]$new()
+    kill_ring: string:= ""
+    input_line: string:= ""
+    current_pos: int:= 1
+    curr_hist: int := hist$high( history ) + 1
 
-  stream$puts(str,prompt)
+    stream$puts(str,prompt)
 
-  for ss:stream in stream$scripts( str ) do
-      stream$rem_script( str, ss )
-      array[ stream ]$addh( scripted_streams, ss )
-      end % for
-  % remove all scripting of this stream.  will add the text back later.
+    for ss:stream in stream$scripts( str ) do
+	stream$rem_script( str, ss )
+	array[ stream ]$addh( scripted_streams, ss )
+	end % for
+    % remove all scripting of this stream.  will add the text back later.
 
-  while TRUE do
-      command, parameter: int := get_key_press( str )
-      line_length: int:= string$size( input_line )	% frequently used.
+    while TRUE do
+	command, parameter: int := get_key_press( str )
+	line_length: int:= string$size( input_line )      % frequently used.
 
-      if command = INSERT_CHARACTER then
-	  input_line, current_pos := insert_text( str,
-	      string$c2s( char$i2c( parameter ) ),
-	      input_line, current_pos )
+	if command = INSERT_CHARACTER then
+	   input_line, current_pos := insert_text( str,
+						   string$c2s( char$i2c( parameter ) ),
+						   input_line, current_pos )
 
-      elseif command = DELETE_LINE then		% Erase entire input area.
-	  input_line, current_pos := delete_text( str, input_line, current_pos,
-	      1, line_length )
+	 elseif command = DELETE_LINE then         % Erase entire input area.
+	   input_line, current_pos := delete_text( str, input_line, current_pos,
+						   1, line_length )
 
-      elseif command = COMPLETE_ENTRY then	% save history and return.
+	 elseif command = COMPLETE_ENTRY then      % save history and return.
 
-	  if input_line ~= hist$top( history ) cand input_line ~= "" then
+	   if input_line ~= hist$top( history ) cand input_line ~= "" then
 	      hist$addh( history, input_line )
 	      if hist$size( history ) > MAX_HIST then
-		  hist$reml( history )
-		  end % if
+		 hist$reml( history )
+		 end % if
 	      end except when bounds: hist$addh( history, input_line ) end%when
 
-	  for ss:stream in array[ stream ]$elements( scripted_streams ) do
-	      stream$puts( ss, input_line )
-	      stream$add_script( str, ss )
-	      end % for
-	  % print the input line on all scripted streams.  then set the
-	  % scripting back.
+	   for ss:stream in array[ stream ]$elements( scripted_streams ) do
+	       stream$puts( ss, input_line )
+	       stream$add_script( str, ss )
+	       end % for
+	   % print the input line on all scripted streams.  then set the
+	   % scripting back.
 
-	  return(input_line)
+	   return(input_line)
 
-      elseif command = MOVE_TO_BOL then		% move to beginning of line.
-	  stream$puts( str, fill( BS, current_pos - 1 ) ) 
-	  current_pos:=1
+	 elseif command = MOVE_TO_BOL then         % move to beginning of line.
+	   stream$puts( str, fill( BS, current_pos - 1 ) )
+	   current_pos:=1
 
-      elseif command = MOVE_BACKWARD then	% move one space to the left.
-	  if current_pos > 1 then
+	 elseif command = MOVE_BACKWARD then       % move one space to the left.
+	   if current_pos > 1 then
 	      current_pos:=current_pos-1
 	      stream$puts( str, BS )
 	      end % if
 
-      elseif command = DELETE_CURRENT then	% delete char under cursor.
-	  input_line, current_pos := delete_text( str, input_line, current_pos,
-	    current_pos, current_pos )
+	 elseif command = DELETE_CURRENT then      % delete char under cursor.
+	   input_line, current_pos := delete_text( str, input_line, current_pos,
+						   current_pos, current_pos )
 
-      elseif command = MOVE_TO_EOL then		% move to last character.
-	  stream$puts( str, string$rest( input_line, current_pos ) )
-	  % Can't just use FW, since it won't wrap around.
-	  current_pos:=line_length + 1
+	 elseif command = MOVE_TO_EOL then         % move to last character.
+	   stream$puts( str, string$rest( input_line, current_pos ) )
+	   % Can't just use FW, since it won't wrap around.
+	   current_pos:=line_length + 1
 
-      elseif command = MOVE_FORWARD then	% move one position to right.
-	  if current_pos <= line_length then
+	 elseif command = MOVE_FORWARD then        % move one position to right.
+	   if current_pos <= line_length then
 	      stream$puts( str, string$substr( input_line, current_pos, 1 ) )
 	      % Can't just use FW, since it won't wrap around.
 	      current_pos:=current_pos+1
 	      end % if
 
-      elseif command = DELETE_TO_EOL then	% delete all chars to right.
-	  kill_ring := string$substr(input_line, current_pos,
-	      line_length - current_pos + 1 )
-	  input_line, current_pos := delete_text( str, input_line, current_pos,
-	      current_pos, line_length )
+	 elseif command = DELETE_TO_EOL then       % delete all chars to right.
+	   kill_ring := string$substr(input_line, current_pos,
+				      line_length - current_pos + 1 )
+	   input_line, current_pos := delete_text( str, input_line, current_pos,
+						   current_pos, line_length )
 
-      elseif command = INSERT_BUFFER then	% insert kill-ring
-	input_line, current_pos := insert_text( str, kill_ring,
-	  input_line, current_pos )
+	 elseif command = INSERT_BUFFER then       % insert kill-ring
+	   input_line, current_pos := insert_text( str, kill_ring,
+						   input_line, current_pos )
 
-      elseif command = DELETE_BACK then		% Delete key,
-	  if current_pos > 1 then
+	 elseif command = DELETE_BACK then         % Delete key,
+	   if current_pos > 1 then
 	      input_line, current_pos := delete_text( str, input_line,
-		  current_pos, current_pos - 1, current_pos - 1 )
+						      current_pos, current_pos - 1, current_pos - 1 )
 	      end % if
 
-      elseif command = HISTORY_FORWARD then
-          input_line, current_pos := delete_text( str, input_line, current_pos,
-	    1, line_length )
+	 elseif command = HISTORY_FORWARD then
+	   input_line, current_pos := delete_text( str, input_line, current_pos,
+						   1, line_length )
 
-	  if curr_hist = hist$high( history ) then
+	   if curr_hist = hist$high( history ) then
 	      curr_hist := curr_hist + 1
-	  elseif curr_hist < hist$high( history ) then
+	    elseif curr_hist < hist$high( history ) then
 	      curr_hist := curr_hist + 1
 	      input_line, current_pos := insert_text( str,
-		  history[ curr_hist ], input_line, current_pos )
-	      end % if
+						      history[ curr_hist ], input_line, current_pos )
+	    end % if
 
-      elseif command = HISTORY_BACKWARD then
-	  if curr_hist > hist$low( history ) then
+	 elseif command = HISTORY_BACKWARD then
+	   if curr_hist > hist$low( history ) then
 	      curr_hist := curr_hist - 1
 	      input_line, current_pos := delete_text( str, input_line,
-		  current_pos, 1, line_length )
+						      current_pos, 1, line_length )
 	      input_line, current_pos := insert_text( str,
-		  history[ curr_hist ], input_line, current_pos )
+						      history[ curr_hist ], input_line, current_pos )
 	      end % if
 
-      elseif command = MOVE_FORWARD_WORD then
-          left, right:int := find_word( input_line, current_pos, WORD_DELIMS )
-	  stream$puts( str,
-	      string$substr( input_line, current_pos, right - current_pos + 1))
-	  % Can't just use FW, since it won't wrap around.
-	  current_pos := right + 1
+	 elseif command = MOVE_FORWARD_WORD then
+	   left, right:int := find_word( input_line, current_pos, WORD_DELIMS )
+	   stream$puts( str,
+			string$substr( input_line, current_pos, right - current_pos + 1))
+	   % Can't just use FW, since it won't wrap around.
+	   current_pos := right + 1
 
-      elseif command = MOVE_BACKWARD_WORD then
-	  left, right:int := find_word( input_line, current_pos, WORD_DELIMS )
-	  new_pos: int
-	  if left > 1 then
+	 elseif command = MOVE_BACKWARD_WORD then
+	   left, right:int := find_word( input_line, current_pos, WORD_DELIMS )
+	   new_pos: int
+	   if left > 1 then
 	      new_pos := left - 1
-	  else
-	      new_pos := 1
+	      else
+		   new_pos := 1
 	      end % if
-	  stream$puts( str, fill( BS, current_pos - new_pos ) )
-	  current_pos := new_pos
+	   stream$puts( str, fill( BS, current_pos - new_pos ) )
+	   current_pos := new_pos
 
-      elseif command = DELETE_WORD then
-          left, right:int := find_word( input_line, current_pos, WORD_DELIMS )
-	  kill_ring := string$substr(input_line, left, right - left + 1 )
-	  input_line, current_pos := delete_text( str, input_line, current_pos,
-	    left, right )
+	 elseif command = DELETE_WORD then
+	   left, right:int := find_word( input_line, current_pos, WORD_DELIMS )
+	   kill_ring := string$substr(input_line, left, right - left + 1 )
+	   input_line, current_pos := delete_text( str, input_line, current_pos,
+						   left, right )
 
-      elseif command = UNKNOWN_KEY then
-	  stream$puts( str, BEL )
+	 elseif command = UNKNOWN_KEY then
+	   stream$puts( str, BEL )
 	
-      end % if ascii=...
+	 end % if ascii=...
         
-    end % while
+	end % while
 
-  end lineedit
+    end lineedit
