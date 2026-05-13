@@ -25,6 +25,13 @@
 %	Add boolean parameter, to use history or not????
 %	Test on a SLOW machine to see if WAIT should be increased.
 
+lineedit = cluster is create, getline
+
+rep = struct [
+    bindings: keytable,
+    str: stream,
+    history: hist
+    ]
 
 % Constant Declarations
 CTRL_A	= string$c2s( char$i2c(  1 ) )
@@ -98,6 +105,10 @@ WORD_DELIMS		= " :;.,/|"	% What characters separate words
 
 keytable = stable[ int ]
 hist = array[ string ]
+
+create = proc(str: stream) returns (cvt)
+    return (rep${bindings: setup_keytable(), str: str, history: hist$new()})
+    end create
 
 fill = proc( substring: string, times: int ) returns( string )
     % effects:	returns a string which is the substring repeated times times.
@@ -228,13 +239,14 @@ getc_noeof = proc( str: stream ) returns( char )
     % ctrl-D causes end_of_file error.
     end getc_noeof
 
-get_key_press = proc( str: stream ) returns( int, int )
+get_key_press = proc( li: rep ) returns( int, int )
     % modifies:	str, the output stream
     % effects:	returns the command that is to be executed and the parameter
     %		for that command.  Most commands will ignore the value of the
     %		parameter.
 
-    own bindings: keytable := setup_keytable()
+    str: stream := li.str
+    bindings: keytable := li.bindings
     
     so_far:     string := ""
     put_back:   string := ""
@@ -525,7 +537,9 @@ replace = proc( look_for, new, from: string ) returns( string )
     
     
 
-lineedit = proc( str: stream, prompt: string ) returns( string )
+getline = proc( li: cvt, prompt: string ) returns( string )
+
+    str: stream := li.str
 
     %  modifies:   scr, the screen object,  k, the keyboard object
     %  effects:    It will wait for input from either the keyboard or the mouse.
@@ -534,7 +548,7 @@ lineedit = proc( str: stream, prompt: string ) returns( string )
     %	       string.  If mouse was clicked and more information is required,
     %	       returned in second string.  Otherwise, second string is blank.
 
-    own history: hist:= hist$new()
+    history: hist := li.history
     scripted_streams: array[ stream ] := array[ stream ]$new()
     kill_ring: string:= ""
     input_line: string:= ""
@@ -550,7 +564,7 @@ lineedit = proc( str: stream, prompt: string ) returns( string )
     % remove all scripting of this stream.  will add the text back later.
 
     while TRUE do
-	command, parameter: int := get_key_press( str )
+	command, parameter: int := get_key_press( li )
 	line_length: int:= string$size( input_line )      % frequently used.
 
 	if command = INSERT_CHARACTER then
@@ -674,4 +688,5 @@ lineedit = proc( str: stream, prompt: string ) returns( string )
         
 	end % while
 
-    end lineedit
+    end getline
+end lineedit
