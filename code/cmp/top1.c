@@ -25,9 +25,10 @@ extern errcode streamOPputs();
 extern errcode cmpvarOPversion();
 extern errcode op_sys_name();
 extern errcode streamOPprimary_input();
+extern errcode lineeditOPcreate();
 extern errcode streamOPis_terminal();
 extern errcode streamOPset_prompt();
-extern errcode lineedit();
+extern errcode lineeditOPgetline();
 extern errcode streamOPputl();
 extern errcode streamOPflush();
 extern errcode streamOPgetl();
@@ -49,6 +50,7 @@ start_up(void)
     CLUREF c;
     CLUREF tyo;
     CLUREF tyi;
+    CLUREF li;
     if (start_up_own_init == 0) {
         stringOPcons("clu ", CLU_1, CLUREF_make_num(4), &STR_clu_040);
         stringOPcons("\n\n***** CLU COMPILER 3.", CLU_1, CLUREF_make_num(23), &STR__012_012_052_052_052_052_052_040CLU_040COMPILER_0403_056);
@@ -274,11 +276,20 @@ start_up(void)
     }
 
   LINE(35);
+    {
+    CLUREF T_1_1;
+    err = lineeditOPcreate(tyi, &T_1_1);
+    if (err != ERR_ok)
+        goto ex_0;
+    li.num = T_1_1.num;
+    }
+
+  LINE(36);
     for (;;) { /* while */
         if (true != true)
             break;
 
-  LINE(36);
+  LINE(37);
         { /* if */
         CLUREF T_3_1;
         err = streamOPis_terminal(tyi, &T_3_1);
@@ -286,18 +297,18 @@ start_up(void)
             goto ex_1;
         if (T_3_1.num == true) { /* if */
 
-  LINE(37);
+  LINE(38);
             {
             err = streamOPset_prompt(tyi, STR_command_050s_051_072_040);
             if (err != ERR_ok)
                 goto ex_1;
             }
 
-  LINE(38);
+  LINE(39);
             {
             CLUREF T_4_1;
             CLUREF T_4_2;
-            err = lineedit(tyi, STR_command_050s_051_072_040, &T_4_1);
+            err = lineeditOPgetline(li, STR_command_050s_051_072_040, &T_4_1);
             if (err != ERR_ok)
                 goto ex_1;
             err = stringOPs2ac(T_4_1, &T_4_2);
@@ -306,7 +317,7 @@ start_up(void)
             line.num = T_4_2.num;
             }
 
-  LINE(39);
+  LINE(40);
             {
             err = streamOPset_prompt(tyi, CLU_empty_string);
             if (err != ERR_ok)
@@ -315,21 +326,21 @@ start_up(void)
         }
         else { /* else */
 
-  LINE(41);
+  LINE(42);
             {
             err = streamOPputl(tyo, STR_command_050s_051_072_040);
             if (err != ERR_ok)
                 goto ex_1;
             }
 
-  LINE(42);
+  LINE(43);
             {
             err = streamOPflush(tyo);
             if (err != ERR_ok)
                 goto ex_1;
             }
 
-  LINE(43);
+  LINE(44);
             {
             CLUREF T_4_1;
             CLUREF T_4_2;
@@ -343,14 +354,14 @@ start_up(void)
             }
         }} /* end if */
 
-  LINE(45);
+  LINE(46);
         {
         err = streamOPputl(tyo, CLU_empty_string);
         if (err != ERR_ok)
             goto ex_1;
         }
 
-  LINE(46);
+  LINE(47);
         {
         CLUREF T_3_1;
         err = process_commands(line, tyo, CLU_1, start_upOPcomp, &T_3_1);
@@ -371,7 +382,7 @@ start_up(void)
     }
   end_1:;
 
-  LINE(48);
+  LINE(49);
     { /* if */
     if (allok.num == true) { /* if */
         {
@@ -417,9 +428,9 @@ addl_chars(CLUREF line, CLUREF chars)
 {
     errcode err;
     CLUREF i;
-    enter_proc(51);
+    enter_proc(52);
 
-  LINE(52);
+  LINE(53);
     {
     CLUREF T_1_1;
     err = stringOPsize(chars, &T_1_1);
@@ -428,14 +439,14 @@ addl_chars(CLUREF line, CLUREF chars)
     i.num = T_1_1.num;
     }
 
-  LINE(53);
+  LINE(54);
     for (;;) { /* while */
         CLUREF T_1_1;
         T_1_1.num = (i.num > 0);
         if (T_1_1.num != true)
             break;
 
-  LINE(54);
+  LINE(55);
         {
         CLUREF T_2_1;
         err = stringOPfetch(chars, i, &T_2_1);
@@ -446,7 +457,7 @@ addl_chars(CLUREF line, CLUREF chars)
             goto ex_0;
         }
 
-  LINE(55);
+  LINE(56);
         {
         CLUREF T_2_1;
         T_2_1.num = i.num - 1;
@@ -521,14 +532,14 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
         stringOPcons("missing file name(s)", CLU_1, CLUREF_make_num(20), &STR_missing_040file_040name_050s_051);
         process_commands_own_init = 1;
     }
-    enter_proc(59);
+    enter_proc(60);
 
-  LINE(61);
+  LINE(62);
     {
     allok.tf = true;
     }
 
-  LINE(62);
+  LINE(63);
     {
     CLUREF T_1_1;
     CLUREF T_1_2;
@@ -541,16 +552,16 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
     rhave.num = T_1_3.num;
     }
 
-  LINE(63);
+  LINE(64);
     {
     rtyo.num = tyo.num;
     }
 
-  LINE(64);
+  LINE(65);
     { /* if */
     if (rhave.num == true) { /* if */
 
-  LINE(65);
+  LINE(66);
         {
         CLUREF T_2_1;
         err = get_outstream(rfs, tyo, &T_2_1);
@@ -559,13 +570,13 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
         rtyo.num = T_2_1.num;
         }
 
-  LINE(66);
+  LINE(67);
         { /* if */
         CLUREF T_2_1;
         T_2_1.num = (from.num == 0);
         if (T_2_1.num == true) { /* if */
 
-  LINE(67);
+  LINE(68);
             {
             CLUREF T_3_1;
             err = streamOPget_contents(tyo, &T_3_1);
@@ -574,7 +585,7 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
             errs.num = T_3_1.num;
             }
 
-  LINE(68);
+  LINE(69);
             { /* if */
             CLUREF T_3_1;
             CLUREF T_3_2;
@@ -584,14 +595,14 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
             T_3_2.num = !T_3_1.num;
             if (T_3_2.num == true) { /* if */
 
-  LINE(69);
+  LINE(70);
                 {
                 err = streamOPreset(tyo);
                 if (err != ERR_ok)
                     goto ex_0;
                 }
 
-  LINE(70);
+  LINE(71);
                 {
                 err = streamOPputl(rtyo, errs);
                 if (err != ERR_ok)
@@ -613,12 +624,12 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
     }
     else {
 
-  LINE(74);
+  LINE(75);
     CLUREF T_1_1;
     T_1_1.num = (from.num == 0);
     if (T_1_1.num == true) { /* elseif */
 
-  LINE(75);
+  LINE(76);
         {
         CLUREF T_2_1;
         err = streamOPprimary_output(&T_2_1);
@@ -629,7 +640,7 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
     }
     }} /* end if */
 
-  LINE(76);
+  LINE(77);
     {
     CLUREF T_1_1;
     err = streamOPis_terminal(rtyo, &T_1_1);
@@ -638,7 +649,7 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
     isterm.num = T_1_1.num;
     }
 
-  LINE(77);
+  LINE(78);
     { /* for array$indexes */
     CLUREF T_1_1;
     CLUREF T_1_2;
@@ -646,7 +657,7 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
     for (T_1_1.num = comms.array->ext_low; T_1_1.num <= T_1_2.num; T_1_1.num++) {
         i.num = T_1_1.num;
 
-  LINE(78);
+  LINE(79);
         {
         CLUREF T_2_1;
         if (i.num < comms.array->ext_low || i.num > comms.array->ext_high) {
@@ -657,7 +668,7 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
         comm.num = T_2_1.num;
         }
 
-  LINE(79);
+  LINE(80);
         { /* if */
         CLUREF T_2_1;
         CLUREF T_2_2;
@@ -667,7 +678,7 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
         T_2_3.num = (T_2_2.num > 0);
         if (T_2_3.num == true) { /* if */
 
-  LINE(80);
+  LINE(81);
             {
             err = streamOPputl(rtyo, STR_options_040illegal);
             if (err != ERR_ok)
@@ -685,7 +696,7 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
         }
         } /* end if */
 
-  LINE(83);
+  LINE(84);
         {
         CLUREF T_2_1;
         CLUREF T_2_2;
@@ -696,13 +707,13 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
         mode.num = T_2_2.num;
         }
 
-  LINE(84);
+  LINE(85);
         { /* if */
         CLUREF T_3_1;
         T_3_1.num = (mode.num == 7);
         if (T_3_1.num == true) { /* if */
 
-  LINE(85);
+  LINE(86);
             {
             CLUREF T_4_1;
             CLUREF T_4_2;
@@ -715,7 +726,7 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
         }
         else {
 
-  LINE(86);
+  LINE(87);
         CLUREF T_3_2;
         CLUREF T_3_3;
         CLUREF T_3_4;
@@ -731,7 +742,7 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
         }
         if (T_3_2.num == true) { /* elseif */
 
-  LINE(87);
+  LINE(88);
             {
             CLUREF T_4_1;
             CLUREF T_4_2;
@@ -742,7 +753,7 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
             allok1.num = T_4_2.num;
             }
 
-  LINE(88);
+  LINE(89);
             { /* if */
             CLUREF T_4_1;
             T_4_1.num = !allok1.num;
@@ -755,7 +766,7 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
         }
         else { /* else */
 
-  LINE(89);
+  LINE(90);
             {
             err = streamOPputl(rtyo, STR_missing_040file_040name_050s_051);
             if (err != ERR_ok)
@@ -776,7 +787,7 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
     end_inline_for_1:
     __CLU_END_LABEL;
 
-  LINE(92);
+  LINE(93);
     { /* if */
     CLUREF T_1_1;
     CLUREF T_1_2;
@@ -786,7 +797,7 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
     T_1_2.num = !T_1_1.num;
     if (T_1_2.num == true) { /* if */
 
-  LINE(93);
+  LINE(94);
         {
         err = streamOPflush(rtyo);
         if (err != ERR_ok)
@@ -802,7 +813,7 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
         }
       end_4:;
 
-  LINE(95);
+  LINE(96);
         {
         err = streamOPclose(rtyo);
         if (err != ERR_ok)
@@ -813,7 +824,7 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
         __CLU_EX_HANDLER;
         if (err == ERR_not_possible) {
 
-  LINE(96);
+  LINE(97);
             {
             err = streamOPabort(rtyo);
             if (err != ERR_ok)
@@ -825,7 +836,7 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
         }
       end_5:;
 
-  LINE(97);
+  LINE(98);
         { /* if */
         CLUREF T_2_1;
         CLUREF T_2_2;
@@ -840,7 +851,7 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
         }
         if (T_2_1.num == true) { /* if */
 
-  LINE(98);
+  LINE(99);
             {
             CLUREF T_3_1;
             err = streamOPget_name(rtyo, &T_3_1);
@@ -855,7 +866,7 @@ process_commands(CLUREF line, CLUREF tyo, CLUREF from, CLUREF comp, CLUREF *ret_
     }
     } /* end if */
 
-  LINE(100);
+  LINE(101);
     { /* return */
     {
     ret_1->num = allok.num;
@@ -898,9 +909,9 @@ fake_stream(CLUREF *ret_1)
         fake_streamOPfake.num = T_0_1.num;
         }
     }
-    enter_proc(103);
+    enter_proc(104);
 
-  LINE(105);
+  LINE(106);
     { /* return */
     {
     ret_1->num = fake_streamOPfake.num;
@@ -941,9 +952,9 @@ get_outstream(CLUREF fs, CLUREF tyo, CLUREF *ret_1)
         stringOPcons("write", CLU_1, CLUREF_make_num(5), &STR_write);
         get_outstream_own_init = 1;
     }
-    enter_proc(108);
+    enter_proc(109);
 
-  LINE(109);
+  LINE(110);
     { /* if */
     CLUREF T_2_1;
     CLUREF T_2_2;
@@ -953,7 +964,7 @@ get_outstream(CLUREF fs, CLUREF tyo, CLUREF *ret_1)
     T_2_2.num = !T_2_1.num;
     if (T_2_2.num == true) { /* if */
 
-  LINE(110);
+  LINE(111);
         {
         CLUREF T_3_1;
         CLUREF T_3_2;
@@ -964,7 +975,7 @@ get_outstream(CLUREF fs, CLUREF tyo, CLUREF *ret_1)
         subst.num = T_3_2.num;
         }
 
-  LINE(111);
+  LINE(112);
         { /* return */
         {
         CLUREF T_3_1;
@@ -989,7 +1000,7 @@ get_outstream(CLUREF fs, CLUREF tyo, CLUREF *ret_1)
     }
   end_1:;
 
-  LINE(113);
+  LINE(114);
     { /* return */
     {
     CLUREF T_2_1;
@@ -1014,7 +1025,7 @@ get_outstream(CLUREF fs, CLUREF tyo, CLUREF *ret_1)
     }
   end_2:;
 
-  LINE(115);
+  LINE(116);
     { /* if */
     CLUREF T_1_1;
     CLUREF T_1_2;
@@ -1026,7 +1037,7 @@ get_outstream(CLUREF fs, CLUREF tyo, CLUREF *ret_1)
         goto ex_0;
     if (T_1_2.num == true) { /* if */
 
-  LINE(116);
+  LINE(117);
         {
         CLUREF T_2_1;
         err = streamOPprimary_output(&T_2_1);
@@ -1037,7 +1048,7 @@ get_outstream(CLUREF fs, CLUREF tyo, CLUREF *ret_1)
     }
     } /* end if */
 
-  LINE(117);
+  LINE(118);
     { /* return */
     {
     ret_1->num = tyo.num;
@@ -1086,9 +1097,9 @@ get_command_mode(CLUREF cmnd, CLUREF *ret_1)
         stringOPcons("xce", CLU_1, CLUREF_make_num(3), &STR_xce);
         get_command_mode_own_init = 1;
     }
-    enter_proc(120);
+    enter_proc(121);
 
-  LINE(121);
+  LINE(122);
     { /* if */
     CLUREF T_1_1;
     err = prefix(cmnd, STR_parse, CLU_1, &T_1_1);
@@ -1096,7 +1107,7 @@ get_command_mode(CLUREF cmnd, CLUREF *ret_1)
         goto ex_0;
     if (T_1_1.num == true) { /* if */
 
-  LINE(122);
+  LINE(123);
         { /* return */
         {
         ret_1->num = 0;
@@ -1106,14 +1117,14 @@ get_command_mode(CLUREF cmnd, CLUREF *ret_1)
     }
     else {
 
-  LINE(123);
+  LINE(124);
     CLUREF T_1_2;
     err = prefix(cmnd, STR_check, CLU_2, &T_1_2);
     if (err != ERR_ok)
         goto ex_0;
     if (T_1_2.num == true) { /* elseif */
 
-  LINE(124);
+  LINE(125);
         { /* return */
         {
         ret_1->num = 1;
@@ -1123,7 +1134,7 @@ get_command_mode(CLUREF cmnd, CLUREF *ret_1)
     }
     else {
 
-  LINE(125);
+  LINE(126);
     CLUREF T_1_3;
     CLUREF T_1_4;
     CLUREF T_1_5;
@@ -1139,7 +1150,7 @@ get_command_mode(CLUREF cmnd, CLUREF *ret_1)
     }
     if (T_1_3.num == true) { /* elseif */
 
-  LINE(126);
+  LINE(127);
         { /* return */
         {
         ret_1->num = 3;
@@ -1149,14 +1160,14 @@ get_command_mode(CLUREF cmnd, CLUREF *ret_1)
     }
     else {
 
-  LINE(127);
+  LINE(128);
     CLUREF T_1_6;
     err = prefix(cmnd, STR_specs, CLU_2, &T_1_6);
     if (err != ERR_ok)
         goto ex_0;
     if (T_1_6.num == true) { /* elseif */
 
-  LINE(128);
+  LINE(129);
         { /* return */
         {
         ret_1->num = 4;
@@ -1166,14 +1177,14 @@ get_command_mode(CLUREF cmnd, CLUREF *ret_1)
     }
     else {
 
-  LINE(129);
+  LINE(130);
     CLUREF T_1_7;
     err = prefix(cmnd, STR_ce, CLU_2, &T_1_7);
     if (err != ERR_ok)
         goto ex_0;
     if (T_1_7.num == true) { /* elseif */
 
-  LINE(130);
+  LINE(131);
         { /* return */
         {
         ret_1->num = 5;
@@ -1183,14 +1194,14 @@ get_command_mode(CLUREF cmnd, CLUREF *ret_1)
     }
     else {
 
-  LINE(131);
+  LINE(132);
     CLUREF T_1_8;
     err = prefix(cmnd, STR_xce, CLU_2, &T_1_8);
     if (err != ERR_ok)
         goto ex_0;
     if (T_1_8.num == true) { /* elseif */
 
-  LINE(132);
+  LINE(133);
         { /* return */
         {
         ret_1->num = 6;
@@ -1200,7 +1211,7 @@ get_command_mode(CLUREF cmnd, CLUREF *ret_1)
     }
     else { /* else */
 
-  LINE(133);
+  LINE(134);
         { /* return */
         {
         ret_1->num = 7;
@@ -1234,9 +1245,9 @@ errcode
 prefix(CLUREF s, CLUREF cmnd, CLUREF cnt, CLUREF *ret_1)
 {
     errcode err;
-    enter_proc(136);
+    enter_proc(137);
 
-  LINE(137);
+  LINE(138);
     { /* return */
     {
     CLUREF T_1_1;
@@ -1297,9 +1308,9 @@ make_file_name(CLUREF fs, CLUREF suffix, CLUREF tyo, CLUREF *ret_1, CLUREF *ret_
         stringOPcons("bad format file name - ", CLU_1, CLUREF_make_num(23), &STR_bad_040format_040file_040name_040_055_040);
         make_file_name_own_init = 1;
     }
-    enter_proc(144);
+    enter_proc(145);
 
-  LINE(146);
+  LINE(147);
     {
     CLUREF T_2_1;
     err = file_nameOPparse(fs, &T_2_1);
@@ -1312,17 +1323,17 @@ make_file_name(CLUREF fs, CLUREF suffix, CLUREF tyo, CLUREF *ret_1, CLUREF *ret_
     __CLU_EX_HANDLER;
     if (err == ERR_bad_format) {
 
-  LINE(148);
+  LINE(149);
         { /* begin */
 
-  LINE(149);
+  LINE(150);
             {
             err = streamOPputs(tyo, STR_bad_040format_040file_040name_040_055_040);
             if (err != ERR_ok)
                 goto ex_2;
             }
 
-  LINE(150);
+  LINE(151);
             {
             err = streamOPputl(tyo, fs);
             if (err != ERR_ok)
@@ -1339,7 +1350,7 @@ make_file_name(CLUREF fs, CLUREF suffix, CLUREF tyo, CLUREF *ret_1, CLUREF *ret_
         }
       end_2:;
 
-  LINE(152);
+  LINE(153);
         { /* signal */
             signal(ERR_bad_format);
         }
@@ -1349,7 +1360,7 @@ make_file_name(CLUREF fs, CLUREF suffix, CLUREF tyo, CLUREF *ret_1, CLUREF *ret_
     }
   end_1:;
 
-  LINE(154);
+  LINE(155);
     { /* return */
     {
     CLUREF T_1_1;
@@ -1412,9 +1423,9 @@ check_file_name(CLUREF fn, CLUREF *ret_1)
         stringOPcons("clu", CLU_1, CLUREF_make_num(3), &STR_clu);
         check_file_name_own_init = 1;
     }
-    enter_proc(157);
+    enter_proc(158);
 
-  LINE(158);
+  LINE(159);
     { /* if */
     CLUREF T_2_1;
     CLUREF T_2_2;
@@ -1452,12 +1463,12 @@ check_file_name(CLUREF fn, CLUREF *ret_1)
     }
     if (T_2_1.num == true) { /* if */
 
-  LINE(160);
+  LINE(161);
         {
         fn1.num = fn.num;
         }
 
-  LINE(161);
+  LINE(162);
         {
         CLUREF T_3_1;
         CLUREF T_3_2;
@@ -1473,7 +1484,7 @@ check_file_name(CLUREF fn, CLUREF *ret_1)
         dez1.num = T_3_2.num;
         }
 
-  LINE(162);
+  LINE(163);
         { /* if */
         CLUREF T_3_1;
         CLUREF T_3_2;
@@ -1517,7 +1528,7 @@ check_file_name(CLUREF fn, CLUREF *ret_1)
         }
         if (T_3_1.num == true) { /* if */
 
-  LINE(164);
+  LINE(165);
             {
             CLUREF T_4_1;
             CLUREF T_4_2;
@@ -1557,7 +1568,7 @@ check_file_name(CLUREF fn, CLUREF *ret_1)
             fn1.num = T_4_8.num;
             }
 
-  LINE(168);
+  LINE(169);
             { /* if */
             CLUREF T_4_1;
             err = file_exists(fn1, &T_4_1);
@@ -1565,7 +1576,7 @@ check_file_name(CLUREF fn, CLUREF *ret_1)
                 goto ex_1;
             if (T_4_1.num == true) { /* if */
 
-  LINE(169);
+  LINE(170);
                 { /* return */
                 {
                 ret_1->num = fn1.num;
@@ -1577,7 +1588,7 @@ check_file_name(CLUREF fn, CLUREF *ret_1)
         }
         } /* end if */
 
-  LINE(171);
+  LINE(172);
         { /* if */
         CLUREF T_3_1;
         CLUREF T_3_2;
@@ -1588,7 +1599,7 @@ check_file_name(CLUREF fn, CLUREF *ret_1)
             !(memcmp(T_3_1.str->data, STR_spc.str->data, T_3_1.str->size)));
         if (T_3_2.num == true) { /* if */
 
-  LINE(172);
+  LINE(173);
             {
             CLUREF T_4_1;
             CLUREF T_4_2;
@@ -1605,7 +1616,7 @@ check_file_name(CLUREF fn, CLUREF *ret_1)
             fn1.num = T_4_3.num;
             }
 
-  LINE(173);
+  LINE(174);
             { /* if */
             CLUREF T_4_1;
             err = file_exists(fn1, &T_4_1);
@@ -1613,7 +1624,7 @@ check_file_name(CLUREF fn, CLUREF *ret_1)
                 goto ex_1;
             if (T_4_1.num == true) { /* if */
 
-  LINE(174);
+  LINE(175);
                 { /* return */
                 {
                 ret_1->num = fn1.num;
@@ -1625,7 +1636,7 @@ check_file_name(CLUREF fn, CLUREF *ret_1)
         }
         } /* end if */
 
-  LINE(176);
+  LINE(177);
         {
         CLUREF T_3_1;
         CLUREF T_3_2;
@@ -1642,7 +1653,7 @@ check_file_name(CLUREF fn, CLUREF *ret_1)
         fn1.num = T_3_3.num;
         }
 
-  LINE(177);
+  LINE(178);
         { /* if */
         CLUREF T_3_1;
         err = file_exists(fn1, &T_3_1);
@@ -1650,7 +1661,7 @@ check_file_name(CLUREF fn, CLUREF *ret_1)
             goto ex_1;
         if (T_3_1.num == true) { /* if */
 
-  LINE(178);
+  LINE(179);
             { /* return */
             {
             ret_1->num = fn1.num;
@@ -1671,7 +1682,7 @@ check_file_name(CLUREF fn, CLUREF *ret_1)
     }
   end_1:;
 
-  LINE(180);
+  LINE(181);
     { /* return */
     {
     ret_1->num = fn.num;
@@ -1718,9 +1729,9 @@ open_stream(CLUREF fn, CLUREF mode, CLUREF tyo, CLUREF *ret_1)
         stringOPcons(": ", CLU_1, CLUREF_make_num(2), &STR__072_040);
         open_stream_own_init = 1;
     }
-    enter_proc(183);
+    enter_proc(184);
 
-  LINE(185);
+  LINE(186);
     { /* if */
     CLUREF T_1_1;
     CLUREF T_1_2;
@@ -1729,7 +1740,7 @@ open_stream(CLUREF fn, CLUREF mode, CLUREF tyo, CLUREF *ret_1)
     T_1_2.num = !T_1_1.num;
     if (T_1_2.num == true) { /* if */
 
-  LINE(186);
+  LINE(187);
         {
         CLUREF T_2_1;
         err = check_file_name(fn, &T_2_1);
@@ -1740,7 +1751,7 @@ open_stream(CLUREF fn, CLUREF mode, CLUREF tyo, CLUREF *ret_1)
     }
     } /* end if */
 
-  LINE(187);
+  LINE(188);
     { /* return */
     {
     CLUREF T_2_1;
@@ -1757,17 +1768,17 @@ open_stream(CLUREF fn, CLUREF mode, CLUREF tyo, CLUREF *ret_1)
     if (err == ERR_not_possible) {
         why.num = elist[0].num;
 
-  LINE(189);
+  LINE(190);
         { /* begin */
 
-  LINE(190);
+  LINE(191);
             { /* if */
             CLUREF T_4_1;
             T_4_1.num = ((mode.str->size != STR_read.str->size)? false :
                 !(memcmp(mode.str->data, STR_read.str->data, mode.str->size)));
             if (T_4_1.num == true) { /* if */
 
-  LINE(191);
+  LINE(192);
                 {
                 err = streamOPputs(tyo, STR_reading_040);
                 if (err != ERR_ok)
@@ -1776,7 +1787,7 @@ open_stream(CLUREF fn, CLUREF mode, CLUREF tyo, CLUREF *ret_1)
             }
             else { /* else */
 
-  LINE(192);
+  LINE(193);
                 {
                 err = streamOPputs(tyo, STR_writing_040);
                 if (err != ERR_ok)
@@ -1784,7 +1795,7 @@ open_stream(CLUREF fn, CLUREF mode, CLUREF tyo, CLUREF *ret_1)
                 }
             }} /* end if */
 
-  LINE(194);
+  LINE(195);
             {
             CLUREF T_4_1;
             err = file_nameOPunparse(fn, &T_4_1);
@@ -1795,14 +1806,14 @@ open_stream(CLUREF fn, CLUREF mode, CLUREF tyo, CLUREF *ret_1)
                 goto ex_2;
             }
 
-  LINE(195);
+  LINE(196);
             {
             err = streamOPputs(tyo, STR__072_040);
             if (err != ERR_ok)
                 goto ex_2;
             }
 
-  LINE(196);
+  LINE(197);
             {
             err = streamOPputl(tyo, why);
             if (err != ERR_ok)
@@ -1819,7 +1830,7 @@ open_stream(CLUREF fn, CLUREF mode, CLUREF tyo, CLUREF *ret_1)
         }
       end_2:;
 
-  LINE(198);
+  LINE(199);
         { /* signal */
             signal(ERR_open_failed);
         }
@@ -2061,23 +2072,23 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         stringOPcons("unknown command: ", CLU_1, CLUREF_make_num(17), &STR_unknown_040command_072_040);
         execute_command_own_init = 1;
     }
-    enter_proc(202);
+    enter_proc(203);
 
-  LINE(203);
+  LINE(204);
     {
     locals.err = arrayOPset_low(locals.args, CLU_1);
     if (locals.err != ERR_ok)
         goto ex_0;
     }
 
-  LINE(204);
+  LINE(205);
     {
     CLUREF T_1_1;
     T_1_1.num = locals.args.array->ext_size;
     locals.nargs.num = T_1_1.num;
     }
 
-  LINE(205);
+  LINE(206);
     { /* if */
     CLUREF T_2_1;
     locals.err = prefix(locals.cmnd, STR_xfile, CLU_2, &T_2_1);
@@ -2085,7 +2096,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         goto ex_1;
     if (T_2_1.num == true) { /* if */
 
-  LINE(206);
+  LINE(207);
         {
         locals.err = xfile_execute(locals.args, locals.tyo, locals.comp);
         if (locals.err != ERR_ok)
@@ -2094,20 +2105,20 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(207);
+  LINE(208);
     CLUREF T_2_2;
     locals.err = prefix(locals.cmnd, STR_dir, CLU_2, &T_2_2);
     if (locals.err != ERR_ok)
         goto ex_1;
     if (T_2_2.num == true) { /* elseif */
 
-  LINE(208);
+  LINE(209);
         { /* if */
         CLUREF T_3_1;
         T_3_1.num = (locals.nargs.num == 0);
         if (T_3_1.num == true) { /* if */
 
-  LINE(209);
+  LINE(210);
             {
             locals.err = set_dir(CLU_empty_string, locals.tyo);
             if (locals.err != ERR_ok)
@@ -2116,12 +2127,12 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else {
 
-  LINE(210);
+  LINE(211);
         CLUREF T_3_2;
         T_3_2.num = (locals.nargs.num == 1);
         if (T_3_2.num == true) { /* elseif */
 
-  LINE(211);
+  LINE(212);
             {
             CLUREF T_4_1;
             if (1 < locals.args.array->ext_low || 1 > locals.args.array->ext_high) {
@@ -2136,7 +2147,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else { /* else */
 
-  LINE(212);
+  LINE(213);
             {
             locals.err = streamOPputl(locals.tyo, STR_DIR_040expects_0401_040argument);
             if (locals.err != ERR_ok)
@@ -2146,7 +2157,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(213);
+  LINE(214);
     CLUREF T_2_3;
     CLUREF T_2_4;
     CLUREF T_2_5;
@@ -2162,13 +2173,13 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     if (T_2_3.num == true) { /* elseif */
 
-  LINE(214);
+  LINE(215);
         { /* if */
         CLUREF T_3_1;
         T_3_1.num = (locals.nargs.num == 0);
         if (T_3_1.num == true) { /* if */
 
-  LINE(215);
+  LINE(216);
             {
             locals.err = quit_();
             if (locals.err != ERR_ok)
@@ -2177,7 +2188,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else { /* else */
 
-  LINE(216);
+  LINE(217);
             {
             locals.err = streamOPputl(locals.tyo, STR_KILL_057QUIT_040expects_040no_040arguments);
             if (locals.err != ERR_ok)
@@ -2187,7 +2198,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(218);
+  LINE(219);
     CLUREF T_2_6;
     CLUREF T_2_7;
     CLUREF T_2_8;
@@ -2202,13 +2213,13 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     if (T_2_6.num == true) { /* elseif */
 
-  LINE(219);
+  LINE(220);
         { /* if */
         CLUREF T_3_1;
         T_3_1.num = (locals.nargs.num == 0);
         if (T_3_1.num == true) { /* if */
 
-  LINE(220);
+  LINE(221);
             {
             CLUREF T_4_1;
             locals.err = help_name(&T_4_1);
@@ -2221,7 +2232,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else { /* else */
 
-  LINE(221);
+  LINE(222);
             {
             locals.err = streamOPputl(locals.tyo, STR_HELP_040_050_077_051_040expects_040no_040arguments);
             if (locals.err != ERR_ok)
@@ -2231,27 +2242,27 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(223);
+  LINE(224);
     CLUREF T_2_9;
     locals.err = prefix(locals.cmnd, STR_escape, CLU_2, &T_2_9);
     if (locals.err != ERR_ok)
         goto ex_1;
     if (T_2_9.num == true) { /* elseif */
 
-  LINE(224);
+  LINE(225);
         { /* if */
         CLUREF T_3_1;
         T_3_1.num = (locals.nargs.num == 0);
         if (T_3_1.num == true) { /* if */
 
-  LINE(225);
+  LINE(226);
             {
             locals.err = streamOPflush(locals.tyo);
             if (locals.err != ERR_ok)
                 goto ex_1;
             }
 
-  LINE(226);
+  LINE(227);
             {
             locals.err = _stop();
             if (locals.err != ERR_ok)
@@ -2260,7 +2271,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else { /* else */
 
-  LINE(227);
+  LINE(228);
             {
             locals.err = streamOPputl(locals.tyo, STR_ESCAPE_040expects_040no_040arguments);
             if (locals.err != ERR_ok)
@@ -2270,20 +2281,20 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(229);
+  LINE(230);
     CLUREF T_2_10;
     locals.err = prefix(locals.cmnd, STR_optimize, CLU_1, &T_2_10);
     if (locals.err != ERR_ok)
         goto ex_1;
     if (T_2_10.num == true) { /* elseif */
 
-  LINE(230);
+  LINE(231);
         { /* if */
         CLUREF T_3_1;
         T_3_1.num = (locals.nargs.num > 1);
         if (T_3_1.num == true) { /* if */
 
-  LINE(231);
+  LINE(232);
             {
             locals.err = streamOPputl(locals.tyo, STR_OPTIMIZE_040expects_0400_040or_0401_040arguments);
             if (locals.err != ERR_ok)
@@ -2292,7 +2303,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else { /* else */
 
-  LINE(232);
+  LINE(233);
             {
             CLUREF T_4_1;
             CLUREF T_4_2;
@@ -2309,7 +2320,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             locals.ge.num = T_4_3.num;
             }
 
-  LINE(233);
+  LINE(234);
             { /* if */
             CLUREF T_4_1;
             CLUREF T_4_2;
@@ -2330,14 +2341,14 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             }
             if (T_4_1.num == true) { /* if */
 
-  LINE(234);
+  LINE(235);
                 {
                 locals.err = g_envOPset_space(locals.ge, CLU_true);
                 if (locals.err != ERR_ok)
                     goto ex_1;
                 }
 
-  LINE(235);
+  LINE(236);
                 {
                 locals.err = g_envOPset_time(locals.ge, CLU_true);
                 if (locals.err != ERR_ok)
@@ -2346,7 +2357,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             }
             else {
 
-  LINE(236);
+  LINE(237);
             CLUREF T_4_5;
             CLUREF T_4_6;
             if (1 < locals.args.array->ext_low || 1 > locals.args.array->ext_high) {
@@ -2359,14 +2370,14 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
                 goto ex_1;
             if (T_4_6.num == true) { /* elseif */
 
-  LINE(237);
+  LINE(238);
                 {
                 locals.err = g_envOPset_space(locals.ge, CLU_true);
                 if (locals.err != ERR_ok)
                     goto ex_1;
                 }
 
-  LINE(238);
+  LINE(239);
                 {
                 locals.err = g_envOPset_time(locals.ge, CLU_false);
                 if (locals.err != ERR_ok)
@@ -2375,7 +2386,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             }
             else {
 
-  LINE(239);
+  LINE(240);
             CLUREF T_4_7;
             CLUREF T_4_8;
             if (1 < locals.args.array->ext_low || 1 > locals.args.array->ext_high) {
@@ -2388,14 +2399,14 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
                 goto ex_1;
             if (T_4_8.num == true) { /* elseif */
 
-  LINE(240);
+  LINE(241);
                 {
                 locals.err = g_envOPset_space(locals.ge, CLU_false);
                 if (locals.err != ERR_ok)
                     goto ex_1;
                 }
 
-  LINE(241);
+  LINE(242);
                 {
                 locals.err = g_envOPset_time(locals.ge, CLU_false);
                 if (locals.err != ERR_ok)
@@ -2404,7 +2415,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             }
             else { /* else */
 
-  LINE(242);
+  LINE(243);
                 {
                 locals.err = streamOPputl(locals.tyo, STR_bad_040OPTIMIZE_040option);
                 if (locals.err != ERR_ok)
@@ -2415,20 +2426,20 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(244);
+  LINE(245);
     CLUREF T_2_11;
     locals.err = prefix(locals.cmnd, STR_safe, CLU_2, &T_2_11);
     if (locals.err != ERR_ok)
         goto ex_1;
     if (T_2_11.num == true) { /* elseif */
 
-  LINE(245);
+  LINE(246);
         { /* if */
         CLUREF T_3_1;
         T_3_1.num = (locals.nargs.num > 1);
         if (T_3_1.num == true) { /* if */
 
-  LINE(246);
+  LINE(247);
             {
             locals.err = streamOPputl(locals.tyo, STR_SAFE_040expects_0400_040or_0401_040arguments);
             if (locals.err != ERR_ok)
@@ -2437,7 +2448,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else {
 
-  LINE(247);
+  LINE(248);
         CLUREF T_3_2;
         CLUREF T_3_3;
         CLUREF T_3_4;
@@ -2457,7 +2468,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         if (T_3_2.num == true) { /* elseif */
 
-  LINE(248);
+  LINE(249);
             { /* if */
             CLUREF T_5_1;
             CLUREF T_5_2;
@@ -2469,7 +2480,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
                 goto ex_2;
             if (T_5_2.num == true) { /* if */
 
-  LINE(249);
+  LINE(250);
                 {
                 CLUREF T_6_1;
                 CLUREF T_6_2;
@@ -2482,7 +2493,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
                 locals.st.num = T_6_2.num;
                 }
 
-  LINE(251);
+  LINE(252);
                 {
                 CLUREF T_6_1;
                 locals.err = streamOPgets(locals.st, CLU_empty_string, &T_6_1);
@@ -2493,7 +2504,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
                     goto ex_2;
                 }
 
-  LINE(252);
+  LINE(253);
                 {
                 locals.err = streamOPclose(locals.st);
                 if (locals.err != ERR_ok)
@@ -2506,7 +2517,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             __CLU_EX_HANDLER;
             if (locals.err == ERR_not_possible) {
 
-  LINE(254);
+  LINE(255);
                 {
                 locals.err = streamOPputl(locals.tyo, STR_SAFE_040failed_041);
                 if (locals.err != ERR_ok)
@@ -2520,7 +2531,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else {
 
-  LINE(257);
+  LINE(258);
         CLUREF T_3_6;
         CLUREF T_3_7;
         if (1 < locals.args.array->ext_low || 1 > locals.args.array->ext_high) {
@@ -2533,7 +2544,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             goto ex_1;
         if (T_3_7.num == true) { /* elseif */
 
-  LINE(258);
+  LINE(259);
             {
             locals.err = cmpvarOPset_modules(CLU_empty_string);
             if (locals.err != ERR_ok)
@@ -2542,7 +2553,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else { /* else */
 
-  LINE(259);
+  LINE(260);
             {
             locals.err = streamOPputl(locals.tyo, STR_bad_040SAFE_040option);
             if (locals.err != ERR_ok)
@@ -2552,20 +2563,20 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(260);
+  LINE(261);
     CLUREF T_2_12;
     locals.err = prefix(locals.cmnd, STR_allow, CLU_1, &T_2_12);
     if (locals.err != ERR_ok)
         goto ex_1;
     if (T_2_12.num == true) { /* elseif */
 
-  LINE(261);
+  LINE(262);
         { /* if */
         CLUREF T_3_1;
         T_3_1.num = (locals.nargs.num > 1);
         if (T_3_1.num == true) { /* if */
 
-  LINE(262);
+  LINE(263);
             {
             locals.err = streamOPputl(locals.tyo, STR_ALLOW_040expects_0400_040or_0401_040arguments);
             if (locals.err != ERR_ok)
@@ -2574,7 +2585,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else {
 
-  LINE(263);
+  LINE(264);
         CLUREF T_3_2;
         CLUREF T_3_3;
         CLUREF T_3_4;
@@ -2594,7 +2605,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         if (T_3_2.num == true) { /* elseif */
 
-  LINE(264);
+  LINE(265);
             {
             locals.err = cmpvarOPset_allow(CLU_true);
             if (locals.err != ERR_ok)
@@ -2603,7 +2614,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else {
 
-  LINE(265);
+  LINE(266);
         CLUREF T_3_6;
         CLUREF T_3_7;
         if (1 < locals.args.array->ext_low || 1 > locals.args.array->ext_high) {
@@ -2616,7 +2627,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             goto ex_1;
         if (T_3_7.num == true) { /* elseif */
 
-  LINE(266);
+  LINE(267);
             {
             locals.err = cmpvarOPset_allow(CLU_false);
             if (locals.err != ERR_ok)
@@ -2625,7 +2636,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else { /* else */
 
-  LINE(267);
+  LINE(268);
             {
             locals.err = streamOPputl(locals.tyo, STR_bad_040ALLOW_040option);
             if (locals.err != ERR_ok)
@@ -2635,20 +2646,20 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(268);
+  LINE(269);
     CLUREF T_2_13;
     locals.err = prefix(locals.cmnd, STR_expunge, CLU_3, &T_2_13);
     if (locals.err != ERR_ok)
         goto ex_1;
     if (T_2_13.num == true) { /* elseif */
 
-  LINE(269);
+  LINE(270);
         { /* if */
         CLUREF T_3_1;
         T_3_1.num = (locals.nargs.num > 1);
         if (T_3_1.num == true) { /* if */
 
-  LINE(270);
+  LINE(271);
             {
             locals.err = streamOPputl(locals.tyo, STR_EXPUNGE_040expects_0400_040or_0401_040arguments);
             if (locals.err != ERR_ok)
@@ -2657,7 +2668,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else {
 
-  LINE(271);
+  LINE(272);
         CLUREF T_3_2;
         CLUREF T_3_3;
         CLUREF T_3_4;
@@ -2677,7 +2688,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         if (T_3_2.num == true) { /* elseif */
 
-  LINE(272);
+  LINE(273);
             {
             locals.err = cmpvarOPset_expunge(CLU_true);
             if (locals.err != ERR_ok)
@@ -2686,7 +2697,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else {
 
-  LINE(273);
+  LINE(274);
         CLUREF T_3_6;
         CLUREF T_3_7;
         if (1 < locals.args.array->ext_low || 1 > locals.args.array->ext_high) {
@@ -2699,7 +2710,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             goto ex_1;
         if (T_3_7.num == true) { /* elseif */
 
-  LINE(274);
+  LINE(275);
             {
             locals.err = cmpvarOPset_expunge(CLU_false);
             if (locals.err != ERR_ok)
@@ -2708,7 +2719,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else { /* else */
 
-  LINE(275);
+  LINE(276);
             {
             locals.err = streamOPputl(locals.tyo, STR_bad_040EXPUNGE_040option);
             if (locals.err != ERR_ok)
@@ -2718,20 +2729,20 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(276);
+  LINE(277);
     CLUREF T_2_14;
     locals.err = prefix(locals.cmnd, STR_externals, CLU_3, &T_2_14);
     if (locals.err != ERR_ok)
         goto ex_1;
     if (T_2_14.num == true) { /* elseif */
 
-  LINE(277);
+  LINE(278);
         { /* if */
         CLUREF T_3_1;
         T_3_1.num = (locals.nargs.num > 1);
         if (T_3_1.num == true) { /* if */
 
-  LINE(278);
+  LINE(279);
             {
             locals.err = streamOPputl(locals.tyo, STR_EXTERNALS_040expects_0400_040or_0401_040arguments);
             if (locals.err != ERR_ok)
@@ -2740,7 +2751,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else {
 
-  LINE(279);
+  LINE(280);
         CLUREF T_3_2;
         CLUREF T_3_3;
         CLUREF T_3_4;
@@ -2760,7 +2771,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         if (T_3_2.num == true) { /* elseif */
 
-  LINE(280);
+  LINE(281);
             {
             locals.err = cmpvarOPset_externals(CLU_true);
             if (locals.err != ERR_ok)
@@ -2769,7 +2780,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else {
 
-  LINE(281);
+  LINE(282);
         CLUREF T_3_6;
         CLUREF T_3_7;
         if (1 < locals.args.array->ext_low || 1 > locals.args.array->ext_high) {
@@ -2782,7 +2793,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             goto ex_1;
         if (T_3_7.num == true) { /* elseif */
 
-  LINE(282);
+  LINE(283);
             {
             locals.err = cmpvarOPset_externals(CLU_false);
             if (locals.err != ERR_ok)
@@ -2791,7 +2802,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else { /* else */
 
-  LINE(283);
+  LINE(284);
             {
             locals.err = streamOPputl(locals.tyo, STR_bad_040EXTERNALS_040option);
             if (locals.err != ERR_ok)
@@ -2801,20 +2812,20 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(284);
+  LINE(285);
     CLUREF T_2_15;
     locals.err = prefix(locals.cmnd, STR_force, CLU_4, &T_2_15);
     if (locals.err != ERR_ok)
         goto ex_1;
     if (T_2_15.num == true) { /* elseif */
 
-  LINE(285);
+  LINE(286);
         { /* if */
         CLUREF T_3_1;
         T_3_1.num = (locals.nargs.num > 1);
         if (T_3_1.num == true) { /* if */
 
-  LINE(286);
+  LINE(287);
             {
             locals.err = streamOPputl(locals.tyo, STR_FORCE_040expects_0400_040or_0401_040arguments);
             if (locals.err != ERR_ok)
@@ -2823,7 +2834,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else {
 
-  LINE(287);
+  LINE(288);
         CLUREF T_3_2;
         CLUREF T_3_3;
         CLUREF T_3_4;
@@ -2843,7 +2854,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         if (T_3_2.num == true) { /* elseif */
 
-  LINE(288);
+  LINE(289);
             {
             locals.err = cmpvarOPset_force_(CLU_true);
             if (locals.err != ERR_ok)
@@ -2852,7 +2863,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else {
 
-  LINE(289);
+  LINE(290);
         CLUREF T_3_6;
         CLUREF T_3_7;
         if (1 < locals.args.array->ext_low || 1 > locals.args.array->ext_high) {
@@ -2865,7 +2876,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             goto ex_1;
         if (T_3_7.num == true) { /* elseif */
 
-  LINE(290);
+  LINE(291);
             {
             locals.err = cmpvarOPset_force_(CLU_false);
             if (locals.err != ERR_ok)
@@ -2874,7 +2885,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else { /* else */
 
-  LINE(291);
+  LINE(292);
             {
             locals.err = streamOPputl(locals.tyo, STR_bad_040FORCE_040option);
             if (locals.err != ERR_ok)
@@ -2884,20 +2895,20 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(292);
+  LINE(293);
     CLUREF T_2_16;
     locals.err = prefix(locals.cmnd, STR_locals, CLU_1, &T_2_16);
     if (locals.err != ERR_ok)
         goto ex_1;
     if (T_2_16.num == true) { /* elseif */
 
-  LINE(293);
+  LINE(294);
         { /* if */
         CLUREF T_3_1;
         T_3_1.num = (locals.nargs.num > 1);
         if (T_3_1.num == true) { /* if */
 
-  LINE(294);
+  LINE(295);
             {
             locals.err = streamOPputl(locals.tyo, STR_LOCALS_040expects_0400_040or_0401_040arguments);
             if (locals.err != ERR_ok)
@@ -2906,7 +2917,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else {
 
-  LINE(295);
+  LINE(296);
         CLUREF T_3_2;
         CLUREF T_3_3;
         CLUREF T_3_4;
@@ -2926,7 +2937,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         if (T_3_2.num == true) { /* elseif */
 
-  LINE(296);
+  LINE(297);
             {
             locals.err = cmpvarOPset_locals(CLU_true);
             if (locals.err != ERR_ok)
@@ -2935,7 +2946,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else {
 
-  LINE(297);
+  LINE(298);
         CLUREF T_3_6;
         CLUREF T_3_7;
         if (1 < locals.args.array->ext_low || 1 > locals.args.array->ext_high) {
@@ -2948,7 +2959,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             goto ex_1;
         if (T_3_7.num == true) { /* elseif */
 
-  LINE(298);
+  LINE(299);
             {
             locals.err = cmpvarOPset_locals(CLU_false);
             if (locals.err != ERR_ok)
@@ -2957,7 +2968,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else { /* else */
 
-  LINE(299);
+  LINE(300);
             {
             locals.err = streamOPputl(locals.tyo, STR_bad_040LOCALS_040option);
             if (locals.err != ERR_ok)
@@ -2967,20 +2978,20 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(300);
+  LINE(301);
     CLUREF T_2_17;
     locals.err = prefix(locals.cmnd, STR_ccdbg, CLU_3, &T_2_17);
     if (locals.err != ERR_ok)
         goto ex_1;
     if (T_2_17.num == true) { /* elseif */
 
-  LINE(301);
+  LINE(302);
         { /* if */
         CLUREF T_3_1;
         T_3_1.num = (locals.nargs.num == 0);
         if (T_3_1.num == true) { /* if */
 
-  LINE(302);
+  LINE(303);
             {
             CLUREF T_4_1;
             locals.err = cmpvarOPcc_dbg_cmd(&T_4_1);
@@ -2993,7 +3004,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else {
 
-  LINE(303);
+  LINE(304);
         CLUREF T_3_2;
         CLUREF T_3_3;
         CLUREF T_3_4;
@@ -3013,7 +3024,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         if (T_3_2.num == true) { /* elseif */
 
-  LINE(304);
+  LINE(305);
             {
             locals.err = cmpvarOPset_cc_dbg_cmd(CLU_empty_string);
             if (locals.err != ERR_ok)
@@ -3022,7 +3033,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else { /* else */
 
-  LINE(305);
+  LINE(306);
             {
             CLUREF T_4_1;
             locals.err = as2str(locals.args, &T_4_1);
@@ -3036,20 +3047,20 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(306);
+  LINE(307);
     CLUREF T_2_18;
     locals.err = prefix(locals.cmnd, STR_ccopt, CLU_3, &T_2_18);
     if (locals.err != ERR_ok)
         goto ex_1;
     if (T_2_18.num == true) { /* elseif */
 
-  LINE(307);
+  LINE(308);
         { /* if */
         CLUREF T_3_1;
         T_3_1.num = (locals.nargs.num == 0);
         if (T_3_1.num == true) { /* if */
 
-  LINE(308);
+  LINE(309);
             {
             CLUREF T_4_1;
             locals.err = cmpvarOPcc_opt_cmd(&T_4_1);
@@ -3062,7 +3073,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else {
 
-  LINE(309);
+  LINE(310);
         CLUREF T_3_2;
         CLUREF T_3_3;
         CLUREF T_3_4;
@@ -3082,7 +3093,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         if (T_3_2.num == true) { /* elseif */
 
-  LINE(310);
+  LINE(311);
             {
             locals.err = cmpvarOPset_cc_opt_cmd(CLU_empty_string);
             if (locals.err != ERR_ok)
@@ -3091,7 +3102,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else { /* else */
 
-  LINE(311);
+  LINE(312);
             {
             CLUREF T_4_1;
             locals.err = as2str(locals.args, &T_4_1);
@@ -3105,20 +3116,20 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(312);
+  LINE(313);
     CLUREF T_2_19;
     locals.err = prefix(locals.cmnd, STR_cfiles, CLU_2, &T_2_19);
     if (locals.err != ERR_ok)
         goto ex_1;
     if (T_2_19.num == true) { /* elseif */
 
-  LINE(313);
+  LINE(314);
         { /* if */
         CLUREF T_3_1;
         T_3_1.num = (locals.nargs.num > 1);
         if (T_3_1.num == true) { /* if */
 
-  LINE(314);
+  LINE(315);
             {
             locals.err = streamOPputl(locals.tyo, STR_CFILES_040expects_0400_040or_0401_040arguments);
             if (locals.err != ERR_ok)
@@ -3127,7 +3138,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else {
 
-  LINE(315);
+  LINE(316);
         CLUREF T_3_2;
         CLUREF T_3_3;
         CLUREF T_3_4;
@@ -3147,7 +3158,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         if (T_3_2.num == true) { /* elseif */
 
-  LINE(316);
+  LINE(317);
             {
             locals.err = cmpvarOPset_save_c(CLU_true);
             if (locals.err != ERR_ok)
@@ -3156,7 +3167,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else {
 
-  LINE(317);
+  LINE(318);
         CLUREF T_3_6;
         CLUREF T_3_7;
         if (1 < locals.args.array->ext_low || 1 > locals.args.array->ext_high) {
@@ -3169,7 +3180,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             goto ex_1;
         if (T_3_7.num == true) { /* elseif */
 
-  LINE(318);
+  LINE(319);
             {
             locals.err = cmpvarOPset_save_c(CLU_false);
             if (locals.err != ERR_ok)
@@ -3178,7 +3189,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else { /* else */
 
-  LINE(319);
+  LINE(320);
             {
             locals.err = streamOPputl(locals.tyo, STR_bad_040CFILES_040option);
             if (locals.err != ERR_ok)
@@ -3188,20 +3199,20 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(320);
+  LINE(321);
     CLUREF T_2_20;
     locals.err = prefix(locals.cmnd, STR_bindir, CLU_4, &T_2_20);
     if (locals.err != ERR_ok)
         goto ex_1;
     if (T_2_20.num == true) { /* elseif */
 
-  LINE(321);
+  LINE(322);
         { /* if */
         CLUREF T_3_1;
         T_3_1.num = (locals.nargs.num > 1);
         if (T_3_1.num == true) { /* if */
 
-  LINE(322);
+  LINE(323);
             {
             locals.err = streamOPputl(locals.tyo, STR_BINDIR_040expects_0400_040or_0401_040arguments);
             if (locals.err != ERR_ok)
@@ -3210,12 +3221,12 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else {
 
-  LINE(323);
+  LINE(324);
         CLUREF T_3_2;
         T_3_2.num = (locals.nargs.num == 0);
         if (T_3_2.num == true) { /* elseif */
 
-  LINE(324);
+  LINE(325);
             {
             locals.err = cmpvarOPset_dir(CLU_empty_string);
             if (locals.err != ERR_ok)
@@ -3224,7 +3235,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else {
 
-  LINE(325);
+  LINE(326);
         CLUREF T_3_3;
         CLUREF T_3_4;
         CLUREF T_3_5;
@@ -3241,7 +3252,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         T_3_6.num = (T_3_5.num > 0);
         if (T_3_6.num == true) { /* elseif */
 
-  LINE(326);
+  LINE(327);
             {
             locals.err = streamOPputl(locals.tyo, STR_bad_040format_040directory_040name);
             if (locals.err != ERR_ok)
@@ -3250,7 +3261,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else { /* else */
 
-  LINE(327);
+  LINE(328);
             {
             CLUREF T_4_1;
             CLUREF T_4_2;
@@ -3265,7 +3276,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             locals.s.num = T_4_2.num;
             }
 
-  LINE(328);
+  LINE(329);
             { /* if */
             CLUREF T_4_1;
             CLUREF T_4_2;
@@ -3274,7 +3285,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             T_4_2.num = !T_4_1.num;
             if (T_4_2.num == true) { /* if */
 
-  LINE(329);
+  LINE(330);
                 {
                 CLUREF T_5_1;
                 CLUREF T_5_2;
@@ -3285,7 +3296,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
                 locals.s.num = T_5_2.num;
                 }
 
-  LINE(330);
+  LINE(331);
                 { /* if */
                 CLUREF T_6_1;
                 CLUREF T_6_2;
@@ -3297,7 +3308,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
                 T_6_3.num = (T_6_1.ch == T_6_2.ch);
                 if (T_6_3.num == true) { /* if */
 
-  LINE(331);
+  LINE(332);
                     {
                     CLUREF T_7_1;
                     CLUREF T_7_2;
@@ -3308,13 +3319,13 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
                     locals.z.num = T_7_2.num;
                     }
 
-  LINE(332);
+  LINE(333);
                     { /* if */
                     CLUREF T_7_1;
                     T_7_1.num = (locals.z.num == 0);
                     if (T_7_1.num == true) { /* if */
 
-  LINE(333);
+  LINE(334);
                         {
                         CLUREF T_8_1;
                         CLUREF T_8_2;
@@ -3329,7 +3340,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
                     }
                     else { /* else */
 
-  LINE(334);
+  LINE(335);
                         {
                         CLUREF T_8_1;
                         CLUREF T_8_2;
@@ -3360,7 +3371,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
                 }
                 else {
 
-  LINE(338);
+  LINE(339);
                 CLUREF T_6_4;
                 CLUREF T_6_5;
                 CLUREF T_6_6;
@@ -3373,7 +3384,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
                 T_6_7.num = !T_6_6.num;
                 if (T_6_7.num == true) { /* elseif */
 
-  LINE(339);
+  LINE(340);
                     {
                     CLUREF T_7_1;
                     CLUREF T_7_2;
@@ -3399,7 +3410,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             }
             } /* end if */
 
-  LINE(342);
+  LINE(343);
             {
             locals.err = cmpvarOPset_dir(locals.s);
             if (locals.err != ERR_ok)
@@ -3409,20 +3420,20 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(344);
+  LINE(345);
     CLUREF T_2_21;
     locals.err = prefix(locals.cmnd, STR_binsuf, CLU_4, &T_2_21);
     if (locals.err != ERR_ok)
         goto ex_1;
     if (T_2_21.num == true) { /* elseif */
 
-  LINE(345);
+  LINE(346);
         { /* if */
         CLUREF T_3_1;
         T_3_1.num = (locals.nargs.num > 1);
         if (T_3_1.num == true) { /* if */
 
-  LINE(346);
+  LINE(347);
             {
             locals.err = streamOPputl(locals.tyo, STR_BINSUF_040expects_0400_040or_0401_040arguments);
             if (locals.err != ERR_ok)
@@ -3431,12 +3442,12 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else {
 
-  LINE(347);
+  LINE(348);
         CLUREF T_3_2;
         T_3_2.num = (locals.nargs.num == 1);
         if (T_3_2.num == true) { /* elseif */
 
-  LINE(348);
+  LINE(349);
             {
             CLUREF T_5_1;
             CLUREF T_5_2;
@@ -3461,7 +3472,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             __CLU_EX_HANDLER;
             if (locals.err == ERR_bad_format) {
 
-  LINE(350);
+  LINE(351);
                 {
                 locals.err = streamOPputl(locals.tyo, STR_bad_040format_040suffix);
                 if (locals.err != ERR_ok)
@@ -3475,7 +3486,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else { /* else */
 
-  LINE(352);
+  LINE(353);
             {
             locals.err = cmpvarOPset_suffix(CLU_empty_string);
             if (locals.err != ERR_ok)
@@ -3485,20 +3496,20 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(353);
+  LINE(354);
     CLUREF T_2_22;
     locals.err = prefix(locals.cmnd, STR_newlib, CLU_1, &T_2_22);
     if (locals.err != ERR_ok)
         goto ex_1;
     if (T_2_22.num == true) { /* elseif */
 
-  LINE(354);
+  LINE(355);
         { /* if */
         CLUREF T_3_1;
         T_3_1.num = (locals.nargs.num > 0);
         if (T_3_1.num == true) { /* if */
 
-  LINE(355);
+  LINE(356);
             {
             locals.err = streamOPputl(locals.tyo, STR_NEWLIB_040expects_040no_040arguments);
             if (locals.err != ERR_ok)
@@ -3507,7 +3518,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else { /* else */
 
-  LINE(356);
+  LINE(357);
             {
             locals.err = duOPreset();
             if (locals.err != ERR_ok)
@@ -3517,14 +3528,14 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(358);
+  LINE(359);
     CLUREF T_2_23;
     locals.err = prefix(locals.cmnd, STR_dump, CLU_2, &T_2_23);
     if (locals.err != ERR_ok)
         goto ex_1;
     if (T_2_23.num == true) { /* elseif */
 
-  LINE(359);
+  LINE(360);
         { /* if */
         CLUREF T_3_1;
         CLUREF T_3_2;
@@ -3532,7 +3543,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         T_3_2.num = !T_3_1.num;
         if (T_3_2.num == true) { /* if */
 
-  LINE(360);
+  LINE(361);
             {
             locals.err = streamOPputl(locals.tyo, STR_DUMP_040expects_0401_040argument);
             if (locals.err != ERR_ok)
@@ -3541,10 +3552,10 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else { /* else */
 
-  LINE(361);
+  LINE(362);
             { /* begin */
 
-  LINE(362);
+  LINE(363);
                 {
                 CLUREF T_6_1;
                 CLUREF T_6_2;
@@ -3563,7 +3574,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
                 locals.fn.num = T_6_3.num;
                 }
 
-  LINE(363);
+  LINE(364);
                 {
                 CLUREF T_6_1;
                 CLUREF T_6_2;
@@ -3576,14 +3587,14 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
                 locals.fn.num = T_6_2.num;
                 }
 
-  LINE(364);
+  LINE(365);
                 {
                 locals.err = streamOPputs(locals.tyo, STR_Dumped_040to_040);
                 if (locals.err != ERR_ok)
                     goto ex_5;
                 }
 
-  LINE(365);
+  LINE(366);
                 {
                 CLUREF T_6_1;
                 locals.err = file_nameOPunparse(locals.fn, &T_6_1);
@@ -3599,7 +3610,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             __CLU_EX_HANDLER;
             if (locals.err == ERR_bad_format) {
 
-  LINE(366);
+  LINE(367);
                 {
                 locals.err = streamOPputl(locals.tyo, STR_bad_040format_040file_040name);
                 if (locals.err != ERR_ok)
@@ -3609,7 +3620,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             else if (locals.err == ERR_not_possible) {
                 locals.why.num = elist[0].num;
 
-  LINE(367);
+  LINE(368);
                 {
                 locals.err = streamOPputl(locals.tyo, locals.why);
                 if (locals.err != ERR_ok)
@@ -3624,14 +3635,14 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(370);
+  LINE(371);
     CLUREF T_2_24;
     locals.err = prefix(locals.cmnd, STR_callers, CLU_2, &T_2_24);
     if (locals.err != ERR_ok)
         goto ex_1;
     if (T_2_24.num == true) { /* elseif */
 
-  LINE(371);
+  LINE(372);
         { /* if */
         CLUREF T_3_1;
         CLUREF T_3_2;
@@ -3639,7 +3650,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         T_3_2.num = !T_3_1.num;
         if (T_3_2.num == true) { /* if */
 
-  LINE(372);
+  LINE(373);
             {
             locals.err = streamOPputl(locals.tyo, STR_CALLERS_040expects_0401_040argument);
             if (locals.err != ERR_ok)
@@ -3648,10 +3659,10 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
         }
         else { /* else */
 
-  LINE(373);
+  LINE(374);
             { /* begin */
 
-  LINE(374);
+  LINE(375);
                 {
                 CLUREF T_6_1;
                 if (1 < locals.args.array->ext_low || 1 > locals.args.array->ext_high) {
@@ -3669,7 +3680,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             __CLU_EX_HANDLER;
             if (locals.err == ERR_not_found) {
 
-  LINE(375);
+  LINE(376);
                 {
                 CLUREF T_5_1;
                 CLUREF T_5_2;
@@ -3693,7 +3704,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             else if (locals.err == ERR_not_possible) {
                 locals.why.num = elist[0].num;
 
-  LINE(377);
+  LINE(378);
                 {
                 locals.err = streamOPputl(locals.tyo, locals.why);
                 if (locals.err != ERR_ok)
@@ -3708,14 +3719,14 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(380);
+  LINE(381);
     CLUREF T_2_25;
     locals.err = prefix(locals.cmnd, STR_merge, CLU_1, &T_2_25);
     if (locals.err != ERR_ok)
         goto ex_1;
     if (T_2_25.num == true) { /* elseif */
 
-  LINE(381);
+  LINE(382);
         { /* for */
             locals.err = all_input_names(locals.args, STR_lib, locals.tyo, execute_command_IB_1, &locals, &locals.ecode2);
 
@@ -3734,14 +3745,14 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(392);
+  LINE(393);
     CLUREF T_2_26;
     locals.err = prefix(locals.cmnd, STR_forget, CLU_4, &T_2_26);
     if (locals.err != ERR_ok)
         goto ex_1;
     if (T_2_26.num == true) { /* elseif */
 
-  LINE(393);
+  LINE(394);
         { /* for array$elements */
         CLUREF T_3_1;
         CLUREF T_3_2;
@@ -3756,7 +3767,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             }
             locals.nm.num = T_3_3.array->store->data[T_3_1.num - T_3_3.array->ext_low + T_3_3.array->int_low];
 
-  LINE(394);
+  LINE(395);
             {
             CLUREF T_5_1;
             CLUREF T_5_2;
@@ -3775,14 +3786,14 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
             __CLU_EX_HANDLER;
             if (locals.err == ERR_not_found) {
 
-  LINE(396);
+  LINE(397);
                 {
                 locals.err = streamOPputs(locals.tyo, locals.nm);
                 if (locals.err != ERR_ok)
                     goto ex_1;
                 }
 
-  LINE(397);
+  LINE(398);
                 {
                 locals.err = streamOPputl(locals.tyo, STR__072_040not_040found);
                 if (locals.err != ERR_ok)
@@ -3800,14 +3811,14 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(400);
+  LINE(401);
     CLUREF T_2_27;
     locals.err = prefix(locals.cmnd, STR_unmerge, CLU_1, &T_2_27);
     if (locals.err != ERR_ok)
         goto ex_1;
     if (T_2_27.num == true) { /* elseif */
 
-  LINE(401);
+  LINE(402);
         { /* for */
             locals.err = all_input_names(locals.args, STR_lib, locals.tyo, execute_command_IB_2, &locals, &locals.ecode2);
 
@@ -3826,7 +3837,7 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     }
     else {
 
-  LINE(412);
+  LINE(413);
     CLUREF T_2_28;
     CLUREF T_2_29;
     locals.err = stringOPempty(locals.cmnd, &T_2_28);
@@ -3835,14 +3846,14 @@ execute_command(CLUREF cmnd, CLUREF args, CLUREF tyo, CLUREF comp)
     T_2_29.num = !T_2_28.num;
     if (T_2_29.num == true) { /* elseif */
 
-  LINE(413);
+  LINE(414);
         {
         locals.err = streamOPputs(locals.tyo, STR_unknown_040command_072_040);
         if (locals.err != ERR_ok)
             goto ex_1;
         }
 
-  LINE(414);
+  LINE(415);
         {
         locals.err = streamOPputl(locals.tyo, locals.cmnd);
         if (locals.err != ERR_ok)
@@ -3879,16 +3890,16 @@ static errcode
 execute_command_IB_1(CLUREF iv_1, execute_command_LOCALS_t *locals, errcode *iecode)
 {
     locals->fn.num = iv_1.num;
-    enter_iter_body_proc(382);
+    enter_iter_body_proc(383);
 
-  FB_LINE(382);
+  FB_LINE(383);
     {
     locals->err = streamOPputs(locals->tyo, STR_Merging_040);
     if (locals->err != ERR_ok)
         goto ex_0;
     }
 
-  FB_LINE(383);
+  FB_LINE(384);
     {
     CLUREF T_1_1;
     locals->err = file_nameOPunparse(locals->fn, &T_1_1);
@@ -3899,14 +3910,14 @@ execute_command_IB_1(CLUREF iv_1, execute_command_LOCALS_t *locals, errcode *iec
         goto ex_0;
     }
 
-  FB_LINE(384);
+  FB_LINE(385);
     {
     locals->err = streamOPflush(locals->tyo);
     if (locals->err != ERR_ok)
         goto ex_0;
     }
 
-  FB_LINE(385);
+  FB_LINE(386);
     {
     CLUREF T_2_1;
     locals->err = ceOPget_xlib(locals->comp, &T_2_1);
@@ -3922,14 +3933,14 @@ execute_command_IB_1(CLUREF iv_1, execute_command_LOCALS_t *locals, errcode *iec
     if (locals->err == ERR_not_possible) {
         locals->why.num = elist[0].num;
 
-  FB_LINE(387);
+  FB_LINE(388);
         {
         locals->err = streamOPputs(locals->tyo, STR__072_040);
         if (locals->err != ERR_ok)
             goto ex_0;
         }
 
-  FB_LINE(388);
+  FB_LINE(389);
         {
         locals->err = streamOPputs(locals->tyo, locals->why);
         if (locals->err != ERR_ok)
@@ -3941,7 +3952,7 @@ execute_command_IB_1(CLUREF iv_1, execute_command_LOCALS_t *locals, errcode *iec
     }
   end_1:;
 
-  FB_LINE(390);
+  FB_LINE(391);
     {
     CLUREF T_1_1;
     T_1_1.ch = '\n';
@@ -3964,16 +3975,16 @@ static errcode
 execute_command_IB_2(CLUREF iv_1, execute_command_LOCALS_t *locals, errcode *iecode)
 {
     locals->fn.num = iv_1.num;
-    enter_iter_body_proc(402);
+    enter_iter_body_proc(403);
 
-  FB_LINE(402);
+  FB_LINE(403);
     {
     locals->err = streamOPputs(locals->tyo, STR_Un_055Merging_040);
     if (locals->err != ERR_ok)
         goto ex_0;
     }
 
-  FB_LINE(403);
+  FB_LINE(404);
     {
     CLUREF T_1_1;
     locals->err = file_nameOPunparse(locals->fn, &T_1_1);
@@ -3984,14 +3995,14 @@ execute_command_IB_2(CLUREF iv_1, execute_command_LOCALS_t *locals, errcode *iec
         goto ex_0;
     }
 
-  FB_LINE(404);
+  FB_LINE(405);
     {
     locals->err = streamOPflush(locals->tyo);
     if (locals->err != ERR_ok)
         goto ex_0;
     }
 
-  FB_LINE(405);
+  FB_LINE(406);
     {
     CLUREF T_2_1;
     locals->err = ceOPget_xlib(locals->comp, &T_2_1);
@@ -4007,14 +4018,14 @@ execute_command_IB_2(CLUREF iv_1, execute_command_LOCALS_t *locals, errcode *iec
     if (locals->err == ERR_not_possible) {
         locals->why.num = elist[0].num;
 
-  FB_LINE(407);
+  FB_LINE(408);
         {
         locals->err = streamOPputs(locals->tyo, STR__072_040);
         if (locals->err != ERR_ok)
             goto ex_0;
         }
 
-  FB_LINE(408);
+  FB_LINE(409);
         {
         locals->err = streamOPputs(locals->tyo, locals->why);
         if (locals->err != ERR_ok)
@@ -4026,7 +4037,7 @@ execute_command_IB_2(CLUREF iv_1, execute_command_LOCALS_t *locals, errcode *iec
     }
   end_1:;
 
-  FB_LINE(410);
+  FB_LINE(411);
     {
     CLUREF T_1_1;
     T_1_1.ch = '\n';
@@ -4076,9 +4087,9 @@ xfile_execute(CLUREF args, CLUREF tyo, CLUREF comp)
         stringOPcons("read", CLU_1, CLUREF_make_num(4), &STR_read);
         xfile_execute_own_init = 1;
     }
-    enter_proc(418);
+    enter_proc(419);
 
-  LINE(419);
+  LINE(420);
     { /* for */
         locals.err = all_input_names(locals.args, STR_xfile, locals.tyo, xfile_execute_IB_1, &locals, &locals.ecode2);
 
@@ -4114,9 +4125,9 @@ static errcode
 xfile_execute_IB_1(CLUREF iv_1, xfile_execute_LOCALS_t *locals, errcode *iecode)
 {
     locals->fn.num = iv_1.num;
-    enter_iter_body_proc(421);
+    enter_iter_body_proc(422);
 
-  FB_LINE(420);
+  FB_LINE(421);
     {
     CLUREF T_2_1;
     locals->err = open_stream(locals->fn, STR_read, locals->tyo, &T_2_1);
@@ -4129,7 +4140,7 @@ xfile_execute_IB_1(CLUREF iv_1, xfile_execute_LOCALS_t *locals, errcode *iecode)
     __CLU_EX_HANDLER;
     if (locals->err == ERR_open_failed) {
 
-  FB_LINE(421);
+  FB_LINE(422);
         signal(ERR_ok); /* continue */
     }
     else { /* not handled */
@@ -4137,12 +4148,12 @@ xfile_execute_IB_1(CLUREF iv_1, xfile_execute_LOCALS_t *locals, errcode *iecode)
     }
   end_1:;
 
-  FB_LINE(422);
+  FB_LINE(423);
     for (;;) { /* while */
         if (true != true)
             break;
 
-  FB_LINE(423);
+  FB_LINE(424);
         {
         CLUREF T_3_1;
         locals->err = streamOPgetl(locals->st, &T_3_1);
@@ -4151,7 +4162,7 @@ xfile_execute_IB_1(CLUREF iv_1, xfile_execute_LOCALS_t *locals, errcode *iecode)
         locals->inl.num = T_3_1.num;
         }
 
-  FB_LINE(424);
+  FB_LINE(425);
         {
         locals->err = streamOPputl(locals->tyo, locals->inl);
         if (locals->err != ERR_ok)
@@ -4167,7 +4178,7 @@ xfile_execute_IB_1(CLUREF iv_1, xfile_execute_LOCALS_t *locals, errcode *iecode)
         }
       end_3:;
 
-  FB_LINE(426);
+  FB_LINE(427);
         {
         CLUREF T_3_1;
         CLUREF T_3_2;
@@ -4191,7 +4202,7 @@ xfile_execute_IB_1(CLUREF iv_1, xfile_execute_LOCALS_t *locals, errcode *iecode)
     }
   end_2:;
 
-  FB_LINE(429);
+  FB_LINE(430);
     {
     locals->err = streamOPclose(locals->st);
     if (locals->err != ERR_ok)
@@ -4226,9 +4237,9 @@ set_dir(CLUREF dir, CLUREF tyo)
         stringOPcons("bad format for directory!", CLU_1, CLUREF_make_num(25), &STR_bad_040format_040for_040directory_041);
         set_dir_own_init = 1;
     }
-    enter_proc(433);
+    enter_proc(434);
 
-  LINE(434);
+  LINE(435);
     {
     err = set_working_dir(dir);
     if (err != ERR_ok)
@@ -4239,7 +4250,7 @@ set_dir(CLUREF dir, CLUREF tyo)
     __CLU_EX_HANDLER;
     if (err == ERR_bad_format) {
 
-  LINE(436);
+  LINE(437);
         {
         err = streamOPputl(tyo, STR_bad_040format_040for_040directory_041);
         if (err != ERR_ok)
@@ -4287,9 +4298,9 @@ dump_file(CLUREF fn, CLUREF tyo)
         stringOPcons("read", CLU_1, CLUREF_make_num(4), &STR_read);
         dump_file_own_init = 1;
     }
-    enter_proc(441);
+    enter_proc(442);
 
-  LINE(442);
+  LINE(443);
     {
     CLUREF T_2_1;
     err = open_stream(fn, STR_read, tyo, &T_2_1);
@@ -4302,7 +4313,7 @@ dump_file(CLUREF fn, CLUREF tyo)
     __CLU_EX_HANDLER;
     if (err == ERR_open_failed) {
 
-  LINE(443);
+  LINE(444);
         { /* return */
         signal (ERR_ok);
         }
@@ -4312,12 +4323,12 @@ dump_file(CLUREF fn, CLUREF tyo)
     }
   end_1:;
 
-  LINE(444);
+  LINE(445);
     for (;;) { /* while */
         if (true != true)
             break;
 
-  LINE(445);
+  LINE(446);
         {
         CLUREF T_3_1;
         err = streamOPgetl(st, &T_3_1);
@@ -4342,14 +4353,14 @@ dump_file(CLUREF fn, CLUREF tyo)
     }
   end_2:;
 
-  LINE(448);
+  LINE(449);
     {
     err = streamOPclose(st);
     if (err != ERR_ok)
         goto ex_0;
     }
 
-  LINE(449);
+  LINE(450);
     {
     CLUREF T_2_1;
     T_2_1.ch = '\n';
@@ -4408,9 +4419,9 @@ all_input_names(CLUREF args, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
     locals.tyo = tyo;
     locals.proc = proc;
     locals.user_locals = user_locals;
-    enter_proc(453);
+    enter_proc(454);
 
-  LINE(454);
+  LINE(455);
     { /* for array$elements */
     CLUREF T_1_1;
     CLUREF T_1_2;
@@ -4425,7 +4436,7 @@ all_input_names(CLUREF args, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
         }
         locals.fs.num = T_1_3.array->store->data[T_1_1.num - T_1_3.array->ext_low + T_1_3.array->int_low];
 
-  LINE(455);
+  LINE(456);
         { /* for */
             locals.body_ctrl_req = false;
             locals.err = all_derived_names(locals.fs, locals.suffix, locals.tyo, all_input_names_IB_1, &locals, &locals.ecode2);
@@ -4492,9 +4503,9 @@ static errcode
 all_input_names_IB_1(CLUREF iv_1, all_input_names_LOCALS_t *locals, errcode *iecode)
 {
     locals->fn.num = iv_1.num;
-    enter_iter_body_proc(456);
+    enter_iter_body_proc(457);
 
-  FB_LINE(456);
+  FB_LINE(457);
     { /* yield */
     locals->err = (*locals->proc)(locals->fn, locals->user_locals, iecode);
     if (locals->body_ctrl_req && locals->err == ERR_iteriterbodyexit) {
@@ -4580,9 +4591,9 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
         stringOPcons(": no matching files", CLU_1, CLUREF_make_num(19), &STR__072_040no_040matching_040files);
         all_derived_names_own_init = 1;
     }
-    enter_proc(461);
+    enter_proc(462);
 
-  LINE(463);
+  LINE(464);
     { /* if */
     CLUREF T_2_1;
     CLUREF T_2_2;
@@ -4605,7 +4616,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
     }
     if (T_2_1.num == true) { /* if */
 
-  LINE(464);
+  LINE(465);
         {
         CLUREF T_3_1;
         locals.err = stringOPrest(locals.fs, CLU_2, &T_3_1);
@@ -4614,7 +4625,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
         locals.fs.num = T_3_1.num;
         }
 
-  LINE(465);
+  LINE(466);
         {
         CLUREF T_3_1;
         CLUREF T_3_2;
@@ -4625,11 +4636,11 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
         locals.subst.num = T_3_2.num;
         }
 
-  LINE(466);
+  LINE(467);
         { /* if */
         if (locals.subst.num == true) { /* if */
 
-  LINE(467);
+  LINE(468);
             {
             CLUREF T_4_1;
             locals.err = check_file_name(locals.fn, &T_4_1);
@@ -4640,7 +4651,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
         }
         } /* end if */
 
-  LINE(468);
+  LINE(469);
         {
         CLUREF T_3_1;
         locals.err = open_stream(locals.fn, STR_read, locals.tyo, &T_3_1);
@@ -4649,12 +4660,12 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
         locals.st.num = T_3_1.num;
         }
 
-  LINE(469);
+  LINE(470);
         for (;;) { /* while */
             if (true != true)
                 break;
 
-  LINE(470);
+  LINE(471);
             { /* for */
                 CLUREF T_5_1;
                 locals.err = streamOPgetl(locals.st, &T_5_1);
@@ -4716,14 +4727,14 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
         }
       end_2:;
 
-  LINE(475);
+  LINE(476);
         {
         locals.err = streamOPclose(locals.st);
         if (locals.err != ERR_ok)
             goto ex_1;
         }
 
-  LINE(476);
+  LINE(477);
         { /* return */
         signal (ERR_ok);
         }
@@ -4736,7 +4747,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
         || locals.err == ERR_open_failed)
     {
 
-  LINE(477);
+  LINE(478);
         { /* return */
         signal (ERR_ok);
         }
@@ -4746,7 +4757,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
     }
   end_1:;
 
-  LINE(478);
+  LINE(479);
     { /* if */
     CLUREF T_2_1;
     CLUREF T_2_2;
@@ -4758,7 +4769,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
     T_2_3.num = (T_2_2.num == 0);
     if (T_2_3.num == true) { /* if */
 
-  LINE(479);
+  LINE(480);
         {
         CLUREF T_3_1;
         locals.err = file_nameOPparse(locals.fs, &T_3_1);
@@ -4767,7 +4778,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
         locals.fn.num = T_3_1.num;
         }
 
-  LINE(480);
+  LINE(481);
         {
         CLUREF T_3_1;
         CLUREF T_3_2;
@@ -4780,7 +4791,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
         locals.subst.num = T_3_2.num;
         }
 
-  LINE(481);
+  LINE(482);
         {
         CLUREF T_3_1;
         locals.err = file_name_fill(locals.fn, locals.suffix, &T_3_1);
@@ -4789,11 +4800,11 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
         locals.fn.num = T_3_1.num;
         }
 
-  LINE(482);
+  LINE(483);
         { /* if */
         if (locals.subst.num == true) { /* if */
 
-  LINE(483);
+  LINE(484);
             {
             CLUREF T_4_1;
             locals.err = check_file_name(locals.fn, &T_4_1);
@@ -4804,7 +4815,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
         }
         } /* end if */
 
-  LINE(484);
+  LINE(485);
         { /* yield */
         locals.err = (*locals.proc)(locals.fn, locals.user_locals, iecode);
         if (locals.err != ERR_ok) {
@@ -4812,7 +4823,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
         }
         }
 
-  LINE(485);
+  LINE(486);
         { /* return */
         signal (ERR_ok);
         }
@@ -4828,7 +4839,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
     }
   end_3:;
 
-  LINE(487);
+  LINE(488);
     {
     CLUREF T_2_1;
     locals.err = file_specOPparse(locals.fs, &T_2_1);
@@ -4841,17 +4852,17 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
     __CLU_EX_HANDLER;
     if (locals.err == ERR_bad_format) {
 
-  LINE(489);
+  LINE(490);
         { /* begin */
 
-  LINE(490);
+  LINE(491);
             {
             locals.err = streamOPputs(locals.tyo, STR_bad_040format_040file_040name_040_055_040);
             if (locals.err != ERR_ok)
                 goto ex_5;
             }
 
-  LINE(491);
+  LINE(492);
             {
             locals.err = streamOPputl(locals.tyo, locals.fs);
             if (locals.err != ERR_ok)
@@ -4868,7 +4879,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
         }
       end_5:;
 
-  LINE(493);
+  LINE(494);
         { /* return */
         signal (ERR_ok);
         }
@@ -4878,7 +4889,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
     }
   end_4:;
 
-  LINE(495);
+  LINE(496);
     {
     CLUREF T_1_1;
     locals.err = file_specOPget_dir(locals.sp, &T_1_1);
@@ -4887,7 +4898,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
     locals.ddir.num = T_1_1.num;
     }
 
-  LINE(496);
+  LINE(497);
     {
     CLUREF T_1_1;
     locals.err = file_specOPget_name(locals.sp, &T_1_1);
@@ -4896,7 +4907,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
     locals.dnam.num = T_1_1.num;
     }
 
-  LINE(497);
+  LINE(498);
     {
     CLUREF T_1_1;
     locals.err = file_specOPget_suffix(locals.sp, &T_1_1);
@@ -4905,7 +4916,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
     locals.dsuf.num = T_1_1.num;
     }
 
-  LINE(498);
+  LINE(499);
     {
     CLUREF T_1_1;
     locals.err = file_specOPget_other(locals.sp, &T_1_1);
@@ -4914,12 +4925,12 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
     locals.doth.num = T_1_1.num;
     }
 
-  LINE(499);
+  LINE(500);
     {
     locals.subst.tf = false;
     }
 
-  LINE(500);
+  LINE(501);
     { /* if */
     CLUREF T_1_1;
     CLUREF T_1_2;
@@ -4931,7 +4942,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
         goto ex_0;
     if (T_1_2.num == true) { /* if */
 
-  LINE(501);
+  LINE(502);
         {
         CLUREF T_2_1;
         locals.err = working_dir(&T_2_1);
@@ -4942,7 +4953,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
     }
     } /* end if */
 
-  LINE(502);
+  LINE(503);
     { /* if */
     CLUREF T_1_1;
     CLUREF T_1_2;
@@ -4954,19 +4965,19 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
         goto ex_0;
     if (T_1_2.num == true) { /* if */
 
-  LINE(503);
+  LINE(504);
         {
         locals.subst.tf = true;
         }
 
-  LINE(504);
+  LINE(505);
         {
         locals.dsuf.num = locals.suffix.num;
         }
     }
     } /* end if */
 
-  LINE(506);
+  LINE(507);
     {
     CLUREF T_2_1;
     locals.err = file_specOPcreate(locals.ddir, locals.dnam, locals.dsuf, locals.doth, &T_2_1);
@@ -4979,7 +4990,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
     __CLU_EX_HANDLER;
     if (locals.err == ERR_bad_format) {
 
-  LINE(507);
+  LINE(508);
         {
         locals.subst.tf = false;
         }
@@ -4989,7 +5000,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
     }
   end_6:;
 
-  LINE(508);
+  LINE(509);
     {
     CLUREF T_1_1;
     locals.err = file_specOPunparse(locals.sp, &T_1_1);
@@ -4998,10 +5009,10 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
     locals.fs.num = T_1_1.num;
     }
 
-  LINE(509);
+  LINE(510);
     { /* begin */
 
-  LINE(510);
+  LINE(511);
         { /* for */
             locals.body_ctrl_req = false;
             locals.err = all_file_names(locals.fs, all_derived_names_IB_2, &locals, &locals.ecode2);
@@ -5045,7 +5056,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
                 goto ex_7;
         }
 
-  LINE(513);
+  LINE(514);
         { /* return */
         signal (ERR_ok);
         }
@@ -5056,31 +5067,31 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
     if (locals.err == ERR_not_possible) {
         locals.why.num = elist[0].num;
 
-  LINE(515);
+  LINE(516);
         { /* begin */
 
-  LINE(516);
+  LINE(517);
             {
             locals.err = streamOPputs(locals.tyo, STR_reading_040);
             if (locals.err != ERR_ok)
                 goto ex_8;
             }
 
-  LINE(517);
+  LINE(518);
             {
             locals.err = streamOPputs(locals.tyo, locals.fs);
             if (locals.err != ERR_ok)
                 goto ex_8;
             }
 
-  LINE(518);
+  LINE(519);
             {
             locals.err = streamOPputs(locals.tyo, STR__072_040);
             if (locals.err != ERR_ok)
                 goto ex_8;
             }
 
-  LINE(519);
+  LINE(520);
             {
             locals.err = streamOPputl(locals.tyo, locals.why);
             if (locals.err != ERR_ok)
@@ -5097,7 +5108,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
         }
       end_8:;
 
-  LINE(521);
+  LINE(522);
         { /* return */
         signal (ERR_ok);
         }
@@ -5109,7 +5120,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
     }
   end_7:;
 
-  LINE(524);
+  LINE(525);
     { /* if */
     CLUREF T_2_1;
     CLUREF T_2_2;
@@ -5121,7 +5132,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
     }
     if (T_2_1.num == true) { /* if */
 
-  LINE(525);
+  LINE(526);
         {
         CLUREF T_3_1;
         locals.err = file_specOPcreate(locals.ddir, locals.dnam, STR_clu, locals.doth, &T_3_1);
@@ -5130,7 +5141,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
         locals.sp.num = T_3_1.num;
         }
 
-  LINE(526);
+  LINE(527);
         { /* for */
             CLUREF T_3_1;
             locals.err = file_specOPunparse(locals.sp, &T_3_1);
@@ -5178,7 +5189,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
                 goto ex_9;
         }
 
-  LINE(529);
+  LINE(530);
         { /* return */
         signal (ERR_ok);
         }
@@ -5197,11 +5208,11 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
     }
   end_9:;
 
-  LINE(531);
+  LINE(532);
     { /* if */
     if (locals.subst.num == true) { /* if */
 
-  LINE(532);
+  LINE(533);
         {
         CLUREF T_3_1;
         locals.err = file_specOPcreate(locals.ddir, locals.dnam, CLU_empty_string, locals.doth, &T_3_1);
@@ -5210,7 +5221,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
         locals.sp.num = T_3_1.num;
         }
 
-  LINE(533);
+  LINE(534);
         { /* for */
             CLUREF T_3_1;
             locals.err = file_specOPunparse(locals.sp, &T_3_1);
@@ -5258,7 +5269,7 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
                 goto ex_10;
         }
 
-  LINE(536);
+  LINE(537);
         { /* return */
         signal (ERR_ok);
         }
@@ -5277,24 +5288,24 @@ all_derived_names(CLUREF fs, CLUREF suffix, CLUREF tyo, errcode (*proc)(), void 
     }
   end_10:;
 
-  LINE(538);
+  LINE(539);
     { /* begin */
 
-  LINE(539);
+  LINE(540);
         {
         locals.err = streamOPputs(locals.tyo, STR_reading_040);
         if (locals.err != ERR_ok)
             goto ex_11;
         }
 
-  LINE(540);
+  LINE(541);
         {
         locals.err = streamOPputs(locals.tyo, locals.fs);
         if (locals.err != ERR_ok)
             goto ex_11;
         }
 
-  LINE(541);
+  LINE(542);
         {
         locals.err = streamOPputl(locals.tyo, STR__072_040no_040matching_040files);
         if (locals.err != ERR_ok)
@@ -5330,9 +5341,9 @@ static errcode
 all_derived_names_IB_1(CLUREF iv_1, all_derived_names_LOCALS_t *locals, errcode *iecode)
 {
     locals->fn.num = iv_1.num;
-    enter_iter_body_proc(471);
+    enter_iter_body_proc(472);
 
-  FB_LINE(471);
+  FB_LINE(472);
     { /* yield */
     locals->err = (*locals->proc)(locals->fn, locals->user_locals, iecode);
     if (locals->body_ctrl_req && locals->err == ERR_iteriterbodyexit) {
@@ -5359,9 +5370,9 @@ static errcode
 all_derived_names_IB_2(CLUREF iv_1, all_derived_names_LOCALS_t *locals, errcode *iecode)
 {
     locals->fn.num = iv_1.num;
-    enter_iter_body_proc(511);
+    enter_iter_body_proc(512);
 
-  FB_LINE(511);
+  FB_LINE(512);
     { /* yield */
     locals->err = (*locals->proc)(locals->fn, locals->user_locals, iecode);
     if (locals->body_ctrl_req && locals->err == ERR_iteriterbodyexit) {
@@ -5388,9 +5399,9 @@ static errcode
 all_derived_names_IB_3(CLUREF iv_1, all_derived_names_LOCALS_t *locals, errcode *iecode)
 {
     locals->fn.num = iv_1.num;
-    enter_iter_body_proc(527);
+    enter_iter_body_proc(528);
 
-  FB_LINE(527);
+  FB_LINE(528);
     { /* yield */
     locals->err = (*locals->proc)(locals->fn, locals->user_locals, iecode);
     if (locals->body_ctrl_req && locals->err == ERR_iteriterbodyexit) {
@@ -5417,9 +5428,9 @@ static errcode
 all_derived_names_IB_4(CLUREF iv_1, all_derived_names_LOCALS_t *locals, errcode *iecode)
 {
     locals->fn.num = iv_1.num;
-    enter_iter_body_proc(534);
+    enter_iter_body_proc(535);
 
-  FB_LINE(534);
+  FB_LINE(535);
     { /* yield */
     locals->err = (*locals->proc)(locals->fn, locals->user_locals, iecode);
     if (locals->body_ctrl_req && locals->err == ERR_iteriterbodyexit) {
@@ -5461,14 +5472,14 @@ as2str(CLUREF a, CLUREF *ret_1)
         stringOPcons(" ", CLU_1, CLUREF_make_num(1), &STR__040);
         as2str_own_init = 1;
     }
-    enter_proc(545);
+    enter_proc(546);
 
-  LINE(546);
+  LINE(547);
     {
     res = CLU_empty_string;
     }
 
-  LINE(547);
+  LINE(548);
     { /* for array$elements */
     CLUREF T_1_1;
     CLUREF T_1_2;
@@ -5483,7 +5494,7 @@ as2str(CLUREF a, CLUREF *ret_1)
         }
         each_s.num = T_1_3.array->store->data[T_1_1.num - T_1_3.array->ext_low + T_1_3.array->int_low];
 
-  LINE(548);
+  LINE(549);
         {
         CLUREF T_2_1;
         CLUREF T_2_2;
@@ -5500,7 +5511,7 @@ as2str(CLUREF a, CLUREF *ret_1)
     end_inline_for_1:
     __CLU_END_LABEL;
 
-  LINE(550);
+  LINE(551);
     { /* return */
     {
     ret_1->num = res.num;

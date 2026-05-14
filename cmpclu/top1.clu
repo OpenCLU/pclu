@@ -32,10 +32,11 @@ start_up = proc ()
 	stream$puts(tyo, op_sys_name())
 	stream$puts(tyo, ") *****\n\n")
 	tyi: stream := stream$primary_input()
+	li: lineedit := lineedit$create(tyi)
 	while true do
 		if stream$is_terminal(tyi) then
 		    tyi.prompt := "command(s): "
-		    line := str$s2ac(lineedit(tyi, "command(s): "))
+		    line := str$s2ac(lineedit$getline(li, "command(s): "))
 		    tyi.prompt := ""
 		  else
 		    stream$putl(tyo, "command(s): ")

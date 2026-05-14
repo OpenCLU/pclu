@@ -5,797 +5,33 @@
 #include "pclu_sys.h"
 
 
+/**** BEGIN CLUSTER lineedit ****/
 
-/**** BEGIN PROCEDURE fill ****/
-
+extern errcode lineeditOPsetup_keytable();
+extern errcode arrayOPnew();
 extern errcode intOPfrom_to();
 extern errcode stringOPconcat();
-static int fill_own_init = 0;
-
-errcode
-fill(CLUREF substring, CLUREF times, CLUREF *ret_1)
-{
-    errcode err;
-    CLUREF dum;
-    CLUREF i;
-    if (fill_own_init == 0) {
-        fill_own_init = 1;
-    }
-    enter_proc(102);
-
-  LINE(105);
-    {
-    dum = CLU_empty_string;
-    }
-
-  LINE(106);
-    { /* for int$from_to */
-    CLUREF T_1_1;
-    CLUREF T_1_2;
-    T_1_2.num = times.num;
-    for (T_1_1.num = 1; T_1_1.num <= T_1_2.num; T_1_1.num++
-    ) {
-        i.num = T_1_1.num;
-
-  LINE(107);
-        {
-        CLUREF T_2_1;
-        err = stringOPconcat(dum, substring, &T_2_1);
-        if (err != ERR_ok)
-            goto ex_0;
-        dum.num = T_2_1.num;
-        }
-    }
-    }
-    end_inline_for_1:
-    __CLU_END_LABEL;
-
-  LINE(109);
-    { /* return */
-    {
-    ret_1->num = dum.num;
-    }
-    signal (ERR_ok);
-    }
-
-    goto end_0;
-  ex_0:
-    __CLU_EX_HANDLER;
-    if (err != ERR_failure)
-        elist[0] = _pclu_erstr(err);
-    signal(ERR_failure);
-  end_0:
-    elist[0] = no_return_values_STRING;
-    signal(ERR_failure);
-}
-
-/**** END PROCEDURE fill ****/
-
-
-
-/**** BEGIN PROCEDURE insert_text ****/
-
 extern errcode intOPle();
 extern errcode stringOPsize();
 extern errcode stringOPrest();
 extern errcode streamOPputs();
-extern errcode fill();
+extern errcode lineeditOPfill();
 extern errcode stringOPsubstr();
 extern errcode intOPsub();
 extern errcode intOPadd();
-static CLUREF STR__033_133D;
-static int insert_text_own_init = 0;
-
-errcode
-insert_text(CLUREF str, CLUREF text_to_insert, CLUREF current_text, CLUREF current_pos, CLUREF *ret_1, CLUREF *ret_2)
-{
-    errcode err;
-    CLUREF rest_of_line;
-    CLUREF new_text;
-    if (insert_text_own_init == 0) {
-        stringOPcons("\033[D", CLU_1, CLUREF_make_num(3), &STR__033_133D);
-        insert_text_own_init = 1;
-    }
-    enter_proc(113);
-
-  LINE(121);
-    { /* if */
-    CLUREF T_1_1;
-    CLUREF T_1_2;
-    err = stringOPsize(current_text, &T_1_1);
-    if (err != ERR_ok)
-        goto ex_0;
-    T_1_2.num = (current_pos.num <= T_1_1.num);
-    if (T_1_2.num == true) { /* if */
-
-  LINE(122);
-        {
-        CLUREF T_2_1;
-        err = stringOPrest(current_text, current_pos, &T_2_1);
-        if (err != ERR_ok)
-            goto ex_0;
-        rest_of_line.num = T_2_1.num;
-        }
-
-  LINE(123);
-        {
-        CLUREF T_2_1;
-        CLUREF T_2_2;
-        CLUREF T_2_3;
-        CLUREF T_2_4;
-        err = stringOPconcat(text_to_insert, rest_of_line, &T_2_1);
-        if (err != ERR_ok)
-            goto ex_0;
-        err = stringOPsize(rest_of_line, &T_2_2);
-        if (err != ERR_ok)
-            goto ex_0;
-        err = fill(STR__033_133D, T_2_2, &T_2_3);
-        if (err != ERR_ok)
-            goto ex_0;
-        err = stringOPconcat(T_2_1, T_2_3, &T_2_4);
-        if (err != ERR_ok)
-            goto ex_0;
-        err = streamOPputs(str, T_2_4);
-        if (err != ERR_ok)
-            goto ex_0;
-        }
-
-  LINE(125);
-        {
-        CLUREF T_2_1;
-        CLUREF T_2_2;
-        CLUREF T_2_3;
-        CLUREF T_2_4;
-        T_2_1.num = current_pos.num - 1;
-        if ((T_2_1.num >= 0 && current_pos.num < 0 && (-1) < 0) ||
-            (T_2_1.num <= 0 && current_pos.num > 0 && (-1) > 0)) {
-            err = ERR_overflow;
-            goto ex_0;
-        }
-        err = stringOPsubstr(current_text, CLU_1, T_2_1, &T_2_2);
-        if (err != ERR_ok)
-            goto ex_0;
-        err = stringOPconcat(T_2_2, text_to_insert, &T_2_3);
-        if (err != ERR_ok)
-            goto ex_0;
-        err = stringOPconcat(T_2_3, rest_of_line, &T_2_4);
-        if (err != ERR_ok)
-            goto ex_0;
-        new_text.num = T_2_4.num;
-        }
-
-  LINE(127);
-        { /* return */
-        {
-        ret_1->num = new_text.num;
-        }
-        {
-        CLUREF T_2_1;
-        CLUREF T_2_2;
-        err = stringOPsize(text_to_insert, &T_2_1);
-        if (err != ERR_ok)
-            goto ex_0;
-        T_2_2.num = current_pos.num + T_2_1.num;
-        if ((T_2_2.num > 0 && current_pos.num < 0 && T_2_1.num < 0) ||
-            (T_2_2.num < 0 && current_pos.num > 0 && T_2_1.num > 0)) {
-            err = ERR_overflow;
-            goto ex_0;
-        }
-        ret_2->num = T_2_2.num;
-        }
-        signal (ERR_ok);
-        }
-    }
-    else { /* else */
-
-  LINE(129);
-        {
-        err = streamOPputs(str, text_to_insert);
-        if (err != ERR_ok)
-            goto ex_0;
-        }
-
-  LINE(130);
-        { /* return */
-        {
-        CLUREF T_2_1;
-        err = stringOPconcat(current_text, text_to_insert, &T_2_1);
-        if (err != ERR_ok)
-            goto ex_0;
-        ret_1->num = T_2_1.num;
-        }
-        {
-        CLUREF T_2_2;
-        CLUREF T_2_3;
-        err = stringOPsize(text_to_insert, &T_2_2);
-        if (err != ERR_ok)
-            goto ex_0;
-        T_2_3.num = current_pos.num + T_2_2.num;
-        if ((T_2_3.num > 0 && current_pos.num < 0 && T_2_2.num < 0) ||
-            (T_2_3.num < 0 && current_pos.num > 0 && T_2_2.num > 0)) {
-            err = ERR_overflow;
-            goto ex_0;
-        }
-        ret_2->num = T_2_3.num;
-        }
-        signal (ERR_ok);
-        }
-    }} /* end if */
-
-    goto end_0;
-  ex_0:
-    __CLU_EX_HANDLER;
-    if (err != ERR_failure)
-        elist[0] = _pclu_erstr(err);
-    signal(ERR_failure);
-  end_0:
-    elist[0] = no_return_values_STRING;
-    signal(ERR_failure);
-}
-
-/**** END PROCEDURE insert_text ****/
-
-
-
-/**** BEGIN PROCEDURE delete_text ****/
-
 extern errcode intOPge();
 extern errcode intOPgt();
-static CLUREF STR__040;
-static int delete_text_own_init = 0;
-
-errcode
-delete_text(CLUREF str, CLUREF current_text, CLUREF current_pos, CLUREF del_start, CLUREF del_end, CLUREF *ret_1, CLUREF *ret_2)
-{
-    errcode err;
-    CLUREF rest_of_line;
-    CLUREF get_to_start;
-    CLUREF new_pos;
-    CLUREF new_text;
-    if (delete_text_own_init == 0) {
-        stringOPcons("\033[D", CLU_1, CLUREF_make_num(3), &STR__033_133D);
-        stringOPcons(" ", CLU_1, CLUREF_make_num(1), &STR__040);
-        delete_text_own_init = 1;
-    }
-    enter_proc(137);
-
-  LINE(146);
-    { /* if */
-    CLUREF T_1_1;
-    T_1_1.num = (del_end.num >= del_start.num);
-    if (T_1_1.num == true) { /* if */
-
-  LINE(147);
-        {
-        CLUREF T_3_1;
-        CLUREF T_3_2;
-        CLUREF T_3_3;
-        T_3_1.num = del_end.num + 1;
-        if ((T_3_1.num > 0 && del_end.num < 0 && 1 < 0) ||
-            (T_3_1.num < 0 && del_end.num > 0 && 1 > 0)) {
-            err = ERR_overflow;
-            goto ex_1;
-        }
-        err = stringOPsize(current_text, &T_3_2);
-        if (err != ERR_ok)
-            goto ex_1;
-        err = stringOPsubstr(current_text, T_3_1, T_3_2, &T_3_3);
-        if (err != ERR_ok)
-            goto ex_1;
-        rest_of_line.num = T_3_3.num;
-        }
-        goto end_1;
-      ex_1: /* except */
-        __CLU_EX_HANDLER;
-        if (err == ERR_bounds) {
-
-  LINE(149);
-            {
-            rest_of_line = CLU_empty_string;
-            }
-        }
-        else { /* not handled */
-            goto ex_0;
-        }
-      end_1:;
-
-  LINE(151);
-        {
-        get_to_start = CLU_empty_string;
-        }
-
-  LINE(153);
-        { /* if */
-        CLUREF T_2_1;
-        T_2_1.num = (current_pos.num > del_start.num);
-        if (T_2_1.num == true) { /* if */
-
-  LINE(154);
-            {
-            CLUREF T_3_1;
-            CLUREF T_3_2;
-            T_3_1.num = current_pos.num - del_start.num;
-            if ((T_3_1.num >= 0 && current_pos.num < 0 && (-del_start.num) < 0) ||
-                (T_3_1.num <= 0 && current_pos.num > 0 && (-del_start.num) > 0)) {
-                err = ERR_overflow;
-                goto ex_0;
-            }
-            err = fill(STR__033_133D, T_3_1, &T_3_2);
-            if (err != ERR_ok)
-                goto ex_0;
-            get_to_start.num = T_3_2.num;
-            }
-        }
-        else { /* else */
-
-  LINE(156);
-            {
-            CLUREF T_3_1;
-            CLUREF T_3_2;
-            T_3_1.num = del_start.num - current_pos.num;
-            if ((T_3_1.num >= 0 && del_start.num < 0 && (-current_pos.num) < 0) ||
-                (T_3_1.num <= 0 && del_start.num > 0 && (-current_pos.num) > 0)) {
-                err = ERR_overflow;
-                goto ex_0;
-            }
-            err = stringOPsubstr(current_text, current_pos, T_3_1, &T_3_2);
-            if (err != ERR_ok)
-                goto ex_0;
-            get_to_start.num = T_3_2.num;
-            }
-        }} /* end if */
-
-  LINE(162);
-        { /* if */
-        CLUREF T_2_1;
-        T_2_1.num = (current_pos.num <= del_start.num);
-        if (T_2_1.num == true) { /* if */
-
-  LINE(163);
-            {
-            new_pos.num = current_pos.num;
-            }
-        }
-        else {
-
-  LINE(164);
-        CLUREF T_2_2;
-        T_2_2.num = (current_pos.num > del_end.num);
-        if (T_2_2.num == true) { /* elseif */
-
-  LINE(165);
-            {
-            CLUREF T_3_1;
-            CLUREF T_3_2;
-            CLUREF T_3_3;
-            T_3_1.num = current_pos.num - del_end.num;
-            if ((T_3_1.num >= 0 && current_pos.num < 0 && (-del_end.num) < 0) ||
-                (T_3_1.num <= 0 && current_pos.num > 0 && (-del_end.num) > 0)) {
-                err = ERR_overflow;
-                goto ex_0;
-            }
-            T_3_2.num = T_3_1.num + del_start.num;
-            if ((T_3_2.num > 0 && T_3_1.num < 0 && del_start.num < 0) ||
-                (T_3_2.num < 0 && T_3_1.num > 0 && del_start.num > 0)) {
-                err = ERR_overflow;
-                goto ex_0;
-            }
-            T_3_3.num = T_3_2.num - 1;
-            if ((T_3_3.num >= 0 && T_3_2.num < 0 && (-1) < 0) ||
-                (T_3_3.num <= 0 && T_3_2.num > 0 && (-1) > 0)) {
-                err = ERR_overflow;
-                goto ex_0;
-            }
-            new_pos.num = T_3_3.num;
-            }
-        }
-        else { /* else */
-
-  LINE(167);
-            {
-            new_pos.num = del_start.num;
-            }
-        }}} /* end if */
-
-  LINE(170);
-        { /* if */
-        CLUREF T_2_1;
-        CLUREF T_2_2;
-        err = stringOPsize(current_text, &T_2_1);
-        if (err != ERR_ok)
-            goto ex_0;
-        T_2_2.num = (new_pos.num <= T_2_1.num);
-        if (T_2_2.num == true) { /* if */
-
-  LINE(171);
-            {
-            CLUREF T_3_1;
-            CLUREF T_3_2;
-            CLUREF T_3_3;
-            CLUREF T_3_4;
-            CLUREF T_3_5;
-            CLUREF T_3_6;
-            CLUREF T_3_7;
-            CLUREF T_3_8;
-            CLUREF T_3_9;
-            CLUREF T_3_10;
-            err = stringOPconcat(get_to_start, rest_of_line, &T_3_1);
-            if (err != ERR_ok)
-                goto ex_0;
-            T_3_2.num = del_end.num - del_start.num;
-            if ((T_3_2.num >= 0 && del_end.num < 0 && (-del_start.num) < 0) ||
-                (T_3_2.num <= 0 && del_end.num > 0 && (-del_start.num) > 0)) {
-                err = ERR_overflow;
-                goto ex_0;
-            }
-            T_3_3.num = T_3_2.num + 1;
-            if ((T_3_3.num > 0 && T_3_2.num < 0 && 1 < 0) ||
-                (T_3_3.num < 0 && T_3_2.num > 0 && 1 > 0)) {
-                err = ERR_overflow;
-                goto ex_0;
-            }
-            err = fill(STR__040, T_3_3, &T_3_4);
-            if (err != ERR_ok)
-                goto ex_0;
-            err = stringOPconcat(T_3_1, T_3_4, &T_3_5);
-            if (err != ERR_ok)
-                goto ex_0;
-            err = stringOPsize(current_text, &T_3_6);
-            if (err != ERR_ok)
-                goto ex_0;
-            T_3_7.num = T_3_6.num - new_pos.num;
-            if ((T_3_7.num >= 0 && T_3_6.num < 0 && (-new_pos.num) < 0) ||
-                (T_3_7.num <= 0 && T_3_6.num > 0 && (-new_pos.num) > 0)) {
-                err = ERR_overflow;
-                goto ex_0;
-            }
-            T_3_8.num = T_3_7.num + 1;
-            if ((T_3_8.num > 0 && T_3_7.num < 0 && 1 < 0) ||
-                (T_3_8.num < 0 && T_3_7.num > 0 && 1 > 0)) {
-                err = ERR_overflow;
-                goto ex_0;
-            }
-            err = fill(STR__033_133D, T_3_8, &T_3_9);
-            if (err != ERR_ok)
-                goto ex_0;
-            err = stringOPconcat(T_3_5, T_3_9, &T_3_10);
-            if (err != ERR_ok)
-                goto ex_0;
-            err = streamOPputs(str, T_3_10);
-            if (err != ERR_ok)
-                goto ex_0;
-            }
-        }
-        } /* end if */
-
-  LINE(176);
-        {
-        CLUREF T_2_1;
-        CLUREF T_2_2;
-        CLUREF T_2_3;
-        T_2_1.num = del_start.num - 1;
-        if ((T_2_1.num >= 0 && del_start.num < 0 && (-1) < 0) ||
-            (T_2_1.num <= 0 && del_start.num > 0 && (-1) > 0)) {
-            err = ERR_overflow;
-            goto ex_0;
-        }
-        err = stringOPsubstr(current_text, CLU_1, T_2_1, &T_2_2);
-        if (err != ERR_ok)
-            goto ex_0;
-        err = stringOPconcat(T_2_2, rest_of_line, &T_2_3);
-        if (err != ERR_ok)
-            goto ex_0;
-        new_text.num = T_2_3.num;
-        }
-
-  LINE(178);
-        { /* return */
-        {
-        ret_1->num = new_text.num;
-        }
-        {
-        ret_2->num = new_pos.num;
-        }
-        signal (ERR_ok);
-        }
-    }
-    else { /* else */
-
-  LINE(181);
-        { /* return */
-        {
-        ret_1->num = current_text.num;
-        }
-        {
-        ret_2->num = current_pos.num;
-        }
-        signal (ERR_ok);
-        }
-    }} /* end if */
-
-    goto end_0;
-  ex_0:
-    __CLU_EX_HANDLER;
-    if (err != ERR_failure)
-        elist[0] = _pclu_erstr(err);
-    signal(ERR_failure);
-  end_0:
-    elist[0] = no_return_values_STRING;
-    signal(ERR_failure);
-}
-
-/**** END PROCEDURE delete_text ****/
-
-
-
-/**** BEGIN PROCEDURE find_word ****/
-
 extern errcode intOPfrom_to_by();
 extern errcode intOPequal();
 extern errcode stringOPindexc();
 extern errcode stringOPfetch();
 extern errcode boolOPnot();
-
-errcode
-find_word(CLUREF current_text, CLUREF current_pos, CLUREF delim, CLUREF *ret_1, CLUREF *ret_2)
-{
-    errcode err;
-    CLUREF beg;
-    CLUREF i;
-    CLUREF ending;
-    enter_proc(186);
-
-  LINE(194);
-    { /* if */
-    CLUREF T_1_1;
-    CLUREF T_1_2;
-    err = stringOPsize(current_text, &T_1_1);
-    if (err != ERR_ok)
-        goto ex_0;
-    T_1_2.num = (current_pos.num > T_1_1.num);
-    if (T_1_2.num == true) { /* if */
-
-  LINE(195);
-        {
-        CLUREF T_2_1;
-        err = stringOPsize(current_text, &T_2_1);
-        if (err != ERR_ok)
-            goto ex_0;
-        current_pos.num = T_2_1.num;
-        }
-    }
-    } /* end if */
-
-  LINE(198);
-    {
-    beg.num = 1;
-    }
-
-  LINE(199);
-    { /* for int$from_to_by */
-    CLUREF T_2_1;
-    CLUREF T_2_2;
-    CLUREF T_2_3;
-    T_2_2.num = 1;
-    T_2_3.num = -1;
-    for (T_2_1.num = current_pos.num; ((T_2_3.num == 0) || ((T_2_3.num > 0)? (T_2_1.num <= T_2_2.num) : (T_2_1.num >= T_2_2.num))); T_2_1.num += T_2_3.num) {
-        i.num = T_2_1.num;
-
-  LINE(200);
-        { /* if */
-        CLUREF T_3_1;
-        CLUREF T_3_2;
-        CLUREF T_3_3;
-        err = stringOPfetch(current_text, i, &T_3_1);
-        if (err != ERR_ok)
-            goto ex_1;
-        err = stringOPindexc(T_3_1, delim, &T_3_2);
-        if (err != ERR_ok)
-            goto ex_1;
-        T_3_3.num = (T_3_2.num == 0);
-        if (T_3_3.num == true) { /* if */
-
-  LINE(201);
-            {
-            beg.num = i.num;
-            }
-        }
-        else {
-
-  LINE(202);
-        CLUREF T_3_4;
-        CLUREF T_3_5;
-        T_3_4.num = (beg.num == 1);
-        T_3_5.num = !T_3_4.num;
-        if (T_3_5.num == true) { /* elseif */
-
-  LINE(203);
-            { /* exit */
-                err = ((errcode)"ERR_got_it");
-                goto ex_1;
-            }
-        }
-        }} /* end if */
-    }
-    }
-    end_inline_for_1:
-    __CLU_END_LABEL;
-    goto end_1;
-  ex_1: /* except */
-    __CLU_EX_HANDLER;
-    if (errcmp(err, "ERR_got_it")) {
-    }
-    else { /* not handled */
-        goto ex_0;
-    }
-  end_1:;
-
-  LINE(207);
-    {
-    ending.num = 0;
-    }
-
-  LINE(208);
-    { /* for int$from_to */
-    CLUREF T_1_1;
-    CLUREF T_1_2;
-    CLUREF T_1_3;
-    err = stringOPsize(current_text, &T_1_1);
-    if (err != ERR_ok)
-        goto ex_0;
-    T_1_3.num = T_1_1.num;
-    for (T_1_2.num = current_pos.num; T_1_2.num <= T_1_3.num; T_1_2.num++
-    ) {
-        i.num = T_1_2.num;
-
-  LINE(209);
-        { /* if */
-        CLUREF T_2_1;
-        CLUREF T_2_2;
-        CLUREF T_2_3;
-        CLUREF T_2_4;
-        err = stringOPfetch(current_text, i, &T_2_1);
-        if (err != ERR_ok)
-            goto ex_0;
-        err = stringOPindexc(T_2_1, delim, &T_2_2);
-        if (err != ERR_ok)
-            goto ex_0;
-        T_2_3.num = (T_2_2.num == 0);
-        T_2_4.num = !T_2_3.num;
-        if (T_2_4.num == true) { /* if */
-
-  LINE(210);
-            {
-            ending.num = i.num;
-            }
-        }
-        else {
-
-  LINE(211);
-        CLUREF T_2_5;
-        CLUREF T_2_6;
-        T_2_5.num = (ending.num == 0);
-        T_2_6.num = !T_2_5.num;
-        if (T_2_6.num == true) { /* elseif */
-
-  LINE(212);
-            { /* return */
-            {
-            ret_1->num = beg.num;
-            }
-            {
-            ret_2->num = ending.num;
-            }
-            signal (ERR_ok);
-            }
-        }
-        }} /* end if */
-    }
-    }
-    end_inline_for_2:
-    __CLU_END_LABEL;
-
-  LINE(216);
-    { /* return */
-    {
-    ret_1->num = beg.num;
-    }
-    {
-    CLUREF T_1_1;
-    err = stringOPsize(current_text, &T_1_1);
-    if (err != ERR_ok)
-        goto ex_0;
-    ret_2->num = T_1_1.num;
-    }
-    signal (ERR_ok);
-    }
-
-    goto end_0;
-  ex_0:
-    __CLU_EX_HANDLER;
-    if (err != ERR_failure)
-        elist[0] = _pclu_erstr(err);
-    signal(ERR_failure);
-  end_0:
-    elist[0] = no_return_values_STRING;
-    signal(ERR_failure);
-}
-
-/**** END PROCEDURE find_word ****/
-
-
-
-/**** BEGIN PROCEDURE getc_noeof ****/
-
 extern errcode streamOPgetc_image();
 extern errcode streamOPset_eof_flag();
 extern errcode charOPi2c();
-
-errcode
-getc_noeof(CLUREF str, CLUREF *ret_1)
-{
-    errcode err;
-    enter_proc(220);
-
-  LINE(224);
-    { /* return */
-    {
-    CLUREF T_2_1;
-    err = streamOPgetc_image(str, &T_2_1);
-    if (err != ERR_ok)
-        goto ex_1;
-    ret_1->num = T_2_1.num;
-    }
-    signal (ERR_ok);
-    }
-    goto end_1;
-  ex_1: /* except */
-    __CLU_EX_HANDLER;
-    if (err == ERR_end_of_file) {
-
-  LINE(225);
-        {
-        err = streamOPset_eof_flag(str, CLU_false);
-        if (err != ERR_ok)
-            goto ex_0;
-        }
-
-  LINE(226);
-        { /* return */
-        {
-        CLUREF T_2_1;
-        err = charOPi2c(CLU_4, &T_2_1);
-        if (err != ERR_ok)
-            goto ex_0;
-        ret_1->num = T_2_1.num;
-        }
-        signal (ERR_ok);
-        }
-    }
-    else { /* not handled */
-        goto ex_0;
-    }
-  end_1:;
-
-    goto end_0;
-  ex_0:
-    __CLU_EX_HANDLER;
-    if (err != ERR_failure)
-        elist[0] = _pclu_erstr(err);
-    signal(ERR_failure);
-  end_0:
-    elist[0] = no_return_values_STRING;
-    signal(ERR_failure);
-}
-
-/**** END PROCEDURE getc_noeof ****/
-
-
-
-/**** BEGIN PROCEDURE get_key_press ****/
-
-extern errcode setup_keytable();
-extern errcode getc_noeof();
+extern errcode structOPget_3();
+extern errcode structOPget_1();
+extern errcode lineeditOPgetc_noeof();
 extern errcode charOPge();
 extern errcode charOPle();
 extern errcode charOPc2i();
@@ -810,385 +46,48 @@ extern errcode timeOPsub();
 extern errcode stableOPlookup();
 extern errcode streamOPset_rescan();
 extern errcode streamOPget_rescan();
+extern errcode stableOPcreate();
+extern errcode stableOPinsert();
+extern errcode _home_dir();
+extern errcode lineeditOPoverload_keytable_file();
+extern errcode file_nameOPparse();
+extern errcode _system_root();
+extern errcode lineeditOPsetup_default_keytable();
+extern errcode streamOPopen();
+extern errcode lineeditOPreplace();
+extern errcode streamOPgetl();
+extern errcode charOPequal();
+extern errcode streamOPputl();
+extern errcode streamOPerror_output();
+extern errcode file_nameOPunparse();
+extern errcode upper_case();
+extern errcode stringOPindexs();
+extern errcode stableOPdelete();
+extern errcode streamOPclose();
+extern errcode structOPget_2();
+extern errcode arrayOPhigh();
+extern errcode streamOPscripts();
+extern errcode streamOPrem_script();
+extern errcode arrayOPaddh();
+extern errcode lineeditOPget_key_press();
+extern errcode lineeditOPinsert_text();
+extern errcode lineeditOPdelete_text();
+extern errcode arrayOPtop();
+extern errcode arrayOPsize();
+extern errcode arrayOPreml();
+extern errcode arrayOPelements();
+extern errcode streamOPadd_script();
+extern errcode intOPlt();
+extern errcode arrayOPfetch();
+extern errcode arrayOPlow();
+extern errcode lineeditOPfind_word();
 extern const struct REQS * const stable_of_value_t_reqs;
 extern struct OPS *int_ops;
 extern const OWN_req stable_ownreqs;
 extern struct OPS *stable_ops;
 struct OPS *stable_of_int_ops __CLU_COMMON;
-static int get_key_press_own_init = 0;
-CLUREF get_key_pressOPbindings;
-
-errcode
-get_key_press(CLUREF str, CLUREF *ret_1, CLUREF *ret_2)
-{
-    errcode err;
-    CLUREF so_far;
-    CLUREF put_back;
-    CLUREF last_exact;
-    CLUREF ismore;
-    CLUREF first_time;
-    CLUREF exact;
-    CLUREF partial;
-    CLUREF key_press;
-    CLUREF a;
-    if (get_key_press_own_init == 0) {
-        add_parm_info_type(0, (const struct OPS *)int_ops, stable_of_value_t_reqs);
-        find_type_instance(stable_ops, 1, &stable_ownreqs, &(stable_of_int_ops));
-        get_key_press_own_init = 1;
-        {
-        CLUREF T_0_1;
-        err = setup_keytable(&T_0_1);
-        if (err != ERR_ok)
-            goto ex_0;
-        get_key_pressOPbindings.num = T_0_1.num;
-        }
-    }
-    enter_proc(231);
-
-  LINE(239);
-    {
-    so_far = CLU_empty_string;
-    }
-
-  LINE(240);
-    {
-    put_back = CLU_empty_string;
-    }
-
-  LINE(241);
-    {
-    last_exact = CLU_empty_string;
-    }
-
-  LINE(243);
-    {
-    first_time.tf = true;
-    }
-
-  LINE(249);
-    for (;;) { /* while */
-        if (true != true)
-            break;
-
-  LINE(253);
-        {
-        CLUREF T_2_1;
-        err = getc_noeof(str, &T_2_1);
-        if (err != ERR_ok)
-            goto ex_0;
-        key_press.num = T_2_1.num;
-        }
-
-  LINE(255);
-        { /* if */
-        CLUREF T_2_1;
-        CLUREF T_2_2;
-        CLUREF T_2_3;
-        CLUREF T_2_4;
-        CLUREF T_2_5;
-        CLUREF T_2_6;
-        T_2_3.ch = ' ';
-        err = charOPge(key_press, T_2_3, &T_2_4);
-        if (err != ERR_ok)
-            goto ex_0;
-        T_2_2.num = T_2_4.num;
-        if (T_2_4.num) {
-            T_2_5.ch = '~';
-            err = charOPle(key_press, T_2_5, &T_2_6);
-            if (err != ERR_ok)
-                goto ex_0;
-            T_2_2.num = T_2_6.num;
-        }
-        T_2_1.num = T_2_2.num;
-        if (T_2_2.num) {
-            T_2_1.num = first_time.num;
-        }
-        if (T_2_1.num == true) { /* if */
-
-  LINE(256);
-            { /* return */
-            {
-            ret_1->num = 1;
-            }
-            {
-            CLUREF T_3_1;
-            T_3_1.num = (long)(key_press.ch & 0xff);
-            ret_2->num = T_3_1.num;
-            }
-            signal (ERR_ok);
-            }
-        }
-        } /* end if */
-
-  LINE(259);
-        {
-        CLUREF T_2_1;
-        CLUREF T_2_2;
-        err = stringOPc2s(key_press, &T_2_1);
-        if (err != ERR_ok)
-            goto ex_0;
-        err = stringOPconcat(so_far, T_2_1, &T_2_2);
-        if (err != ERR_ok)
-            goto ex_0;
-        so_far.num = T_2_2.num;
-        }
-
-  LINE(260);
-        {
-        CLUREF T_2_1;
-        CLUREF T_2_2;
-        generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-        generic_CLU_proc.proc = stableOPcompletions;
-        CUR_PROC_VAR.proc = &generic_CLU_proc;
-        err = stableOPcompletions(get_key_pressOPbindings, so_far, &T_2_1, &T_2_2);
-        if (err != ERR_ok)
-            goto ex_0;
-        exact.num = T_2_1.num;
-        partial.num = T_2_2.num;
-        }
-
-  LINE(262);
-        { /* if */
-        if (exact.num == true) { /* if */
-
-  LINE(263);
-            {
-            last_exact.num = so_far.num;
-            }
-
-  LINE(264);
-            {
-            put_back = CLU_empty_string;
-            }
-        }
-        else {
-
-  LINE(265);
-        CLUREF T_2_1;
-        CLUREF T_2_2;
-        T_2_1.num = ((last_exact.str->size != CLU_empty_string.str->size)? false :
-            !(memcmp(last_exact.str->data, CLU_empty_string.str->data, last_exact.str->size)));
-        T_2_2.num = !T_2_1.num;
-        if (T_2_2.num == true) { /* elseif */
-
-  LINE(266);
-            {
-            CLUREF T_3_1;
-            CLUREF T_3_2;
-            err = stringOPc2s(key_press, &T_3_1);
-            if (err != ERR_ok)
-                goto ex_0;
-            err = stringOPconcat(put_back, T_3_1, &T_3_2);
-            if (err != ERR_ok)
-                goto ex_0;
-            put_back.num = T_3_2.num;
-            }
-        }
-        }} /* end if */
-
-  LINE(274);
-        { /* if */
-        CLUREF T_2_1;
-        CLUREF T_2_2;
-        CLUREF T_2_3;
-        T_2_1.num = partial.num;
-        if (partial.num) {
-            T_2_2.num = ((last_exact.str->size != CLU_empty_string.str->size)? false :
-                !(memcmp(last_exact.str->data, CLU_empty_string.str->data, last_exact.str->size)));
-            T_2_3.num = !T_2_2.num;
-            T_2_1.num = T_2_3.num;
-        }
-        if (T_2_1.num == true) { /* if */
-
-  LINE(275);
-            {
-            CLUREF T_3_1;
-            err = run_time(&T_3_1);
-            if (err != ERR_ok)
-                goto ex_0;
-            a.num = T_3_1.num;
-            }
-
-  LINE(276);
-            for (;;) { /* while */
-                CLUREF T_3_1;
-                CLUREF T_3_2;
-                CLUREF T_3_3;
-                CLUREF T_3_4;
-                CLUREF T_3_5;
-                CLUREF T_3_6;
-                CLUREF T_3_7;
-                CLUREF T_3_8;
-                err = streamOPpending(str, &T_3_2);
-                if (err != ERR_ok)
-                    goto ex_0;
-                T_3_3.num = !T_3_2.num;
-                T_3_1.num = T_3_3.num;
-                if (T_3_3.num) {
-                    err = run_time(&T_3_4);
-                    if (err != ERR_ok)
-                        goto ex_0;
-                    err = timeOPsub(T_3_4, a, &T_3_5);
-                    if (err != ERR_ok)
-                        goto ex_0;
-                    err = timeOPt2r(T_3_5, &T_3_6);
-                    if (err != ERR_ok)
-                        goto ex_0;
-                    T_3_7.real = 3.000000e-01;
-                    err = realOPlt(T_3_6, T_3_7, &T_3_8);
-                    if (err != ERR_ok)
-                        goto ex_0;
-                    T_3_1.num = T_3_8.num;
-                }
-                if (T_3_1.num != true)
-                    break;
-            }
-            end_while_2:
-            __CLU_END_LABEL;
-        }
-        } /* end if */
-
-  LINE(287);
-        {
-        CLUREF T_2_1;
-        err = streamOPpending(str, &T_2_1);
-        if (err != ERR_ok)
-            goto ex_0;
-        ismore.num = T_2_1.num;
-        }
-
-  LINE(288);
-        {
-        first_time.tf = false;
-        }
-
-  LINE(290);
-        { /* if */
-        CLUREF T_2_1;
-        CLUREF T_2_2;
-        CLUREF T_2_3;
-        CLUREF T_2_4;
-        CLUREF T_2_5;
-        CLUREF T_2_6;
-        T_2_2.num = !partial.num;
-        T_2_1.num = T_2_2.num;
-        if (!T_2_2.num) {
-            T_2_4.num = ((last_exact.str->size != CLU_empty_string.str->size)? false :
-                !(memcmp(last_exact.str->data, CLU_empty_string.str->data, last_exact.str->size)));
-            T_2_5.num = !T_2_4.num;
-            T_2_3.num = T_2_5.num;
-            if (T_2_5.num) {
-                T_2_6.num = !ismore.num;
-                T_2_3.num = T_2_6.num;
-            }
-            T_2_1.num = T_2_3.num;
-        }
-        if (T_2_1.num == true) { /* if */
-
-  LINE(291);
-            { /* if */
-            if (exact.num == true) { /* if */
-
-  LINE(292);
-                { /* return */
-                {
-                CLUREF T_4_1;
-                generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-                generic_CLU_proc.proc = stableOPlookup;
-                CUR_PROC_VAR.proc = &generic_CLU_proc;
-                err = stableOPlookup(get_key_pressOPbindings, so_far, &T_4_1);
-                if (err != ERR_ok)
-                    goto ex_0;
-                ret_1->num = T_4_1.num;
-                }
-                {
-                ret_2->num = 1;
-                }
-                signal (ERR_ok);
-                }
-            }
-            else {
-
-  LINE(293);
-            CLUREF T_3_1;
-            CLUREF T_3_2;
-            T_3_1.num = ((last_exact.str->size != CLU_empty_string.str->size)? false :
-                !(memcmp(last_exact.str->data, CLU_empty_string.str->data, last_exact.str->size)));
-            T_3_2.num = !T_3_1.num;
-            if (T_3_2.num == true) { /* elseif */
-
-  LINE(294);
-                {
-                CLUREF T_4_1;
-                CLUREF T_4_2;
-                err = streamOPget_rescan(str, &T_4_1);
-                if (err != ERR_ok)
-                    goto ex_0;
-                err = stringOPconcat(put_back, T_4_1, &T_4_2);
-                if (err != ERR_ok)
-                    goto ex_0;
-                err = streamOPset_rescan(str, T_4_2);
-                if (err != ERR_ok)
-                    goto ex_0;
-                }
-
-  LINE(295);
-                { /* return */
-                {
-                CLUREF T_4_1;
-                generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-                generic_CLU_proc.proc = stableOPlookup;
-                CUR_PROC_VAR.proc = &generic_CLU_proc;
-                err = stableOPlookup(get_key_pressOPbindings, last_exact, &T_4_1);
-                if (err != ERR_ok)
-                    goto ex_0;
-                ret_1->num = T_4_1.num;
-                }
-                {
-                ret_2->num = 1;
-                }
-                signal (ERR_ok);
-                }
-            }
-            else { /* else */
-
-  LINE(297);
-                { /* return */
-                {
-                ret_1->num = 0;
-                }
-                {
-                ret_2->num = 1;
-                }
-                signal (ERR_ok);
-                }
-            }}} /* end if */
-        }
-        } /* end if */
-    }
-    end_while_1:
-    __CLU_END_LABEL;
-
-    goto end_0;
-  ex_0:
-    __CLU_EX_HANDLER;
-    if (err != ERR_failure)
-        elist[0] = _pclu_erstr(err);
-    signal(ERR_failure);
-  end_0:
-    elist[0] = no_return_values_STRING;
-    signal(ERR_failure);
-}
-
-/**** END PROCEDURE get_key_press ****/
-
-
-
-/**** BEGIN PROCEDURE setup_default_keytable ****/
-
-extern errcode stableOPcreate();
-extern errcode stableOPinsert();
-struct OPS *stable_of_int_ops __CLU_COMMON;
+static CLUREF STR__033_133D;
+static CLUREF STR__040;
 static CLUREF STR__001;
 static CLUREF STR__002;
 static CLUREF STR__004;
@@ -1210,469 +109,9 @@ static CLUREF STR__033_133C;
 static CLUREF STR__033_1336_176;
 static CLUREF STR__033_1335_176;
 static CLUREF STR__033;
-static int setup_default_keytable_own_init = 0;
-
-errcode
-setup_default_keytable(CLUREF *ret_1)
-{
-    errcode err;
-    CLUREF temp;
-    if (setup_default_keytable_own_init == 0) {
-        add_parm_info_type(0, (const struct OPS *)int_ops, stable_of_value_t_reqs);
-        find_type_instance(stable_ops, 1, &stable_ownreqs, &(stable_of_int_ops));
-        stringOPcons("\001", CLU_1, CLUREF_make_num(1), &STR__001);
-        stringOPcons("\002", CLU_1, CLUREF_make_num(1), &STR__002);
-        stringOPcons("\004", CLU_1, CLUREF_make_num(1), &STR__004);
-        stringOPcons("\005", CLU_1, CLUREF_make_num(1), &STR__005);
-        stringOPcons("\006", CLU_1, CLUREF_make_num(1), &STR__006);
-        stringOPcons("\n", CLU_1, CLUREF_make_num(1), &STR__012);
-        stringOPcons("\v", CLU_1, CLUREF_make_num(1), &STR__013);
-        stringOPcons("\r", CLU_1, CLUREF_make_num(1), &STR__015);
-        stringOPcons("\016", CLU_1, CLUREF_make_num(1), &STR__016);
-        stringOPcons("\020", CLU_1, CLUREF_make_num(1), &STR__020);
-        stringOPcons("\025", CLU_1, CLUREF_make_num(1), &STR__025);
-        stringOPcons("\027", CLU_1, CLUREF_make_num(1), &STR__027);
-        stringOPcons("\177", CLU_1, CLUREF_make_num(1), &STR__177);
-        stringOPcons("\033[2~", CLU_1, CLUREF_make_num(4), &STR__033_1332_176);
-        stringOPcons("\033[3~", CLU_1, CLUREF_make_num(4), &STR__033_1333_176);
-        stringOPcons("\033[A", CLU_1, CLUREF_make_num(3), &STR__033_133A);
-        stringOPcons("\033[B", CLU_1, CLUREF_make_num(3), &STR__033_133B);
-        stringOPcons("\033[C", CLU_1, CLUREF_make_num(3), &STR__033_133C);
-        stringOPcons("\033[D", CLU_1, CLUREF_make_num(3), &STR__033_133D);
-        stringOPcons("\033[6~", CLU_1, CLUREF_make_num(4), &STR__033_1336_176);
-        stringOPcons("\033[5~", CLU_1, CLUREF_make_num(4), &STR__033_1335_176);
-        stringOPcons("\033", CLU_1, CLUREF_make_num(1), &STR__033);
-        setup_default_keytable_own_init = 1;
-    }
-    enter_proc(306);
-
-  LINE(307);
-    {
-    CLUREF T_1_1;
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPcreate;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPcreate(&T_1_1);
-    if (err != ERR_ok)
-        goto ex_0;
-    temp.num = T_1_1.num;
-    }
-
-  LINE(308);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__001, CLU_7);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(309);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__002, CLU_2);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(310);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__004, CLU_10);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(311);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__005, CLU_6);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(312);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__006, CLU_3);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(313);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__012, CLU_8);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(314);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__013, CLU_11);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(315);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__015, CLU_8);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(316);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__016, CLU_15);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(317);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__020, CLU_14);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(318);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__025, CLU_13);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(319);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__027, CLU_16);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(320);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__177, CLU_9);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(321);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__033_1332_176, CLU_12);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(322);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__033_1333_176, CLU_11);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(323);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__033_133A, CLU_14);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(324);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__033_133B, CLU_15);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(325);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__033_133C, CLU_3);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(326);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__033_133D, CLU_2);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(327);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__033_1336_176, CLU_17);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(328);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__033_1335_176, CLU_18);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(329);
-    {
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPinsert;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPinsert(temp, STR__033, CLU_7);
-    if (err != ERR_ok)
-        goto ex_0;
-    }
-
-  LINE(330);
-    { /* return */
-    {
-    ret_1->num = temp.num;
-    }
-    signal (ERR_ok);
-    }
-
-    goto end_0;
-  ex_0:
-    __CLU_EX_HANDLER;
-    if (err != ERR_failure)
-        elist[0] = _pclu_erstr(err);
-    signal(ERR_failure);
-  end_0:
-    elist[0] = no_return_values_STRING;
-    signal(ERR_failure);
-}
-
-/**** END PROCEDURE setup_default_keytable ****/
-
-
-
-/**** BEGIN PROCEDURE setup_keytable ****/
-
-extern errcode _home_dir();
-extern errcode overload_keytable_file();
-extern errcode file_nameOPparse();
-extern errcode _system_root();
-extern errcode setup_default_keytable();
-struct OPS *stable_of_int_ops __CLU_COMMON;
 static CLUREF STR__057lineedit_056keys;
 static CLUREF STR__057_056inputrc;
 static CLUREF STR__057_056lineedit_056keys;
-static int setup_keytable_own_init = 0;
-
-errcode
-setup_keytable(CLUREF *ret_1)
-{
-    errcode err;
-    CLUREF temp_table;
-    CLUREF hd;
-    if (setup_keytable_own_init == 0) {
-        add_parm_info_type(0, (const struct OPS *)int_ops, stable_of_value_t_reqs);
-        find_type_instance(stable_ops, 1, &stable_ownreqs, &(stable_of_int_ops));
-        stringOPcons("/lineedit.keys", CLU_1, CLUREF_make_num(14), &STR__057lineedit_056keys);
-        stringOPcons("/.inputrc", CLU_1, CLUREF_make_num(9), &STR__057_056inputrc);
-        stringOPcons("/.lineedit.keys", CLU_1, CLUREF_make_num(15), &STR__057_056lineedit_056keys);
-        setup_keytable_own_init = 1;
-    }
-    enter_proc(333);
-
-  LINE(342);
-    {
-    CLUREF T_1_1;
-    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
-    generic_CLU_proc.proc = stableOPcreate;
-    CUR_PROC_VAR.proc = &generic_CLU_proc;
-    err = stableOPcreate(&T_1_1);
-    if (err != ERR_ok)
-        goto ex_0;
-    temp_table.num = T_1_1.num;
-    }
-
-  LINE(343);
-    {
-    CLUREF T_1_1;
-    err = _home_dir(CLU_empty_string, &T_1_1);
-    if (err != ERR_ok)
-        goto ex_0;
-    hd.num = T_1_1.num;
-    }
-
-  LINE(344);
-    {
-    CLUREF T_2_1;
-    CLUREF T_2_2;
-    CLUREF T_2_3;
-    err = _system_root(&T_2_1);
-    if (err != ERR_ok)
-        goto ex_1;
-    err = stringOPconcat(T_2_1, STR__057lineedit_056keys, &T_2_2);
-    if (err != ERR_ok)
-        goto ex_1;
-    err = file_nameOPparse(T_2_2, &T_2_3);
-    if (err != ERR_ok)
-        goto ex_1;
-    err = overload_keytable_file(temp_table, T_2_3);
-    if (err != ERR_ok)
-        goto ex_1;
-    }
-    goto end_1;
-  ex_1: /* except */
-    __CLU_EX_HANDLER;
-    if (err == ERR_not_found) {
-
-  LINE(347);
-        {
-        CLUREF T_2_1;
-        err = setup_default_keytable(&T_2_1);
-        if (err != ERR_ok)
-            goto ex_0;
-        temp_table.num = T_2_1.num;
-        }
-    }
-    else { /* not handled */
-        goto ex_0;
-    }
-  end_1:;
-
-  LINE(349);
-    {
-    CLUREF T_2_1;
-    CLUREF T_2_2;
-    err = stringOPconcat(hd, STR__057_056inputrc, &T_2_1);
-    if (err != ERR_ok)
-        goto ex_2;
-    err = file_nameOPparse(T_2_1, &T_2_2);
-    if (err != ERR_ok)
-        goto ex_2;
-    err = overload_keytable_file(temp_table, T_2_2);
-    if (err != ERR_ok)
-        goto ex_2;
-    }
-    goto end_2;
-  ex_2: /* except */
-    __CLU_EX_HANDLER;
-    if (err == ERR_not_found) {
-    }
-    else { /* not handled */
-        goto ex_0;
-    }
-  end_2:;
-
-  LINE(351);
-    {
-    CLUREF T_2_1;
-    CLUREF T_2_2;
-    err = stringOPconcat(hd, STR__057_056lineedit_056keys, &T_2_1);
-    if (err != ERR_ok)
-        goto ex_3;
-    err = file_nameOPparse(T_2_1, &T_2_2);
-    if (err != ERR_ok)
-        goto ex_3;
-    err = overload_keytable_file(temp_table, T_2_2);
-    if (err != ERR_ok)
-        goto ex_3;
-    }
-    goto end_3;
-  ex_3: /* except */
-    __CLU_EX_HANDLER;
-    if (err == ERR_not_found) {
-    }
-    else { /* not handled */
-        goto ex_0;
-    }
-  end_3:;
-
-  LINE(353);
-    { /* return */
-    {
-    ret_1->num = temp_table.num;
-    }
-    signal (ERR_ok);
-    }
-
-    goto end_0;
-  ex_0:
-    __CLU_EX_HANDLER;
-    if (err != ERR_failure)
-        elist[0] = _pclu_erstr(err);
-    signal(ERR_failure);
-  end_0:
-    elist[0] = no_return_values_STRING;
-    signal(ERR_failure);
-}
-
-/**** END PROCEDURE setup_keytable ****/
-
-
-
-/**** BEGIN PROCEDURE overload_keytable_file ****/
-
-extern errcode streamOPopen();
-extern errcode replace();
-extern errcode streamOPgetl();
-extern errcode charOPequal();
-extern errcode streamOPputl();
-extern errcode streamOPerror_output();
-extern errcode file_nameOPunparse();
-extern errcode upper_case();
-extern errcode stringOPindexs();
-extern errcode stableOPdelete();
-extern errcode streamOPclose();
-struct OPS *stable_of_int_ops __CLU_COMMON;
 static CLUREF STR_read;
 static CLUREF STR__011;
 static CLUREF STR_format_040error_040in_040;
@@ -1731,26 +170,46 @@ static CLUREF STR_KILL_137WORD;
 static CLUREF STR_YANK;
 static CLUREF STR_DELETE_137LINE;
 static CLUREF STR__040Indecipherable_040control_040sequence_040in_040;
-static int overload_keytable_file_own_init = 0;
+static CLUREF STR__040_072_073_056_054_057_174;
+static CLUREF STR__007;
+static int lineedit_own_init = 0;
+const OWN_req lineedit_ownreqs = { 0, 0 };
 
 errcode
-overload_keytable_file(CLUREF tbl, CLUREF fn)
+lineedit_own_init_proc(void)
 {
     errcode err;
-    CLUREF str;
-    CLUREF why;
-    CLUREF line;
-    CLUREF pos;
-    CLUREF key;
-    CLUREF command;
-    CLUREF first_ctrl;
-    CLUREF ctrl_what;
-    CLUREF com;
-    if (overload_keytable_file_own_init == 0) {
+    enter_own_init_proc();
+    if (lineedit_own_init == 0) {
         add_parm_info_type(0, (const struct OPS *)int_ops, stable_of_value_t_reqs);
         find_type_instance(stable_ops, 1, &stable_ownreqs, &(stable_of_int_ops));
-        stringOPcons("read", CLU_1, CLUREF_make_num(4), &STR_read);
+        stringOPcons("\033[D", CLU_1, CLUREF_make_num(3), &STR__033_133D);
         stringOPcons(" ", CLU_1, CLUREF_make_num(1), &STR__040);
+        stringOPcons("\001", CLU_1, CLUREF_make_num(1), &STR__001);
+        stringOPcons("\002", CLU_1, CLUREF_make_num(1), &STR__002);
+        stringOPcons("\004", CLU_1, CLUREF_make_num(1), &STR__004);
+        stringOPcons("\005", CLU_1, CLUREF_make_num(1), &STR__005);
+        stringOPcons("\006", CLU_1, CLUREF_make_num(1), &STR__006);
+        stringOPcons("\n", CLU_1, CLUREF_make_num(1), &STR__012);
+        stringOPcons("\v", CLU_1, CLUREF_make_num(1), &STR__013);
+        stringOPcons("\r", CLU_1, CLUREF_make_num(1), &STR__015);
+        stringOPcons("\016", CLU_1, CLUREF_make_num(1), &STR__016);
+        stringOPcons("\020", CLU_1, CLUREF_make_num(1), &STR__020);
+        stringOPcons("\025", CLU_1, CLUREF_make_num(1), &STR__025);
+        stringOPcons("\027", CLU_1, CLUREF_make_num(1), &STR__027);
+        stringOPcons("\177", CLU_1, CLUREF_make_num(1), &STR__177);
+        stringOPcons("\033[2~", CLU_1, CLUREF_make_num(4), &STR__033_1332_176);
+        stringOPcons("\033[3~", CLU_1, CLUREF_make_num(4), &STR__033_1333_176);
+        stringOPcons("\033[A", CLU_1, CLUREF_make_num(3), &STR__033_133A);
+        stringOPcons("\033[B", CLU_1, CLUREF_make_num(3), &STR__033_133B);
+        stringOPcons("\033[C", CLU_1, CLUREF_make_num(3), &STR__033_133C);
+        stringOPcons("\033[6~", CLU_1, CLUREF_make_num(4), &STR__033_1336_176);
+        stringOPcons("\033[5~", CLU_1, CLUREF_make_num(4), &STR__033_1335_176);
+        stringOPcons("\033", CLU_1, CLUREF_make_num(1), &STR__033);
+        stringOPcons("/lineedit.keys", CLU_1, CLUREF_make_num(14), &STR__057lineedit_056keys);
+        stringOPcons("/.inputrc", CLU_1, CLUREF_make_num(9), &STR__057_056inputrc);
+        stringOPcons("/.lineedit.keys", CLU_1, CLUREF_make_num(15), &STR__057_056lineedit_056keys);
+        stringOPcons("read", CLU_1, CLUREF_make_num(4), &STR_read);
         stringOPcons("\t", CLU_1, CLUREF_make_num(1), &STR__011);
         stringOPcons("format error in ", CLU_1, CLUREF_make_num(16), &STR_format_040error_040in_040);
         stringOPcons("line: ", CLU_1, CLUREF_make_num(6), &STR_line_072_040);
@@ -1759,16 +218,13 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
         stringOPcons("CTRL-", CLU_1, CLUREF_make_num(5), &STR_CTRL_055);
         stringOPcons("CONTROL-", CLU_1, CLUREF_make_num(8), &STR_CONTROL_055);
         stringOPcons("ESC", CLU_1, CLUREF_make_num(3), &STR_ESC);
-        stringOPcons("\033", CLU_1, CLUREF_make_num(1), &STR__033);
         stringOPcons("META-", CLU_1, CLUREF_make_num(5), &STR_META_055);
         stringOPcons("MET-", CLU_1, CLUREF_make_num(4), &STR_MET_055);
         stringOPcons("M-", CLU_1, CLUREF_make_num(2), &STR_M_055);
         stringOPcons("SPACE", CLU_1, CLUREF_make_num(5), &STR_SPACE);
         stringOPcons("DEL", CLU_1, CLUREF_make_num(3), &STR_DEL);
-        stringOPcons("\177", CLU_1, CLUREF_make_num(1), &STR__177);
         stringOPcons("RUBOUT", CLU_1, CLUREF_make_num(6), &STR_RUBOUT);
         stringOPcons("NEWLINE", CLU_1, CLUREF_make_num(7), &STR_NEWLINE);
-        stringOPcons("\n", CLU_1, CLUREF_make_num(1), &STR__012);
         stringOPcons("RETURN", CLU_1, CLUREF_make_num(6), &STR_RETURN);
         stringOPcons("TAB", CLU_1, CLUREF_make_num(3), &STR_TAB);
         stringOPcons("LFD", CLU_1, CLUREF_make_num(3), &STR_LFD);
@@ -1811,11 +267,1683 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
         stringOPcons("YANK", CLU_1, CLUREF_make_num(4), &STR_YANK);
         stringOPcons("DELETE_LINE", CLU_1, CLUREF_make_num(11), &STR_DELETE_137LINE);
         stringOPcons(" Indecipherable control sequence in ", CLU_1, CLUREF_make_num(36), &STR__040Indecipherable_040control_040sequence_040in_040);
-        overload_keytable_file_own_init = 1;
+        stringOPcons(" :;.,/|", CLU_1, CLUREF_make_num(7), &STR__040_072_073_056_054_057_174);
+        stringOPcons("\007", CLU_1, CLUREF_make_num(1), &STR__007);
+        lineedit_own_init = 1;
+        signal(ERR_ok);
+      ex_0:
+        __CLU_EX_HANDLER;
+        pclu_unhandled(err);
+        signal(ERR_failure);
     }
-    enter_proc(357);
+    signal(ERR_ok);
+}
 
-  LINE(362);
+
+/**** BEGIN PROCEDURE create ****/
+
+
+errcode
+lineeditOPcreate(CLUREF str, CLUREF *ret_1)
+{
+    errcode err;
+    if (lineedit_own_init == 0) {
+        err = lineedit_own_init_proc();
+        if (err != ERR_ok)
+            goto ex_0;
+    }
+    enter_proc(109);
+
+  LINE(110);
+    { /* return */
+    {
+    CLUREF T_1_1;
+    CLUREF T_1_2;
+    CLUREF T_1_3;
+    RecordAlloc(3, T_1_1);
+    err = lineeditOPsetup_keytable(&T_1_2);
+    if (err != ERR_ok)
+        goto ex_0;
+    T_1_1.vec->data[0] = T_1_2.num;
+    T_1_1.vec->data[2] = str.num;
+    err = arrayOPnew(&T_1_3);
+    if (err != ERR_ok)
+        goto ex_0;
+    T_1_1.vec->data[1] = T_1_3.num;
+    ret_1->num = T_1_1.num;
+    }
+    signal (ERR_ok);
+    }
+
+    goto end_0;
+  ex_0:
+    __CLU_EX_HANDLER;
+    if (err != ERR_failure)
+        elist[0] = _pclu_erstr(err);
+    signal(ERR_failure);
+  end_0:
+    elist[0] = no_return_values_STRING;
+    signal(ERR_failure);
+}
+
+/**** END PROCEDURE create ****/
+
+
+/**** BEGIN PROCEDURE fill ****/
+
+static int lineeditOPfill_own_init = 0;
+
+errcode
+lineeditOPfill(CLUREF substring, CLUREF times, CLUREF *ret_1)
+{
+    errcode err;
+    CLUREF dum;
+    CLUREF i;
+    if (lineeditOPfill_own_init == 0) {
+        if (lineedit_own_init == 0) {
+            err = lineedit_own_init_proc();
+            if (err != ERR_ok)
+                goto ex_0;
+        }
+        lineeditOPfill_own_init = 1;
+    }
+    enter_proc(113);
+
+  LINE(116);
+    {
+    dum = CLU_empty_string;
+    }
+
+  LINE(117);
+    { /* for int$from_to */
+    CLUREF T_1_1;
+    CLUREF T_1_2;
+    T_1_2.num = times.num;
+    for (T_1_1.num = 1; T_1_1.num <= T_1_2.num; T_1_1.num++
+    ) {
+        i.num = T_1_1.num;
+
+  LINE(118);
+        {
+        CLUREF T_2_1;
+        err = stringOPconcat(dum, substring, &T_2_1);
+        if (err != ERR_ok)
+            goto ex_0;
+        dum.num = T_2_1.num;
+        }
+    }
+    }
+    end_inline_for_1:
+    __CLU_END_LABEL;
+
+  LINE(120);
+    { /* return */
+    {
+    ret_1->num = dum.num;
+    }
+    signal (ERR_ok);
+    }
+
+    goto end_0;
+  ex_0:
+    __CLU_EX_HANDLER;
+    if (err != ERR_failure)
+        elist[0] = _pclu_erstr(err);
+    signal(ERR_failure);
+  end_0:
+    elist[0] = no_return_values_STRING;
+    signal(ERR_failure);
+}
+
+/**** END PROCEDURE fill ****/
+
+
+/**** BEGIN PROCEDURE insert_text ****/
+
+static int lineeditOPinsert_text_own_init = 0;
+
+errcode
+lineeditOPinsert_text(CLUREF str, CLUREF text_to_insert, CLUREF current_text, CLUREF current_pos, CLUREF *ret_1, CLUREF *ret_2)
+{
+    errcode err;
+    CLUREF rest_of_line;
+    CLUREF new_text;
+    if (lineeditOPinsert_text_own_init == 0) {
+        if (lineedit_own_init == 0) {
+            err = lineedit_own_init_proc();
+            if (err != ERR_ok)
+                goto ex_0;
+        }
+        lineeditOPinsert_text_own_init = 1;
+    }
+    enter_proc(124);
+
+  LINE(132);
+    { /* if */
+    CLUREF T_1_1;
+    CLUREF T_1_2;
+    err = stringOPsize(current_text, &T_1_1);
+    if (err != ERR_ok)
+        goto ex_0;
+    T_1_2.num = (current_pos.num <= T_1_1.num);
+    if (T_1_2.num == true) { /* if */
+
+  LINE(133);
+        {
+        CLUREF T_2_1;
+        err = stringOPrest(current_text, current_pos, &T_2_1);
+        if (err != ERR_ok)
+            goto ex_0;
+        rest_of_line.num = T_2_1.num;
+        }
+
+  LINE(134);
+        {
+        CLUREF T_2_1;
+        CLUREF T_2_2;
+        CLUREF T_2_3;
+        CLUREF T_2_4;
+        err = stringOPconcat(text_to_insert, rest_of_line, &T_2_1);
+        if (err != ERR_ok)
+            goto ex_0;
+        err = stringOPsize(rest_of_line, &T_2_2);
+        if (err != ERR_ok)
+            goto ex_0;
+        err = lineeditOPfill(STR__033_133D, T_2_2, &T_2_3);
+        if (err != ERR_ok)
+            goto ex_0;
+        err = stringOPconcat(T_2_1, T_2_3, &T_2_4);
+        if (err != ERR_ok)
+            goto ex_0;
+        err = streamOPputs(str, T_2_4);
+        if (err != ERR_ok)
+            goto ex_0;
+        }
+
+  LINE(136);
+        {
+        CLUREF T_2_1;
+        CLUREF T_2_2;
+        CLUREF T_2_3;
+        CLUREF T_2_4;
+        T_2_1.num = current_pos.num - 1;
+        if ((T_2_1.num >= 0 && current_pos.num < 0 && (-1) < 0) ||
+            (T_2_1.num <= 0 && current_pos.num > 0 && (-1) > 0)) {
+            err = ERR_overflow;
+            goto ex_0;
+        }
+        err = stringOPsubstr(current_text, CLU_1, T_2_1, &T_2_2);
+        if (err != ERR_ok)
+            goto ex_0;
+        err = stringOPconcat(T_2_2, text_to_insert, &T_2_3);
+        if (err != ERR_ok)
+            goto ex_0;
+        err = stringOPconcat(T_2_3, rest_of_line, &T_2_4);
+        if (err != ERR_ok)
+            goto ex_0;
+        new_text.num = T_2_4.num;
+        }
+
+  LINE(138);
+        { /* return */
+        {
+        ret_1->num = new_text.num;
+        }
+        {
+        CLUREF T_2_1;
+        CLUREF T_2_2;
+        err = stringOPsize(text_to_insert, &T_2_1);
+        if (err != ERR_ok)
+            goto ex_0;
+        T_2_2.num = current_pos.num + T_2_1.num;
+        if ((T_2_2.num > 0 && current_pos.num < 0 && T_2_1.num < 0) ||
+            (T_2_2.num < 0 && current_pos.num > 0 && T_2_1.num > 0)) {
+            err = ERR_overflow;
+            goto ex_0;
+        }
+        ret_2->num = T_2_2.num;
+        }
+        signal (ERR_ok);
+        }
+    }
+    else { /* else */
+
+  LINE(140);
+        {
+        err = streamOPputs(str, text_to_insert);
+        if (err != ERR_ok)
+            goto ex_0;
+        }
+
+  LINE(141);
+        { /* return */
+        {
+        CLUREF T_2_1;
+        err = stringOPconcat(current_text, text_to_insert, &T_2_1);
+        if (err != ERR_ok)
+            goto ex_0;
+        ret_1->num = T_2_1.num;
+        }
+        {
+        CLUREF T_2_2;
+        CLUREF T_2_3;
+        err = stringOPsize(text_to_insert, &T_2_2);
+        if (err != ERR_ok)
+            goto ex_0;
+        T_2_3.num = current_pos.num + T_2_2.num;
+        if ((T_2_3.num > 0 && current_pos.num < 0 && T_2_2.num < 0) ||
+            (T_2_3.num < 0 && current_pos.num > 0 && T_2_2.num > 0)) {
+            err = ERR_overflow;
+            goto ex_0;
+        }
+        ret_2->num = T_2_3.num;
+        }
+        signal (ERR_ok);
+        }
+    }} /* end if */
+
+    goto end_0;
+  ex_0:
+    __CLU_EX_HANDLER;
+    if (err != ERR_failure)
+        elist[0] = _pclu_erstr(err);
+    signal(ERR_failure);
+  end_0:
+    elist[0] = no_return_values_STRING;
+    signal(ERR_failure);
+}
+
+/**** END PROCEDURE insert_text ****/
+
+
+/**** BEGIN PROCEDURE delete_text ****/
+
+static int lineeditOPdelete_text_own_init = 0;
+
+errcode
+lineeditOPdelete_text(CLUREF str, CLUREF current_text, CLUREF current_pos, CLUREF del_start, CLUREF del_end, CLUREF *ret_1, CLUREF *ret_2)
+{
+    errcode err;
+    CLUREF rest_of_line;
+    CLUREF get_to_start;
+    CLUREF new_pos;
+    CLUREF new_text;
+    if (lineeditOPdelete_text_own_init == 0) {
+        if (lineedit_own_init == 0) {
+            err = lineedit_own_init_proc();
+            if (err != ERR_ok)
+                goto ex_0;
+        }
+        lineeditOPdelete_text_own_init = 1;
+    }
+    enter_proc(148);
+
+  LINE(157);
+    { /* if */
+    CLUREF T_1_1;
+    T_1_1.num = (del_end.num >= del_start.num);
+    if (T_1_1.num == true) { /* if */
+
+  LINE(158);
+        {
+        CLUREF T_3_1;
+        CLUREF T_3_2;
+        CLUREF T_3_3;
+        T_3_1.num = del_end.num + 1;
+        if ((T_3_1.num > 0 && del_end.num < 0 && 1 < 0) ||
+            (T_3_1.num < 0 && del_end.num > 0 && 1 > 0)) {
+            err = ERR_overflow;
+            goto ex_1;
+        }
+        err = stringOPsize(current_text, &T_3_2);
+        if (err != ERR_ok)
+            goto ex_1;
+        err = stringOPsubstr(current_text, T_3_1, T_3_2, &T_3_3);
+        if (err != ERR_ok)
+            goto ex_1;
+        rest_of_line.num = T_3_3.num;
+        }
+        goto end_1;
+      ex_1: /* except */
+        __CLU_EX_HANDLER;
+        if (err == ERR_bounds) {
+
+  LINE(160);
+            {
+            rest_of_line = CLU_empty_string;
+            }
+        }
+        else { /* not handled */
+            goto ex_0;
+        }
+      end_1:;
+
+  LINE(162);
+        {
+        get_to_start = CLU_empty_string;
+        }
+
+  LINE(164);
+        { /* if */
+        CLUREF T_2_1;
+        T_2_1.num = (current_pos.num > del_start.num);
+        if (T_2_1.num == true) { /* if */
+
+  LINE(165);
+            {
+            CLUREF T_3_1;
+            CLUREF T_3_2;
+            T_3_1.num = current_pos.num - del_start.num;
+            if ((T_3_1.num >= 0 && current_pos.num < 0 && (-del_start.num) < 0) ||
+                (T_3_1.num <= 0 && current_pos.num > 0 && (-del_start.num) > 0)) {
+                err = ERR_overflow;
+                goto ex_0;
+            }
+            err = lineeditOPfill(STR__033_133D, T_3_1, &T_3_2);
+            if (err != ERR_ok)
+                goto ex_0;
+            get_to_start.num = T_3_2.num;
+            }
+        }
+        else { /* else */
+
+  LINE(167);
+            {
+            CLUREF T_3_1;
+            CLUREF T_3_2;
+            T_3_1.num = del_start.num - current_pos.num;
+            if ((T_3_1.num >= 0 && del_start.num < 0 && (-current_pos.num) < 0) ||
+                (T_3_1.num <= 0 && del_start.num > 0 && (-current_pos.num) > 0)) {
+                err = ERR_overflow;
+                goto ex_0;
+            }
+            err = stringOPsubstr(current_text, current_pos, T_3_1, &T_3_2);
+            if (err != ERR_ok)
+                goto ex_0;
+            get_to_start.num = T_3_2.num;
+            }
+        }} /* end if */
+
+  LINE(173);
+        { /* if */
+        CLUREF T_2_1;
+        T_2_1.num = (current_pos.num <= del_start.num);
+        if (T_2_1.num == true) { /* if */
+
+  LINE(174);
+            {
+            new_pos.num = current_pos.num;
+            }
+        }
+        else {
+
+  LINE(175);
+        CLUREF T_2_2;
+        T_2_2.num = (current_pos.num > del_end.num);
+        if (T_2_2.num == true) { /* elseif */
+
+  LINE(176);
+            {
+            CLUREF T_3_1;
+            CLUREF T_3_2;
+            CLUREF T_3_3;
+            T_3_1.num = current_pos.num - del_end.num;
+            if ((T_3_1.num >= 0 && current_pos.num < 0 && (-del_end.num) < 0) ||
+                (T_3_1.num <= 0 && current_pos.num > 0 && (-del_end.num) > 0)) {
+                err = ERR_overflow;
+                goto ex_0;
+            }
+            T_3_2.num = T_3_1.num + del_start.num;
+            if ((T_3_2.num > 0 && T_3_1.num < 0 && del_start.num < 0) ||
+                (T_3_2.num < 0 && T_3_1.num > 0 && del_start.num > 0)) {
+                err = ERR_overflow;
+                goto ex_0;
+            }
+            T_3_3.num = T_3_2.num - 1;
+            if ((T_3_3.num >= 0 && T_3_2.num < 0 && (-1) < 0) ||
+                (T_3_3.num <= 0 && T_3_2.num > 0 && (-1) > 0)) {
+                err = ERR_overflow;
+                goto ex_0;
+            }
+            new_pos.num = T_3_3.num;
+            }
+        }
+        else { /* else */
+
+  LINE(178);
+            {
+            new_pos.num = del_start.num;
+            }
+        }}} /* end if */
+
+  LINE(181);
+        { /* if */
+        CLUREF T_2_1;
+        CLUREF T_2_2;
+        err = stringOPsize(current_text, &T_2_1);
+        if (err != ERR_ok)
+            goto ex_0;
+        T_2_2.num = (new_pos.num <= T_2_1.num);
+        if (T_2_2.num == true) { /* if */
+
+  LINE(182);
+            {
+            CLUREF T_3_1;
+            CLUREF T_3_2;
+            CLUREF T_3_3;
+            CLUREF T_3_4;
+            CLUREF T_3_5;
+            CLUREF T_3_6;
+            CLUREF T_3_7;
+            CLUREF T_3_8;
+            CLUREF T_3_9;
+            CLUREF T_3_10;
+            err = stringOPconcat(get_to_start, rest_of_line, &T_3_1);
+            if (err != ERR_ok)
+                goto ex_0;
+            T_3_2.num = del_end.num - del_start.num;
+            if ((T_3_2.num >= 0 && del_end.num < 0 && (-del_start.num) < 0) ||
+                (T_3_2.num <= 0 && del_end.num > 0 && (-del_start.num) > 0)) {
+                err = ERR_overflow;
+                goto ex_0;
+            }
+            T_3_3.num = T_3_2.num + 1;
+            if ((T_3_3.num > 0 && T_3_2.num < 0 && 1 < 0) ||
+                (T_3_3.num < 0 && T_3_2.num > 0 && 1 > 0)) {
+                err = ERR_overflow;
+                goto ex_0;
+            }
+            err = lineeditOPfill(STR__040, T_3_3, &T_3_4);
+            if (err != ERR_ok)
+                goto ex_0;
+            err = stringOPconcat(T_3_1, T_3_4, &T_3_5);
+            if (err != ERR_ok)
+                goto ex_0;
+            err = stringOPsize(current_text, &T_3_6);
+            if (err != ERR_ok)
+                goto ex_0;
+            T_3_7.num = T_3_6.num - new_pos.num;
+            if ((T_3_7.num >= 0 && T_3_6.num < 0 && (-new_pos.num) < 0) ||
+                (T_3_7.num <= 0 && T_3_6.num > 0 && (-new_pos.num) > 0)) {
+                err = ERR_overflow;
+                goto ex_0;
+            }
+            T_3_8.num = T_3_7.num + 1;
+            if ((T_3_8.num > 0 && T_3_7.num < 0 && 1 < 0) ||
+                (T_3_8.num < 0 && T_3_7.num > 0 && 1 > 0)) {
+                err = ERR_overflow;
+                goto ex_0;
+            }
+            err = lineeditOPfill(STR__033_133D, T_3_8, &T_3_9);
+            if (err != ERR_ok)
+                goto ex_0;
+            err = stringOPconcat(T_3_5, T_3_9, &T_3_10);
+            if (err != ERR_ok)
+                goto ex_0;
+            err = streamOPputs(str, T_3_10);
+            if (err != ERR_ok)
+                goto ex_0;
+            }
+        }
+        } /* end if */
+
+  LINE(187);
+        {
+        CLUREF T_2_1;
+        CLUREF T_2_2;
+        CLUREF T_2_3;
+        T_2_1.num = del_start.num - 1;
+        if ((T_2_1.num >= 0 && del_start.num < 0 && (-1) < 0) ||
+            (T_2_1.num <= 0 && del_start.num > 0 && (-1) > 0)) {
+            err = ERR_overflow;
+            goto ex_0;
+        }
+        err = stringOPsubstr(current_text, CLU_1, T_2_1, &T_2_2);
+        if (err != ERR_ok)
+            goto ex_0;
+        err = stringOPconcat(T_2_2, rest_of_line, &T_2_3);
+        if (err != ERR_ok)
+            goto ex_0;
+        new_text.num = T_2_3.num;
+        }
+
+  LINE(189);
+        { /* return */
+        {
+        ret_1->num = new_text.num;
+        }
+        {
+        ret_2->num = new_pos.num;
+        }
+        signal (ERR_ok);
+        }
+    }
+    else { /* else */
+
+  LINE(192);
+        { /* return */
+        {
+        ret_1->num = current_text.num;
+        }
+        {
+        ret_2->num = current_pos.num;
+        }
+        signal (ERR_ok);
+        }
+    }} /* end if */
+
+    goto end_0;
+  ex_0:
+    __CLU_EX_HANDLER;
+    if (err != ERR_failure)
+        elist[0] = _pclu_erstr(err);
+    signal(ERR_failure);
+  end_0:
+    elist[0] = no_return_values_STRING;
+    signal(ERR_failure);
+}
+
+/**** END PROCEDURE delete_text ****/
+
+
+/**** BEGIN PROCEDURE find_word ****/
+
+
+errcode
+lineeditOPfind_word(CLUREF current_text, CLUREF current_pos, CLUREF delim, CLUREF *ret_1, CLUREF *ret_2)
+{
+    errcode err;
+    CLUREF beg;
+    CLUREF i;
+    CLUREF ending;
+    if (lineedit_own_init == 0) {
+        err = lineedit_own_init_proc();
+        if (err != ERR_ok)
+            goto ex_0;
+    }
+    enter_proc(197);
+
+  LINE(205);
+    { /* if */
+    CLUREF T_1_1;
+    CLUREF T_1_2;
+    err = stringOPsize(current_text, &T_1_1);
+    if (err != ERR_ok)
+        goto ex_0;
+    T_1_2.num = (current_pos.num > T_1_1.num);
+    if (T_1_2.num == true) { /* if */
+
+  LINE(206);
+        {
+        CLUREF T_2_1;
+        err = stringOPsize(current_text, &T_2_1);
+        if (err != ERR_ok)
+            goto ex_0;
+        current_pos.num = T_2_1.num;
+        }
+    }
+    } /* end if */
+
+  LINE(209);
+    {
+    beg.num = 1;
+    }
+
+  LINE(210);
+    { /* for int$from_to_by */
+    CLUREF T_2_1;
+    CLUREF T_2_2;
+    CLUREF T_2_3;
+    T_2_2.num = 1;
+    T_2_3.num = -1;
+    for (T_2_1.num = current_pos.num; ((T_2_3.num == 0) || ((T_2_3.num > 0)? (T_2_1.num <= T_2_2.num) : (T_2_1.num >= T_2_2.num))); T_2_1.num += T_2_3.num) {
+        i.num = T_2_1.num;
+
+  LINE(211);
+        { /* if */
+        CLUREF T_3_1;
+        CLUREF T_3_2;
+        CLUREF T_3_3;
+        err = stringOPfetch(current_text, i, &T_3_1);
+        if (err != ERR_ok)
+            goto ex_1;
+        err = stringOPindexc(T_3_1, delim, &T_3_2);
+        if (err != ERR_ok)
+            goto ex_1;
+        T_3_3.num = (T_3_2.num == 0);
+        if (T_3_3.num == true) { /* if */
+
+  LINE(212);
+            {
+            beg.num = i.num;
+            }
+        }
+        else {
+
+  LINE(213);
+        CLUREF T_3_4;
+        CLUREF T_3_5;
+        T_3_4.num = (beg.num == 1);
+        T_3_5.num = !T_3_4.num;
+        if (T_3_5.num == true) { /* elseif */
+
+  LINE(214);
+            { /* exit */
+                err = ((errcode)"ERR_got_it");
+                goto ex_1;
+            }
+        }
+        }} /* end if */
+    }
+    }
+    end_inline_for_1:
+    __CLU_END_LABEL;
+    goto end_1;
+  ex_1: /* except */
+    __CLU_EX_HANDLER;
+    if (errcmp(err, "ERR_got_it")) {
+    }
+    else { /* not handled */
+        goto ex_0;
+    }
+  end_1:;
+
+  LINE(218);
+    {
+    ending.num = 0;
+    }
+
+  LINE(219);
+    { /* for int$from_to */
+    CLUREF T_1_1;
+    CLUREF T_1_2;
+    CLUREF T_1_3;
+    err = stringOPsize(current_text, &T_1_1);
+    if (err != ERR_ok)
+        goto ex_0;
+    T_1_3.num = T_1_1.num;
+    for (T_1_2.num = current_pos.num; T_1_2.num <= T_1_3.num; T_1_2.num++
+    ) {
+        i.num = T_1_2.num;
+
+  LINE(220);
+        { /* if */
+        CLUREF T_2_1;
+        CLUREF T_2_2;
+        CLUREF T_2_3;
+        CLUREF T_2_4;
+        err = stringOPfetch(current_text, i, &T_2_1);
+        if (err != ERR_ok)
+            goto ex_0;
+        err = stringOPindexc(T_2_1, delim, &T_2_2);
+        if (err != ERR_ok)
+            goto ex_0;
+        T_2_3.num = (T_2_2.num == 0);
+        T_2_4.num = !T_2_3.num;
+        if (T_2_4.num == true) { /* if */
+
+  LINE(221);
+            {
+            ending.num = i.num;
+            }
+        }
+        else {
+
+  LINE(222);
+        CLUREF T_2_5;
+        CLUREF T_2_6;
+        T_2_5.num = (ending.num == 0);
+        T_2_6.num = !T_2_5.num;
+        if (T_2_6.num == true) { /* elseif */
+
+  LINE(223);
+            { /* return */
+            {
+            ret_1->num = beg.num;
+            }
+            {
+            ret_2->num = ending.num;
+            }
+            signal (ERR_ok);
+            }
+        }
+        }} /* end if */
+    }
+    }
+    end_inline_for_2:
+    __CLU_END_LABEL;
+
+  LINE(227);
+    { /* return */
+    {
+    ret_1->num = beg.num;
+    }
+    {
+    CLUREF T_1_1;
+    err = stringOPsize(current_text, &T_1_1);
+    if (err != ERR_ok)
+        goto ex_0;
+    ret_2->num = T_1_1.num;
+    }
+    signal (ERR_ok);
+    }
+
+    goto end_0;
+  ex_0:
+    __CLU_EX_HANDLER;
+    if (err != ERR_failure)
+        elist[0] = _pclu_erstr(err);
+    signal(ERR_failure);
+  end_0:
+    elist[0] = no_return_values_STRING;
+    signal(ERR_failure);
+}
+
+/**** END PROCEDURE find_word ****/
+
+
+/**** BEGIN PROCEDURE getc_noeof ****/
+
+
+errcode
+lineeditOPgetc_noeof(CLUREF str, CLUREF *ret_1)
+{
+    errcode err;
+    if (lineedit_own_init == 0) {
+        err = lineedit_own_init_proc();
+        if (err != ERR_ok)
+            goto ex_0;
+    }
+    enter_proc(231);
+
+  LINE(235);
+    { /* return */
+    {
+    CLUREF T_2_1;
+    err = streamOPgetc_image(str, &T_2_1);
+    if (err != ERR_ok)
+        goto ex_1;
+    ret_1->num = T_2_1.num;
+    }
+    signal (ERR_ok);
+    }
+    goto end_1;
+  ex_1: /* except */
+    __CLU_EX_HANDLER;
+    if (err == ERR_end_of_file) {
+
+  LINE(236);
+        {
+        err = streamOPset_eof_flag(str, CLU_false);
+        if (err != ERR_ok)
+            goto ex_0;
+        }
+
+  LINE(237);
+        { /* return */
+        {
+        CLUREF T_2_1;
+        err = charOPi2c(CLU_4, &T_2_1);
+        if (err != ERR_ok)
+            goto ex_0;
+        ret_1->num = T_2_1.num;
+        }
+        signal (ERR_ok);
+        }
+    }
+    else { /* not handled */
+        goto ex_0;
+    }
+  end_1:;
+
+    goto end_0;
+  ex_0:
+    __CLU_EX_HANDLER;
+    if (err != ERR_failure)
+        elist[0] = _pclu_erstr(err);
+    signal(ERR_failure);
+  end_0:
+    elist[0] = no_return_values_STRING;
+    signal(ERR_failure);
+}
+
+/**** END PROCEDURE getc_noeof ****/
+
+
+/**** BEGIN PROCEDURE get_key_press ****/
+
+struct OPS *stable_of_int_ops __CLU_COMMON;
+static int lineeditOPget_key_press_own_init = 0;
+
+errcode
+lineeditOPget_key_press(CLUREF li, CLUREF *ret_1, CLUREF *ret_2)
+{
+    errcode err;
+    CLUREF str;
+    CLUREF bindings;
+    CLUREF so_far;
+    CLUREF put_back;
+    CLUREF last_exact;
+    CLUREF ismore;
+    CLUREF first_time;
+    CLUREF exact;
+    CLUREF partial;
+    CLUREF key_press;
+    CLUREF a;
+    if (lineeditOPget_key_press_own_init == 0) {
+        if (lineedit_own_init == 0) {
+            err = lineedit_own_init_proc();
+            if (err != ERR_ok)
+                goto ex_0;
+        }
+        lineeditOPget_key_press_own_init = 1;
+    }
+    enter_proc(242);
+
+  LINE(248);
+    {
+    CLUREF T_1_1;
+    T_1_1.num = li.vec->data[2];
+    str.num = T_1_1.num;
+    }
+
+  LINE(249);
+    {
+    CLUREF T_1_1;
+    T_1_1.num = li.vec->data[0];
+    bindings.num = T_1_1.num;
+    }
+
+  LINE(251);
+    {
+    so_far = CLU_empty_string;
+    }
+
+  LINE(252);
+    {
+    put_back = CLU_empty_string;
+    }
+
+  LINE(253);
+    {
+    last_exact = CLU_empty_string;
+    }
+
+  LINE(255);
+    {
+    first_time.tf = true;
+    }
+
+  LINE(261);
+    for (;;) { /* while */
+        if (true != true)
+            break;
+
+  LINE(265);
+        {
+        CLUREF T_2_1;
+        err = lineeditOPgetc_noeof(str, &T_2_1);
+        if (err != ERR_ok)
+            goto ex_0;
+        key_press.num = T_2_1.num;
+        }
+
+  LINE(267);
+        { /* if */
+        CLUREF T_2_1;
+        CLUREF T_2_2;
+        CLUREF T_2_3;
+        CLUREF T_2_4;
+        CLUREF T_2_5;
+        CLUREF T_2_6;
+        T_2_3.ch = ' ';
+        err = charOPge(key_press, T_2_3, &T_2_4);
+        if (err != ERR_ok)
+            goto ex_0;
+        T_2_2.num = T_2_4.num;
+        if (T_2_4.num) {
+            T_2_5.ch = '~';
+            err = charOPle(key_press, T_2_5, &T_2_6);
+            if (err != ERR_ok)
+                goto ex_0;
+            T_2_2.num = T_2_6.num;
+        }
+        T_2_1.num = T_2_2.num;
+        if (T_2_2.num) {
+            T_2_1.num = first_time.num;
+        }
+        if (T_2_1.num == true) { /* if */
+
+  LINE(268);
+            { /* return */
+            {
+            ret_1->num = 1;
+            }
+            {
+            CLUREF T_3_1;
+            T_3_1.num = (long)(key_press.ch & 0xff);
+            ret_2->num = T_3_1.num;
+            }
+            signal (ERR_ok);
+            }
+        }
+        } /* end if */
+
+  LINE(271);
+        {
+        CLUREF T_2_1;
+        CLUREF T_2_2;
+        err = stringOPc2s(key_press, &T_2_1);
+        if (err != ERR_ok)
+            goto ex_0;
+        err = stringOPconcat(so_far, T_2_1, &T_2_2);
+        if (err != ERR_ok)
+            goto ex_0;
+        so_far.num = T_2_2.num;
+        }
+
+  LINE(272);
+        {
+        CLUREF T_2_1;
+        CLUREF T_2_2;
+        generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+        generic_CLU_proc.proc = stableOPcompletions;
+        CUR_PROC_VAR.proc = &generic_CLU_proc;
+        err = stableOPcompletions(bindings, so_far, &T_2_1, &T_2_2);
+        if (err != ERR_ok)
+            goto ex_0;
+        exact.num = T_2_1.num;
+        partial.num = T_2_2.num;
+        }
+
+  LINE(274);
+        { /* if */
+        if (exact.num == true) { /* if */
+
+  LINE(275);
+            {
+            last_exact.num = so_far.num;
+            }
+
+  LINE(276);
+            {
+            put_back = CLU_empty_string;
+            }
+        }
+        else {
+
+  LINE(277);
+        CLUREF T_2_1;
+        CLUREF T_2_2;
+        T_2_1.num = ((last_exact.str->size != CLU_empty_string.str->size)? false :
+            !(memcmp(last_exact.str->data, CLU_empty_string.str->data, last_exact.str->size)));
+        T_2_2.num = !T_2_1.num;
+        if (T_2_2.num == true) { /* elseif */
+
+  LINE(278);
+            {
+            CLUREF T_3_1;
+            CLUREF T_3_2;
+            err = stringOPc2s(key_press, &T_3_1);
+            if (err != ERR_ok)
+                goto ex_0;
+            err = stringOPconcat(put_back, T_3_1, &T_3_2);
+            if (err != ERR_ok)
+                goto ex_0;
+            put_back.num = T_3_2.num;
+            }
+        }
+        }} /* end if */
+
+  LINE(286);
+        { /* if */
+        CLUREF T_2_1;
+        CLUREF T_2_2;
+        CLUREF T_2_3;
+        T_2_1.num = partial.num;
+        if (partial.num) {
+            T_2_2.num = ((last_exact.str->size != CLU_empty_string.str->size)? false :
+                !(memcmp(last_exact.str->data, CLU_empty_string.str->data, last_exact.str->size)));
+            T_2_3.num = !T_2_2.num;
+            T_2_1.num = T_2_3.num;
+        }
+        if (T_2_1.num == true) { /* if */
+
+  LINE(287);
+            {
+            CLUREF T_3_1;
+            err = run_time(&T_3_1);
+            if (err != ERR_ok)
+                goto ex_0;
+            a.num = T_3_1.num;
+            }
+
+  LINE(288);
+            for (;;) { /* while */
+                CLUREF T_3_1;
+                CLUREF T_3_2;
+                CLUREF T_3_3;
+                CLUREF T_3_4;
+                CLUREF T_3_5;
+                CLUREF T_3_6;
+                CLUREF T_3_7;
+                CLUREF T_3_8;
+                err = streamOPpending(str, &T_3_2);
+                if (err != ERR_ok)
+                    goto ex_0;
+                T_3_3.num = !T_3_2.num;
+                T_3_1.num = T_3_3.num;
+                if (T_3_3.num) {
+                    err = run_time(&T_3_4);
+                    if (err != ERR_ok)
+                        goto ex_0;
+                    err = timeOPsub(T_3_4, a, &T_3_5);
+                    if (err != ERR_ok)
+                        goto ex_0;
+                    err = timeOPt2r(T_3_5, &T_3_6);
+                    if (err != ERR_ok)
+                        goto ex_0;
+                    T_3_7.real = 3.000000e-01;
+                    err = realOPlt(T_3_6, T_3_7, &T_3_8);
+                    if (err != ERR_ok)
+                        goto ex_0;
+                    T_3_1.num = T_3_8.num;
+                }
+                if (T_3_1.num != true)
+                    break;
+            }
+            end_while_2:
+            __CLU_END_LABEL;
+        }
+        } /* end if */
+
+  LINE(299);
+        {
+        CLUREF T_2_1;
+        err = streamOPpending(str, &T_2_1);
+        if (err != ERR_ok)
+            goto ex_0;
+        ismore.num = T_2_1.num;
+        }
+
+  LINE(300);
+        {
+        first_time.tf = false;
+        }
+
+  LINE(302);
+        { /* if */
+        CLUREF T_2_1;
+        CLUREF T_2_2;
+        CLUREF T_2_3;
+        CLUREF T_2_4;
+        CLUREF T_2_5;
+        CLUREF T_2_6;
+        T_2_2.num = !partial.num;
+        T_2_1.num = T_2_2.num;
+        if (!T_2_2.num) {
+            T_2_4.num = ((last_exact.str->size != CLU_empty_string.str->size)? false :
+                !(memcmp(last_exact.str->data, CLU_empty_string.str->data, last_exact.str->size)));
+            T_2_5.num = !T_2_4.num;
+            T_2_3.num = T_2_5.num;
+            if (T_2_5.num) {
+                T_2_6.num = !ismore.num;
+                T_2_3.num = T_2_6.num;
+            }
+            T_2_1.num = T_2_3.num;
+        }
+        if (T_2_1.num == true) { /* if */
+
+  LINE(303);
+            { /* if */
+            if (exact.num == true) { /* if */
+
+  LINE(304);
+                { /* return */
+                {
+                CLUREF T_4_1;
+                generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+                generic_CLU_proc.proc = stableOPlookup;
+                CUR_PROC_VAR.proc = &generic_CLU_proc;
+                err = stableOPlookup(bindings, so_far, &T_4_1);
+                if (err != ERR_ok)
+                    goto ex_0;
+                ret_1->num = T_4_1.num;
+                }
+                {
+                ret_2->num = 1;
+                }
+                signal (ERR_ok);
+                }
+            }
+            else {
+
+  LINE(305);
+            CLUREF T_3_1;
+            CLUREF T_3_2;
+            T_3_1.num = ((last_exact.str->size != CLU_empty_string.str->size)? false :
+                !(memcmp(last_exact.str->data, CLU_empty_string.str->data, last_exact.str->size)));
+            T_3_2.num = !T_3_1.num;
+            if (T_3_2.num == true) { /* elseif */
+
+  LINE(306);
+                {
+                CLUREF T_4_1;
+                CLUREF T_4_2;
+                err = streamOPget_rescan(str, &T_4_1);
+                if (err != ERR_ok)
+                    goto ex_0;
+                err = stringOPconcat(put_back, T_4_1, &T_4_2);
+                if (err != ERR_ok)
+                    goto ex_0;
+                err = streamOPset_rescan(str, T_4_2);
+                if (err != ERR_ok)
+                    goto ex_0;
+                }
+
+  LINE(307);
+                { /* return */
+                {
+                CLUREF T_4_1;
+                generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+                generic_CLU_proc.proc = stableOPlookup;
+                CUR_PROC_VAR.proc = &generic_CLU_proc;
+                err = stableOPlookup(bindings, last_exact, &T_4_1);
+                if (err != ERR_ok)
+                    goto ex_0;
+                ret_1->num = T_4_1.num;
+                }
+                {
+                ret_2->num = 1;
+                }
+                signal (ERR_ok);
+                }
+            }
+            else { /* else */
+
+  LINE(309);
+                { /* return */
+                {
+                ret_1->num = 0;
+                }
+                {
+                ret_2->num = 1;
+                }
+                signal (ERR_ok);
+                }
+            }}} /* end if */
+        }
+        } /* end if */
+    }
+    end_while_1:
+    __CLU_END_LABEL;
+
+    goto end_0;
+  ex_0:
+    __CLU_EX_HANDLER;
+    if (err != ERR_failure)
+        elist[0] = _pclu_erstr(err);
+    signal(ERR_failure);
+  end_0:
+    elist[0] = no_return_values_STRING;
+    signal(ERR_failure);
+}
+
+/**** END PROCEDURE get_key_press ****/
+
+
+/**** BEGIN PROCEDURE setup_default_keytable ****/
+
+struct OPS *stable_of_int_ops __CLU_COMMON;
+static int lineeditOPsetup_default_keytable_own_init = 0;
+
+errcode
+lineeditOPsetup_default_keytable(CLUREF *ret_1)
+{
+    errcode err;
+    CLUREF temp;
+    if (lineeditOPsetup_default_keytable_own_init == 0) {
+        if (lineedit_own_init == 0) {
+            err = lineedit_own_init_proc();
+            if (err != ERR_ok)
+                goto ex_0;
+        }
+        lineeditOPsetup_default_keytable_own_init = 1;
+    }
+    enter_proc(318);
+
+  LINE(319);
+    {
+    CLUREF T_1_1;
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPcreate;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPcreate(&T_1_1);
+    if (err != ERR_ok)
+        goto ex_0;
+    temp.num = T_1_1.num;
+    }
+
+  LINE(320);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__001, CLU_7);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(321);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__002, CLU_2);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(322);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__004, CLU_10);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(323);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__005, CLU_6);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(324);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__006, CLU_3);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(325);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__012, CLU_8);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(326);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__013, CLU_11);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(327);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__015, CLU_8);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(328);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__016, CLU_15);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(329);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__020, CLU_14);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(330);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__025, CLU_13);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(331);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__027, CLU_16);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(332);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__177, CLU_9);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(333);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__033_1332_176, CLU_12);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(334);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__033_1333_176, CLU_11);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(335);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__033_133A, CLU_14);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(336);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__033_133B, CLU_15);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(337);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__033_133C, CLU_3);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(338);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__033_133D, CLU_2);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(339);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__033_1336_176, CLU_17);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(340);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__033_1335_176, CLU_18);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(341);
+    {
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPinsert;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPinsert(temp, STR__033, CLU_7);
+    if (err != ERR_ok)
+        goto ex_0;
+    }
+
+  LINE(342);
+    { /* return */
+    {
+    ret_1->num = temp.num;
+    }
+    signal (ERR_ok);
+    }
+
+    goto end_0;
+  ex_0:
+    __CLU_EX_HANDLER;
+    if (err != ERR_failure)
+        elist[0] = _pclu_erstr(err);
+    signal(ERR_failure);
+  end_0:
+    elist[0] = no_return_values_STRING;
+    signal(ERR_failure);
+}
+
+/**** END PROCEDURE setup_default_keytable ****/
+
+
+/**** BEGIN PROCEDURE setup_keytable ****/
+
+struct OPS *stable_of_int_ops __CLU_COMMON;
+static int lineeditOPsetup_keytable_own_init = 0;
+
+errcode
+lineeditOPsetup_keytable(CLUREF *ret_1)
+{
+    errcode err;
+    CLUREF temp_table;
+    CLUREF hd;
+    if (lineeditOPsetup_keytable_own_init == 0) {
+        if (lineedit_own_init == 0) {
+            err = lineedit_own_init_proc();
+            if (err != ERR_ok)
+                goto ex_0;
+        }
+        lineeditOPsetup_keytable_own_init = 1;
+    }
+    enter_proc(345);
+
+  LINE(354);
+    {
+    CLUREF T_1_1;
+    generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
+    generic_CLU_proc.proc = stableOPcreate;
+    CUR_PROC_VAR.proc = &generic_CLU_proc;
+    err = stableOPcreate(&T_1_1);
+    if (err != ERR_ok)
+        goto ex_0;
+    temp_table.num = T_1_1.num;
+    }
+
+  LINE(355);
+    {
+    CLUREF T_1_1;
+    err = _home_dir(CLU_empty_string, &T_1_1);
+    if (err != ERR_ok)
+        goto ex_0;
+    hd.num = T_1_1.num;
+    }
+
+  LINE(356);
+    {
+    CLUREF T_2_1;
+    CLUREF T_2_2;
+    CLUREF T_2_3;
+    err = _system_root(&T_2_1);
+    if (err != ERR_ok)
+        goto ex_1;
+    err = stringOPconcat(T_2_1, STR__057lineedit_056keys, &T_2_2);
+    if (err != ERR_ok)
+        goto ex_1;
+    err = file_nameOPparse(T_2_2, &T_2_3);
+    if (err != ERR_ok)
+        goto ex_1;
+    err = lineeditOPoverload_keytable_file(temp_table, T_2_3);
+    if (err != ERR_ok)
+        goto ex_1;
+    }
+    goto end_1;
+  ex_1: /* except */
+    __CLU_EX_HANDLER;
+    if (err == ERR_not_found) {
+
+  LINE(359);
+        {
+        CLUREF T_2_1;
+        err = lineeditOPsetup_default_keytable(&T_2_1);
+        if (err != ERR_ok)
+            goto ex_0;
+        temp_table.num = T_2_1.num;
+        }
+    }
+    else { /* not handled */
+        goto ex_0;
+    }
+  end_1:;
+
+  LINE(361);
+    {
+    CLUREF T_2_1;
+    CLUREF T_2_2;
+    err = stringOPconcat(hd, STR__057_056inputrc, &T_2_1);
+    if (err != ERR_ok)
+        goto ex_2;
+    err = file_nameOPparse(T_2_1, &T_2_2);
+    if (err != ERR_ok)
+        goto ex_2;
+    err = lineeditOPoverload_keytable_file(temp_table, T_2_2);
+    if (err != ERR_ok)
+        goto ex_2;
+    }
+    goto end_2;
+  ex_2: /* except */
+    __CLU_EX_HANDLER;
+    if (err == ERR_not_found) {
+    }
+    else { /* not handled */
+        goto ex_0;
+    }
+  end_2:;
+
+  LINE(363);
+    {
+    CLUREF T_2_1;
+    CLUREF T_2_2;
+    err = stringOPconcat(hd, STR__057_056lineedit_056keys, &T_2_1);
+    if (err != ERR_ok)
+        goto ex_3;
+    err = file_nameOPparse(T_2_1, &T_2_2);
+    if (err != ERR_ok)
+        goto ex_3;
+    err = lineeditOPoverload_keytable_file(temp_table, T_2_2);
+    if (err != ERR_ok)
+        goto ex_3;
+    }
+    goto end_3;
+  ex_3: /* except */
+    __CLU_EX_HANDLER;
+    if (err == ERR_not_found) {
+    }
+    else { /* not handled */
+        goto ex_0;
+    }
+  end_3:;
+
+  LINE(365);
+    { /* return */
+    {
+    ret_1->num = temp_table.num;
+    }
+    signal (ERR_ok);
+    }
+
+    goto end_0;
+  ex_0:
+    __CLU_EX_HANDLER;
+    if (err != ERR_failure)
+        elist[0] = _pclu_erstr(err);
+    signal(ERR_failure);
+  end_0:
+    elist[0] = no_return_values_STRING;
+    signal(ERR_failure);
+}
+
+/**** END PROCEDURE setup_keytable ****/
+
+
+/**** BEGIN PROCEDURE overload_keytable_file ****/
+
+struct OPS *stable_of_int_ops __CLU_COMMON;
+static int lineeditOPoverload_keytable_file_own_init = 0;
+
+errcode
+lineeditOPoverload_keytable_file(CLUREF tbl, CLUREF fn)
+{
+    errcode err;
+    CLUREF str;
+    CLUREF why;
+    CLUREF line;
+    CLUREF pos;
+    CLUREF key;
+    CLUREF command;
+    CLUREF first_ctrl;
+    CLUREF ctrl_what;
+    CLUREF com;
+    if (lineeditOPoverload_keytable_file_own_init == 0) {
+        if (lineedit_own_init == 0) {
+            err = lineedit_own_init_proc();
+            if (err != ERR_ok)
+                goto ex_0;
+        }
+        lineeditOPoverload_keytable_file_own_init = 1;
+    }
+    enter_proc(369);
+
+  LINE(374);
     {
     CLUREF T_2_1;
     err = streamOPopen(fn, STR_read, &T_2_1);
@@ -1829,7 +1957,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
     if (err == ERR_not_possible) {
         why.num = elist[0].num;
 
-  LINE(363);
+  LINE(375);
         { /* signal */
             signal(ERR_not_found);
         }
@@ -1839,34 +1967,34 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
     }
   end_1:;
 
-  LINE(365);
+  LINE(377);
     for (;;) { /* while */
         if (true != true)
             break;
 
-  LINE(366);
+  LINE(378);
         {
         CLUREF T_3_1;
         CLUREF T_3_2;
         err = streamOPgetl(str, &T_3_1);
         if (err != ERR_ok)
             goto ex_2;
-        err = replace(STR__040, CLU_empty_string, T_3_1, &T_3_2);
+        err = lineeditOPreplace(STR__040, CLU_empty_string, T_3_1, &T_3_2);
         if (err != ERR_ok)
             goto ex_2;
         line.num = T_3_2.num;
         }
 
-  LINE(367);
+  LINE(379);
         {
         CLUREF T_3_1;
-        err = replace(STR__011, CLU_empty_string, line, &T_3_1);
+        err = lineeditOPreplace(STR__011, CLU_empty_string, line, &T_3_1);
         if (err != ERR_ok)
             goto ex_2;
         line.num = T_3_1.num;
         }
 
-  LINE(370);
+  LINE(382);
         { /* if */
         CLUREF T_3_1;
         CLUREF T_3_2;
@@ -1899,12 +2027,12 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
         }
         if (T_3_1.num == true) { /* if */
 
-  LINE(371);
+  LINE(383);
             goto end_while_1;
         }
         } /* end if */
 
-  LINE(374);
+  LINE(386);
         {
         CLUREF T_3_1;
         CLUREF T_3_2;
@@ -1915,13 +2043,13 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
         pos.num = T_3_2.num;
         }
 
-  LINE(376);
+  LINE(388);
         { /* if */
         CLUREF T_3_1;
         T_3_1.num = (pos.num == 0);
         if (T_3_1.num == true) { /* if */
 
-  LINE(377);
+  LINE(389);
             {
             CLUREF T_4_1;
             CLUREF T_4_2;
@@ -1940,7 +2068,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
                 goto ex_2;
             }
 
-  LINE(379);
+  LINE(391);
             {
             CLUREF T_4_1;
             CLUREF T_4_2;
@@ -1955,12 +2083,12 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
                 goto ex_2;
             }
 
-  LINE(380);
+  LINE(392);
             goto end_while_1;
         }
         } /* end if */
 
-  LINE(383);
+  LINE(395);
         {
         CLUREF T_3_1;
         CLUREF T_3_2;
@@ -1976,7 +2104,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
         key.num = T_3_2.num;
         }
 
-  LINE(384);
+  LINE(396);
         {
         CLUREF T_3_1;
         CLUREF T_3_2;
@@ -1996,118 +2124,10 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
         command.num = T_3_3.num;
         }
 
-  LINE(385);
-        {
-        CLUREF T_3_1;
-        err = replace(STR_c_055, STR_C_055, key, &T_3_1);
-        if (err != ERR_ok)
-            goto ex_2;
-        key.num = T_3_1.num;
-        }
-
-  LINE(386);
-        {
-        CLUREF T_3_1;
-        err = replace(STR_CTRL_055, STR_C_055, key, &T_3_1);
-        if (err != ERR_ok)
-            goto ex_2;
-        key.num = T_3_1.num;
-        }
-
-  LINE(387);
-        {
-        CLUREF T_3_1;
-        err = replace(STR_CONTROL_055, STR_C_055, key, &T_3_1);
-        if (err != ERR_ok)
-            goto ex_2;
-        key.num = T_3_1.num;
-        }
-
-  LINE(388);
-        {
-        CLUREF T_3_1;
-        err = replace(STR_ESC, STR__033, key, &T_3_1);
-        if (err != ERR_ok)
-            goto ex_2;
-        key.num = T_3_1.num;
-        }
-
-  LINE(389);
-        {
-        CLUREF T_3_1;
-        err = replace(STR_META_055, STR__033, key, &T_3_1);
-        if (err != ERR_ok)
-            goto ex_2;
-        key.num = T_3_1.num;
-        }
-
-  LINE(390);
-        {
-        CLUREF T_3_1;
-        err = replace(STR_MET_055, STR__033, key, &T_3_1);
-        if (err != ERR_ok)
-            goto ex_2;
-        key.num = T_3_1.num;
-        }
-
-  LINE(391);
-        {
-        CLUREF T_3_1;
-        err = replace(STR_M_055, STR__033, key, &T_3_1);
-        if (err != ERR_ok)
-            goto ex_2;
-        key.num = T_3_1.num;
-        }
-
-  LINE(392);
-        {
-        CLUREF T_3_1;
-        err = replace(STR_SPACE, STR__040, key, &T_3_1);
-        if (err != ERR_ok)
-            goto ex_2;
-        key.num = T_3_1.num;
-        }
-
-  LINE(393);
-        {
-        CLUREF T_3_1;
-        err = replace(STR_DEL, STR__177, key, &T_3_1);
-        if (err != ERR_ok)
-            goto ex_2;
-        key.num = T_3_1.num;
-        }
-
-  LINE(394);
-        {
-        CLUREF T_3_1;
-        err = replace(STR_RUBOUT, STR__177, key, &T_3_1);
-        if (err != ERR_ok)
-            goto ex_2;
-        key.num = T_3_1.num;
-        }
-
-  LINE(395);
-        {
-        CLUREF T_3_1;
-        err = replace(STR_NEWLINE, STR__012, key, &T_3_1);
-        if (err != ERR_ok)
-            goto ex_2;
-        key.num = T_3_1.num;
-        }
-
-  LINE(396);
-        {
-        CLUREF T_3_1;
-        err = replace(STR_RETURN, STR__012, key, &T_3_1);
-        if (err != ERR_ok)
-            goto ex_2;
-        key.num = T_3_1.num;
-        }
-
   LINE(397);
         {
         CLUREF T_3_1;
-        err = replace(STR_TAB, STR__011, key, &T_3_1);
+        err = lineeditOPreplace(STR_c_055, STR_C_055, key, &T_3_1);
         if (err != ERR_ok)
             goto ex_2;
         key.num = T_3_1.num;
@@ -2116,7 +2136,16 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
   LINE(398);
         {
         CLUREF T_3_1;
-        err = replace(STR_LFD, STR__012, key, &T_3_1);
+        err = lineeditOPreplace(STR_CTRL_055, STR_C_055, key, &T_3_1);
+        if (err != ERR_ok)
+            goto ex_2;
+        key.num = T_3_1.num;
+        }
+
+  LINE(399);
+        {
+        CLUREF T_3_1;
+        err = lineeditOPreplace(STR_CONTROL_055, STR_C_055, key, &T_3_1);
         if (err != ERR_ok)
             goto ex_2;
         key.num = T_3_1.num;
@@ -2125,7 +2154,16 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
   LINE(400);
         {
         CLUREF T_3_1;
-        err = replace(STR__054, CLU_empty_string, key, &T_3_1);
+        err = lineeditOPreplace(STR_ESC, STR__033, key, &T_3_1);
+        if (err != ERR_ok)
+            goto ex_2;
+        key.num = T_3_1.num;
+        }
+
+  LINE(401);
+        {
+        CLUREF T_3_1;
+        err = lineeditOPreplace(STR_META_055, STR__033, key, &T_3_1);
         if (err != ERR_ok)
             goto ex_2;
         key.num = T_3_1.num;
@@ -2134,7 +2172,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
   LINE(402);
         {
         CLUREF T_3_1;
-        err = replace(STR_COMMA, STR__054, key, &T_3_1);
+        err = lineeditOPreplace(STR_MET_055, STR__033, key, &T_3_1);
         if (err != ERR_ok)
             goto ex_2;
         key.num = T_3_1.num;
@@ -2143,7 +2181,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
   LINE(403);
         {
         CLUREF T_3_1;
-        err = replace(STR_COLON, STR__072, key, &T_3_1);
+        err = lineeditOPreplace(STR_M_055, STR__033, key, &T_3_1);
         if (err != ERR_ok)
             goto ex_2;
         key.num = T_3_1.num;
@@ -2152,7 +2190,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
   LINE(404);
         {
         CLUREF T_3_1;
-        err = replace(STR_C_055_177, STR__037, key, &T_3_1);
+        err = lineeditOPreplace(STR_SPACE, STR__040, key, &T_3_1);
         if (err != ERR_ok)
             goto ex_2;
         key.num = T_3_1.num;
@@ -2161,7 +2199,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
   LINE(405);
         {
         CLUREF T_3_1;
-        err = replace(STR_C_055_137, STR__037, key, &T_3_1);
+        err = lineeditOPreplace(STR_DEL, STR__177, key, &T_3_1);
         if (err != ERR_ok)
             goto ex_2;
         key.num = T_3_1.num;
@@ -2170,7 +2208,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
   LINE(406);
         {
         CLUREF T_3_1;
-        err = replace(STR_C_055_136, STR__036, key, &T_3_1);
+        err = lineeditOPreplace(STR_RUBOUT, STR__177, key, &T_3_1);
         if (err != ERR_ok)
             goto ex_2;
         key.num = T_3_1.num;
@@ -2179,7 +2217,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
   LINE(407);
         {
         CLUREF T_3_1;
-        err = replace(STR_C_055_176, STR__036, key, &T_3_1);
+        err = lineeditOPreplace(STR_NEWLINE, STR__012, key, &T_3_1);
         if (err != ERR_ok)
             goto ex_2;
         key.num = T_3_1.num;
@@ -2188,7 +2226,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
   LINE(408);
         {
         CLUREF T_3_1;
-        err = replace(STR_C_055_135, STR__035, key, &T_3_1);
+        err = lineeditOPreplace(STR_RETURN, STR__012, key, &T_3_1);
         if (err != ERR_ok)
             goto ex_2;
         key.num = T_3_1.num;
@@ -2197,7 +2235,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
   LINE(409);
         {
         CLUREF T_3_1;
-        err = replace(STR_C_055_133, STR__033, key, &T_3_1);
+        err = lineeditOPreplace(STR_TAB, STR__011, key, &T_3_1);
         if (err != ERR_ok)
             goto ex_2;
         key.num = T_3_1.num;
@@ -2206,22 +2244,112 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
   LINE(410);
         {
         CLUREF T_3_1;
-        err = replace(STR_C_055_040, STR__000, key, &T_3_1);
+        err = lineeditOPreplace(STR_LFD, STR__012, key, &T_3_1);
         if (err != ERR_ok)
             goto ex_2;
         key.num = T_3_1.num;
         }
 
-  LINE(411);
+  LINE(412);
         {
         CLUREF T_3_1;
-        err = replace(STR_C_055_100, STR__000, key, &T_3_1);
+        err = lineeditOPreplace(STR__054, CLU_empty_string, key, &T_3_1);
         if (err != ERR_ok)
             goto ex_2;
         key.num = T_3_1.num;
         }
 
-  LINE(413);
+  LINE(414);
+        {
+        CLUREF T_3_1;
+        err = lineeditOPreplace(STR_COMMA, STR__054, key, &T_3_1);
+        if (err != ERR_ok)
+            goto ex_2;
+        key.num = T_3_1.num;
+        }
+
+  LINE(415);
+        {
+        CLUREF T_3_1;
+        err = lineeditOPreplace(STR_COLON, STR__072, key, &T_3_1);
+        if (err != ERR_ok)
+            goto ex_2;
+        key.num = T_3_1.num;
+        }
+
+  LINE(416);
+        {
+        CLUREF T_3_1;
+        err = lineeditOPreplace(STR_C_055_177, STR__037, key, &T_3_1);
+        if (err != ERR_ok)
+            goto ex_2;
+        key.num = T_3_1.num;
+        }
+
+  LINE(417);
+        {
+        CLUREF T_3_1;
+        err = lineeditOPreplace(STR_C_055_137, STR__037, key, &T_3_1);
+        if (err != ERR_ok)
+            goto ex_2;
+        key.num = T_3_1.num;
+        }
+
+  LINE(418);
+        {
+        CLUREF T_3_1;
+        err = lineeditOPreplace(STR_C_055_136, STR__036, key, &T_3_1);
+        if (err != ERR_ok)
+            goto ex_2;
+        key.num = T_3_1.num;
+        }
+
+  LINE(419);
+        {
+        CLUREF T_3_1;
+        err = lineeditOPreplace(STR_C_055_176, STR__036, key, &T_3_1);
+        if (err != ERR_ok)
+            goto ex_2;
+        key.num = T_3_1.num;
+        }
+
+  LINE(420);
+        {
+        CLUREF T_3_1;
+        err = lineeditOPreplace(STR_C_055_135, STR__035, key, &T_3_1);
+        if (err != ERR_ok)
+            goto ex_2;
+        key.num = T_3_1.num;
+        }
+
+  LINE(421);
+        {
+        CLUREF T_3_1;
+        err = lineeditOPreplace(STR_C_055_133, STR__033, key, &T_3_1);
+        if (err != ERR_ok)
+            goto ex_2;
+        key.num = T_3_1.num;
+        }
+
+  LINE(422);
+        {
+        CLUREF T_3_1;
+        err = lineeditOPreplace(STR_C_055_040, STR__000, key, &T_3_1);
+        if (err != ERR_ok)
+            goto ex_2;
+        key.num = T_3_1.num;
+        }
+
+  LINE(423);
+        {
+        CLUREF T_3_1;
+        err = lineeditOPreplace(STR_C_055_100, STR__000, key, &T_3_1);
+        if (err != ERR_ok)
+            goto ex_2;
+        key.num = T_3_1.num;
+        }
+
+  LINE(425);
         for (;;) { /* while */
             CLUREF T_4_1;
             CLUREF T_4_2;
@@ -2234,7 +2362,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
             if (T_4_3.num != true)
                 break;
 
-  LINE(414);
+  LINE(426);
             {
             CLUREF T_5_1;
             err = stringOPindexs(STR_C_055, key, &T_5_1);
@@ -2243,7 +2371,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
             first_ctrl.num = T_5_1.num;
             }
 
-  LINE(415);
+  LINE(427);
             {
             CLUREF T_5_1;
             CLUREF T_5_2;
@@ -2263,7 +2391,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
             ctrl_what.num = T_5_3.num;
             }
 
-  LINE(416);
+  LINE(428);
             { /* if */
             CLUREF T_5_1;
             CLUREF T_5_2;
@@ -2284,7 +2412,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
             }
             if (T_5_1.num == true) { /* if */
 
-  LINE(417);
+  LINE(429);
                 {
                 CLUREF T_6_1;
                 CLUREF T_6_2;
@@ -2340,7 +2468,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
             }
             else { /* else */
 
-  LINE(421);
+  LINE(433);
                 {
                 key = CLU_empty_string;
                 }
@@ -2353,7 +2481,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
         __CLU_EX_HANDLER;
         if (err == ERR_bounds) {
 
-  LINE(424);
+  LINE(436);
             {
             key = CLU_empty_string;
             }
@@ -2363,21 +2491,21 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
         }
       end_3:;
 
-  LINE(429);
+  LINE(441);
         {
         CLUREF T_3_1;
-        err = replace(STR__055, STR__137, command, &T_3_1);
+        err = lineeditOPreplace(STR__055, STR__137, command, &T_3_1);
         if (err != ERR_ok)
             goto ex_2;
         command.num = T_3_1.num;
         }
 
-  LINE(430);
+  LINE(442);
         {
         com.num = 0;
         }
 
-  LINE(431);
+  LINE(443);
         { /* if */
         CLUREF T_3_1;
         CLUREF T_3_2;
@@ -2386,207 +2514,129 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
         T_3_2.num = !T_3_1.num;
         if (T_3_2.num == true) { /* if */
 
-  LINE(432);
+  LINE(444);
             { /* if */
             CLUREF T_4_1;
             T_4_1.num = ((command.str->size != STR_BEGINNING_137OF_137LINE.str->size)? false :
                 !(memcmp(command.str->data, STR_BEGINNING_137OF_137LINE.str->data, command.str->size)));
             if (T_4_1.num == true) { /* if */
 
-  LINE(433);
+  LINE(445);
                 {
                 com.num = 7;
                 }
             }
             else {
 
-  LINE(434);
+  LINE(446);
             CLUREF T_4_2;
             T_4_2.num = ((command.str->size != STR_END_137OF_137LINE.str->size)? false :
                 !(memcmp(command.str->data, STR_END_137OF_137LINE.str->data, command.str->size)));
             if (T_4_2.num == true) { /* elseif */
 
-  LINE(435);
+  LINE(447);
                 {
                 com.num = 6;
                 }
             }
             else {
 
-  LINE(436);
+  LINE(448);
             CLUREF T_4_3;
             T_4_3.num = ((command.str->size != STR_FORWARD_137CHAR.str->size)? false :
                 !(memcmp(command.str->data, STR_FORWARD_137CHAR.str->data, command.str->size)));
             if (T_4_3.num == true) { /* elseif */
 
-  LINE(437);
+  LINE(449);
                 {
                 com.num = 3;
                 }
             }
             else {
 
-  LINE(438);
+  LINE(450);
             CLUREF T_4_4;
             T_4_4.num = ((command.str->size != STR_BACKWARD_137CHAR.str->size)? false :
                 !(memcmp(command.str->data, STR_BACKWARD_137CHAR.str->data, command.str->size)));
             if (T_4_4.num == true) { /* elseif */
 
-  LINE(439);
+  LINE(451);
                 {
                 com.num = 2;
                 }
             }
             else {
 
-  LINE(440);
+  LINE(452);
             CLUREF T_4_5;
             T_4_5.num = ((command.str->size != STR_FORWARD_137WORD.str->size)? false :
                 !(memcmp(command.str->data, STR_FORWARD_137WORD.str->data, command.str->size)));
             if (T_4_5.num == true) { /* elseif */
 
-  LINE(441);
+  LINE(453);
                 {
                 com.num = 17;
                 }
             }
             else {
 
-  LINE(442);
+  LINE(454);
             CLUREF T_4_6;
             T_4_6.num = ((command.str->size != STR_BACKWARD_137WORD.str->size)? false :
                 !(memcmp(command.str->data, STR_BACKWARD_137WORD.str->data, command.str->size)));
             if (T_4_6.num == true) { /* elseif */
 
-  LINE(443);
+  LINE(455);
                 {
                 com.num = 18;
                 }
             }
             else {
 
-  LINE(444);
+  LINE(456);
             CLUREF T_4_7;
             T_4_7.num = ((command.str->size != STR_ACCEPT_137LINE.str->size)? false :
                 !(memcmp(command.str->data, STR_ACCEPT_137LINE.str->data, command.str->size)));
             if (T_4_7.num == true) { /* elseif */
 
-  LINE(445);
+  LINE(457);
                 {
                 com.num = 8;
                 }
             }
             else {
 
-  LINE(446);
+  LINE(458);
             CLUREF T_4_8;
             T_4_8.num = ((command.str->size != STR_PREVIOUS_137HISTORY.str->size)? false :
                 !(memcmp(command.str->data, STR_PREVIOUS_137HISTORY.str->data, command.str->size)));
             if (T_4_8.num == true) { /* elseif */
 
-  LINE(447);
+  LINE(459);
                 {
                 com.num = 14;
                 }
             }
             else {
 
-  LINE(448);
+  LINE(460);
             CLUREF T_4_9;
             T_4_9.num = ((command.str->size != STR_NEXT_137HISTORY.str->size)? false :
                 !(memcmp(command.str->data, STR_NEXT_137HISTORY.str->data, command.str->size)));
             if (T_4_9.num == true) { /* elseif */
 
-  LINE(449);
+  LINE(461);
                 {
                 com.num = 15;
                 }
             }
             else {
 
-  LINE(450);
+  LINE(462);
             CLUREF T_4_10;
             T_4_10.num = ((command.str->size != STR_BEGINNING_137OF_137HISTORY.str->size)? false :
                 !(memcmp(command.str->data, STR_BEGINNING_137OF_137HISTORY.str->data, command.str->size)));
             if (T_4_10.num == true) { /* elseif */
-
-  LINE(451);
-                {
-                com.num = 0;
-                }
-            }
-            else {
-
-  LINE(452);
-            CLUREF T_4_11;
-            T_4_11.num = ((command.str->size != STR_END_137OF_137HISTORY.str->size)? false :
-                !(memcmp(command.str->data, STR_END_137OF_137HISTORY.str->data, command.str->size)));
-            if (T_4_11.num == true) { /* elseif */
-
-  LINE(453);
-                {
-                com.num = 0;
-                }
-            }
-            else {
-
-  LINE(454);
-            CLUREF T_4_12;
-            T_4_12.num = ((command.str->size != STR_DELETE_137CHAR.str->size)? false :
-                !(memcmp(command.str->data, STR_DELETE_137CHAR.str->data, command.str->size)));
-            if (T_4_12.num == true) { /* elseif */
-
-  LINE(455);
-                {
-                com.num = 10;
-                }
-            }
-            else {
-
-  LINE(456);
-            CLUREF T_4_13;
-            T_4_13.num = ((command.str->size != STR_BACKWARD_137DELETE_137CHAR.str->size)? false :
-                !(memcmp(command.str->data, STR_BACKWARD_137DELETE_137CHAR.str->data, command.str->size)));
-            if (T_4_13.num == true) { /* elseif */
-
-  LINE(457);
-                {
-                com.num = 9;
-                }
-            }
-            else {
-
-  LINE(458);
-            CLUREF T_4_14;
-            T_4_14.num = ((command.str->size != STR_QUOTED_137INSERT.str->size)? false :
-                !(memcmp(command.str->data, STR_QUOTED_137INSERT.str->data, command.str->size)));
-            if (T_4_14.num == true) { /* elseif */
-
-  LINE(459);
-                {
-                com.num = 0;
-                }
-            }
-            else {
-
-  LINE(460);
-            CLUREF T_4_15;
-            T_4_15.num = ((command.str->size != STR_UPCASE_137WORD.str->size)? false :
-                !(memcmp(command.str->data, STR_UPCASE_137WORD.str->data, command.str->size)));
-            if (T_4_15.num == true) { /* elseif */
-
-  LINE(461);
-                {
-                com.num = 0;
-                }
-            }
-            else {
-
-  LINE(462);
-            CLUREF T_4_16;
-            T_4_16.num = ((command.str->size != STR_DOWNCASE_137WORD.str->size)? false :
-                !(memcmp(command.str->data, STR_DOWNCASE_137WORD.str->data, command.str->size)));
-            if (T_4_16.num == true) { /* elseif */
 
   LINE(463);
                 {
@@ -2596,64 +2646,142 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
             else {
 
   LINE(464);
+            CLUREF T_4_11;
+            T_4_11.num = ((command.str->size != STR_END_137OF_137HISTORY.str->size)? false :
+                !(memcmp(command.str->data, STR_END_137OF_137HISTORY.str->data, command.str->size)));
+            if (T_4_11.num == true) { /* elseif */
+
+  LINE(465);
+                {
+                com.num = 0;
+                }
+            }
+            else {
+
+  LINE(466);
+            CLUREF T_4_12;
+            T_4_12.num = ((command.str->size != STR_DELETE_137CHAR.str->size)? false :
+                !(memcmp(command.str->data, STR_DELETE_137CHAR.str->data, command.str->size)));
+            if (T_4_12.num == true) { /* elseif */
+
+  LINE(467);
+                {
+                com.num = 10;
+                }
+            }
+            else {
+
+  LINE(468);
+            CLUREF T_4_13;
+            T_4_13.num = ((command.str->size != STR_BACKWARD_137DELETE_137CHAR.str->size)? false :
+                !(memcmp(command.str->data, STR_BACKWARD_137DELETE_137CHAR.str->data, command.str->size)));
+            if (T_4_13.num == true) { /* elseif */
+
+  LINE(469);
+                {
+                com.num = 9;
+                }
+            }
+            else {
+
+  LINE(470);
+            CLUREF T_4_14;
+            T_4_14.num = ((command.str->size != STR_QUOTED_137INSERT.str->size)? false :
+                !(memcmp(command.str->data, STR_QUOTED_137INSERT.str->data, command.str->size)));
+            if (T_4_14.num == true) { /* elseif */
+
+  LINE(471);
+                {
+                com.num = 0;
+                }
+            }
+            else {
+
+  LINE(472);
+            CLUREF T_4_15;
+            T_4_15.num = ((command.str->size != STR_UPCASE_137WORD.str->size)? false :
+                !(memcmp(command.str->data, STR_UPCASE_137WORD.str->data, command.str->size)));
+            if (T_4_15.num == true) { /* elseif */
+
+  LINE(473);
+                {
+                com.num = 0;
+                }
+            }
+            else {
+
+  LINE(474);
+            CLUREF T_4_16;
+            T_4_16.num = ((command.str->size != STR_DOWNCASE_137WORD.str->size)? false :
+                !(memcmp(command.str->data, STR_DOWNCASE_137WORD.str->data, command.str->size)));
+            if (T_4_16.num == true) { /* elseif */
+
+  LINE(475);
+                {
+                com.num = 0;
+                }
+            }
+            else {
+
+  LINE(476);
             CLUREF T_4_17;
             T_4_17.num = ((command.str->size != STR_KILL_137LINE.str->size)? false :
                 !(memcmp(command.str->data, STR_KILL_137LINE.str->data, command.str->size)));
             if (T_4_17.num == true) { /* elseif */
 
-  LINE(465);
+  LINE(477);
                 {
                 com.num = 11;
                 }
             }
             else {
 
-  LINE(466);
+  LINE(478);
             CLUREF T_4_18;
             T_4_18.num = ((command.str->size != STR_KILL_137WORD.str->size)? false :
                 !(memcmp(command.str->data, STR_KILL_137WORD.str->data, command.str->size)));
             if (T_4_18.num == true) { /* elseif */
 
-  LINE(467);
+  LINE(479);
                 {
                 com.num = 16;
                 }
             }
             else {
 
-  LINE(468);
+  LINE(480);
             CLUREF T_4_19;
             T_4_19.num = ((command.str->size != STR_YANK.str->size)? false :
                 !(memcmp(command.str->data, STR_YANK.str->data, command.str->size)));
             if (T_4_19.num == true) { /* elseif */
 
-  LINE(469);
+  LINE(481);
                 {
                 com.num = 12;
                 }
             }
             else {
 
-  LINE(470);
+  LINE(482);
             CLUREF T_4_20;
             T_4_20.num = ((command.str->size != STR_DELETE_137LINE.str->size)? false :
                 !(memcmp(command.str->data, STR_DELETE_137LINE.str->data, command.str->size)));
             if (T_4_20.num == true) { /* elseif */
 
-  LINE(471);
+  LINE(483);
                 {
                 com.num = 13;
                 }
             }
             else { /* else */
 
-  LINE(473);
+  LINE(485);
                 {
                 com.num = 0;
                 }
             }}}}}}}}}}}}}}}}}}}}} /* end if */
 
-  LINE(476);
+  LINE(488);
             { /* if */
             CLUREF T_4_1;
             CLUREF T_4_2;
@@ -2661,7 +2789,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
             T_4_2.num = !T_4_1.num;
             if (T_4_2.num == true) { /* if */
 
-  LINE(477);
+  LINE(489);
                 {
                 generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
                 generic_CLU_proc.proc = stableOPinsert;
@@ -2675,7 +2803,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
                 __CLU_EX_HANDLER;
                 if (err == ERR_duplicate) {
 
-  LINE(478);
+  LINE(490);
                     {
                     generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
                     generic_CLU_proc.proc = stableOPdelete;
@@ -2685,7 +2813,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
                         goto ex_2;
                     }
 
-  LINE(479);
+  LINE(491);
                     {
                     generic_CLU_proc.type_owns = stable_of_int_ops->type_owns;
                     generic_CLU_proc.proc = stableOPinsert;
@@ -2704,7 +2832,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
         }
         else { /* else */
 
-  LINE(483);
+  LINE(495);
             {
             CLUREF T_4_1;
             CLUREF T_4_2;
@@ -2723,7 +2851,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
                 goto ex_2;
             }
 
-  LINE(486);
+  LINE(498);
             {
             CLUREF T_4_1;
             CLUREF T_4_2;
@@ -2751,7 +2879,7 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
     }
   end_2:;
 
-  LINE(490);
+  LINE(502);
     {
     err = streamOPclose(str);
     if (err != ERR_ok)
@@ -2771,18 +2899,22 @@ overload_keytable_file(CLUREF tbl, CLUREF fn)
 /**** END PROCEDURE overload_keytable_file ****/
 
 
-
 /**** BEGIN PROCEDURE replace ****/
 
 
 errcode
-replace(CLUREF look_for, CLUREF new, CLUREF from, CLUREF *ret_1)
+lineeditOPreplace(CLUREF look_for, CLUREF new, CLUREF from, CLUREF *ret_1)
 {
     errcode err;
     CLUREF match_beg;
-    enter_proc(494);
+    if (lineedit_own_init == 0) {
+        err = lineedit_own_init_proc();
+        if (err != ERR_ok)
+            goto ex_0;
+    }
+    enter_proc(506);
 
-  LINE(498);
+  LINE(510);
     {
     CLUREF T_1_1;
     CLUREF T_1_2;
@@ -2799,13 +2931,13 @@ replace(CLUREF look_for, CLUREF new, CLUREF from, CLUREF *ret_1)
     match_beg.num = T_1_3.num;
     }
 
-  LINE(500);
+  LINE(512);
     { /* if */
     CLUREF T_1_1;
     T_1_1.num = (match_beg.num == 0);
     if (T_1_1.num == true) { /* if */
 
-  LINE(501);
+  LINE(513);
         { /* return */
         {
         ret_1->num = from.num;
@@ -2815,7 +2947,7 @@ replace(CLUREF look_for, CLUREF new, CLUREF from, CLUREF *ret_1)
     }
     else { /* else */
 
-  LINE(503);
+  LINE(515);
         { /* return */
         {
         CLUREF T_2_1;
@@ -2850,7 +2982,7 @@ replace(CLUREF look_for, CLUREF new, CLUREF from, CLUREF *ret_1)
         err = stringOPrest(from, T_2_5, &T_2_6);
         if (err != ERR_ok)
             goto ex_0;
-        err = replace(look_for, new, T_2_6, &T_2_7);
+        err = lineeditOPreplace(look_for, new, T_2_6, &T_2_7);
         if (err != ERR_ok)
             goto ex_0;
         err = stringOPconcat(T_2_3, T_2_7, &T_2_8);
@@ -2876,34 +3008,15 @@ replace(CLUREF look_for, CLUREF new, CLUREF from, CLUREF *ret_1)
 /**** END PROCEDURE replace ****/
 
 
+/**** BEGIN PROCEDURE getline ****/
 
-/**** BEGIN PROCEDURE lineedit ****/
-
-extern errcode arrayOPnew();
-extern errcode arrayOPhigh();
-extern errcode streamOPscripts();
-extern errcode streamOPrem_script();
-extern errcode arrayOPaddh();
-extern errcode get_key_press();
-extern errcode insert_text();
-extern errcode delete_text();
-extern errcode arrayOPtop();
-extern errcode arrayOPsize();
-extern errcode arrayOPreml();
-extern errcode arrayOPelements();
-extern errcode streamOPadd_script();
-extern errcode intOPlt();
-extern errcode arrayOPfetch();
-extern errcode arrayOPlow();
-extern errcode find_word();
-static errcode lineedit_IB_1();
-static CLUREF STR__040_072_073_056_054_057_174;
-static CLUREF STR__007;
-static int lineedit_own_init = 0;
-CLUREF lineeditOPhistory;
+static errcode lineeditOPgetline_IB_1();
+static int lineeditOPgetline_own_init = 0;
 typedef struct {
     errcode ecode2;
     errcode err;
+    CLUREF str;
+    CLUREF history;
     CLUREF scripted_streams;
     CLUREF kill_ring;
     CLUREF input_line;
@@ -2916,32 +3029,41 @@ typedef struct {
     CLUREF left;
     CLUREF right;
     CLUREF new_pos;
-    CLUREF str;
+    CLUREF li;
     CLUREF prompt;
-} lineedit_LOCALS_t;
+} lineeditOPgetline_LOCALS_t;
 
 errcode
-lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
+lineeditOPgetline(CLUREF li, CLUREF prompt, CLUREF *ret_1)
 {
-    lineedit_LOCALS_t locals;
-    locals.str = str;
+    lineeditOPgetline_LOCALS_t locals;
+    locals.li = li;
     locals.prompt = prompt;
-    if (lineedit_own_init == 0) {
-        stringOPcons("\033[D", CLU_1, CLUREF_make_num(3), &STR__033_133D);
-        stringOPcons(" :;.,/|", CLU_1, CLUREF_make_num(7), &STR__040_072_073_056_054_057_174);
-        stringOPcons("\007", CLU_1, CLUREF_make_num(1), &STR__007);
-        lineedit_own_init = 1;
-        {
-        CLUREF T_0_1;
-        locals.err = arrayOPnew(&T_0_1);
-        if (locals.err != ERR_ok)
-            goto ex_0;
-        lineeditOPhistory.num = T_0_1.num;
+    if (lineeditOPgetline_own_init == 0) {
+        if (lineedit_own_init == 0) {
+            locals.err = lineedit_own_init_proc();
+            if (locals.err != ERR_ok)
+                goto ex_0;
         }
+        lineeditOPgetline_own_init = 1;
     }
-    enter_proc(528);
+    enter_proc(540);
 
-  LINE(538);
+  LINE(542);
+    {
+    CLUREF T_1_1;
+    T_1_1.num = locals.li.vec->data[2];
+    locals.str.num = T_1_1.num;
+    }
+
+  LINE(551);
+    {
+    CLUREF T_1_1;
+    T_1_1.num = locals.li.vec->data[1];
+    locals.history.num = T_1_1.num;
+    }
+
+  LINE(552);
     {
     CLUREF T_1_1;
     locals.err = arrayOPnew(&T_1_1);
@@ -2950,26 +3072,26 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
     locals.scripted_streams.num = T_1_1.num;
     }
 
-  LINE(539);
+  LINE(553);
     {
     locals.kill_ring = CLU_empty_string;
     }
 
-  LINE(540);
+  LINE(554);
     {
     locals.input_line = CLU_empty_string;
     }
 
-  LINE(541);
+  LINE(555);
     {
     locals.current_pos.num = 1;
     }
 
-  LINE(542);
+  LINE(556);
     {
     CLUREF T_1_1;
     CLUREF T_1_2;
-    T_1_1.num = lineeditOPhistory.array->ext_high;
+    T_1_1.num = locals.history.array->ext_high;
     T_1_2.num = T_1_1.num + 1;
     if ((T_1_2.num > 0 && T_1_1.num < 0 && 1 < 0) ||
         (T_1_2.num < 0 && T_1_1.num > 0 && 1 > 0)) {
@@ -2979,16 +3101,16 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
     locals.curr_hist.num = T_1_2.num;
     }
 
-  LINE(544);
+  LINE(558);
     {
     locals.err = streamOPputs(locals.str, locals.prompt);
     if (locals.err != ERR_ok)
         goto ex_0;
     }
 
-  LINE(546);
+  LINE(560);
     { /* for */
-        locals.err = streamOPscripts(locals.str, lineedit_IB_1, &locals, &locals.ecode2);
+        locals.err = streamOPscripts(locals.str, lineeditOPgetline_IB_1, &locals, &locals.ecode2);
 
         if (locals.err == ERR_iterbodyreturn) {
             ret_1->num = elist[0].num;
@@ -3004,23 +3126,23 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
             goto ex_0;
     }
 
-  LINE(552);
+  LINE(566);
     for (;;) { /* while */
         if (true != true)
             break;
 
-  LINE(553);
+  LINE(567);
         {
         CLUREF T_2_1;
         CLUREF T_2_2;
-        locals.err = get_key_press(locals.str, &T_2_1, &T_2_2);
+        locals.err = lineeditOPget_key_press(locals.li, &T_2_1, &T_2_2);
         if (locals.err != ERR_ok)
             goto ex_0;
         locals.command.num = T_2_1.num;
         locals.parameter.num = T_2_2.num;
         }
 
-  LINE(554);
+  LINE(568);
         {
         CLUREF T_2_1;
         locals.err = stringOPsize(locals.input_line, &T_2_1);
@@ -3029,13 +3151,13 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
         locals.line_length.num = T_2_1.num;
         }
 
-  LINE(556);
+  LINE(570);
         { /* if */
         CLUREF T_2_1;
         T_2_1.num = (locals.command.num == 1);
         if (T_2_1.num == true) { /* if */
 
-  LINE(557);
+  LINE(571);
             {
             CLUREF T_3_1;
             CLUREF T_3_2;
@@ -3047,7 +3169,7 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
             locals.err = stringOPc2s(T_3_1, &T_3_2);
             if (locals.err != ERR_ok)
                 goto ex_0;
-            locals.err = insert_text(locals.str, T_3_2, locals.input_line, locals.current_pos, &T_3_3, &T_3_4);
+            locals.err = lineeditOPinsert_text(locals.str, T_3_2, locals.input_line, locals.current_pos, &T_3_3, &T_3_4);
             if (locals.err != ERR_ok)
                 goto ex_0;
             locals.input_line.num = T_3_3.num;
@@ -3056,16 +3178,16 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
         }
         else {
 
-  LINE(561);
+  LINE(575);
         CLUREF T_2_2;
         T_2_2.num = (locals.command.num == 13);
         if (T_2_2.num == true) { /* elseif */
 
-  LINE(562);
+  LINE(576);
             {
             CLUREF T_3_1;
             CLUREF T_3_2;
-            locals.err = delete_text(locals.str, locals.input_line, locals.current_pos, CLU_1, locals.line_length, &T_3_1, &T_3_2);
+            locals.err = lineeditOPdelete_text(locals.str, locals.input_line, locals.current_pos, CLU_1, locals.line_length, &T_3_1, &T_3_2);
             if (locals.err != ERR_ok)
                 goto ex_0;
             locals.input_line.num = T_3_1.num;
@@ -3074,12 +3196,12 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
         }
         else {
 
-  LINE(565);
+  LINE(579);
         CLUREF T_2_3;
         T_2_3.num = (locals.command.num == 8);
         if (T_2_3.num == true) { /* elseif */
 
-  LINE(567);
+  LINE(581);
             { /* if */
             CLUREF T_4_1;
             CLUREF T_4_2;
@@ -3087,7 +3209,7 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
             CLUREF T_4_4;
             CLUREF T_4_5;
             CLUREF T_4_6;
-            locals.err = arrayOPtop(lineeditOPhistory, &T_4_2);
+            locals.err = arrayOPtop(locals.history, &T_4_2);
             if (locals.err != ERR_ok)
                 goto ex_1;
             T_4_3.num = ((locals.input_line.str->size != T_4_2.str->size)? false :
@@ -3102,34 +3224,34 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
             }
             if (T_4_1.num == true) { /* if */
 
-  LINE(568);
+  LINE(582);
                 {
                 {
-                if ((lineeditOPhistory.array->int_low + lineeditOPhistory.array->ext_size + 1) < lineeditOPhistory.array->int_size) {
-                    lineeditOPhistory.array->store->data[lineeditOPhistory.array->int_low + lineeditOPhistory.array->ext_size] = locals.input_line.num;
-                    lineeditOPhistory.array->ext_size++;
-                    lineeditOPhistory.array->ext_high++;
+                if ((locals.history.array->int_low + locals.history.array->ext_size + 1) < locals.history.array->int_size) {
+                    locals.history.array->store->data[locals.history.array->int_low + locals.history.array->ext_size] = locals.input_line.num;
+                    locals.history.array->ext_size++;
+                    locals.history.array->ext_high++;
                 }
                 else {
-                    locals.err = arrayOPaddh(lineeditOPhistory, locals.input_line);
+                    locals.err = arrayOPaddh(locals.history, locals.input_line);
                     if (locals.err != ERR_ok)
                         goto ex_1;
                 }
                 }
                 }
 
-  LINE(569);
+  LINE(583);
                 { /* if */
                 CLUREF T_5_1;
                 CLUREF T_5_2;
-                T_5_1.num = lineeditOPhistory.array->ext_size;
+                T_5_1.num = locals.history.array->ext_size;
                 T_5_2.num = (T_5_1.num > 30);
                 if (T_5_2.num == true) { /* if */
 
-  LINE(570);
+  LINE(584);
                     {
                     CLUREF T_6_1;
-                    locals.err = arrayOPreml(lineeditOPhistory, &T_6_1);
+                    locals.err = arrayOPreml(locals.history, &T_6_1);
                     if (locals.err != ERR_ok)
                         goto ex_1;
                     }
@@ -3142,16 +3264,16 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
             __CLU_EX_HANDLER;
             if (locals.err == ERR_bounds) {
 
-  LINE(572);
+  LINE(586);
                 {
                 {
-                if ((lineeditOPhistory.array->int_low + lineeditOPhistory.array->ext_size + 1) < lineeditOPhistory.array->int_size) {
-                    lineeditOPhistory.array->store->data[lineeditOPhistory.array->int_low + lineeditOPhistory.array->ext_size] = locals.input_line.num;
-                    lineeditOPhistory.array->ext_size++;
-                    lineeditOPhistory.array->ext_high++;
+                if ((locals.history.array->int_low + locals.history.array->ext_size + 1) < locals.history.array->int_size) {
+                    locals.history.array->store->data[locals.history.array->int_low + locals.history.array->ext_size] = locals.input_line.num;
+                    locals.history.array->ext_size++;
+                    locals.history.array->ext_high++;
                 }
                 else {
-                    locals.err = arrayOPaddh(lineeditOPhistory, locals.input_line);
+                    locals.err = arrayOPaddh(locals.history, locals.input_line);
                     if (locals.err != ERR_ok)
                         goto ex_0;
                 }
@@ -3163,7 +3285,7 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
             }
           end_1:;
 
-  LINE(574);
+  LINE(588);
             { /* for array$elements */
             CLUREF T_3_1;
             CLUREF T_3_2;
@@ -3178,14 +3300,14 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
                 }
                 locals.ss.num = T_3_3.array->store->data[T_3_1.num - T_3_3.array->ext_low + T_3_3.array->int_low];
 
-  LINE(575);
+  LINE(589);
                 {
                 locals.err = streamOPputs(locals.ss, locals.input_line);
                 if (locals.err != ERR_ok)
                     goto ex_0;
                 }
 
-  LINE(576);
+  LINE(590);
                 {
                 locals.err = streamOPadd_script(locals.str, locals.ss);
                 if (locals.err != ERR_ok)
@@ -3196,7 +3318,7 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
             end_inline_for_1:
             __CLU_END_LABEL;
 
-  LINE(581);
+  LINE(595);
             { /* return */
             {
             ret_1->num = locals.input_line.num;
@@ -3206,12 +3328,12 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
         }
         else {
 
-  LINE(583);
+  LINE(597);
         CLUREF T_2_4;
         T_2_4.num = (locals.command.num == 7);
         if (T_2_4.num == true) { /* elseif */
 
-  LINE(584);
+  LINE(598);
             {
             CLUREF T_3_1;
             CLUREF T_3_2;
@@ -3221,7 +3343,7 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
                 locals.err = ERR_overflow;
                 goto ex_0;
             }
-            locals.err = fill(STR__033_133D, T_3_1, &T_3_2);
+            locals.err = lineeditOPfill(STR__033_133D, T_3_1, &T_3_2);
             if (locals.err != ERR_ok)
                 goto ex_0;
             locals.err = streamOPputs(locals.str, T_3_2);
@@ -3229,25 +3351,25 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
                 goto ex_0;
             }
 
-  LINE(585);
+  LINE(599);
             {
             locals.current_pos.num = 1;
             }
         }
         else {
 
-  LINE(587);
+  LINE(601);
         CLUREF T_2_5;
         T_2_5.num = (locals.command.num == 2);
         if (T_2_5.num == true) { /* elseif */
 
-  LINE(588);
+  LINE(602);
             { /* if */
             CLUREF T_3_1;
             T_3_1.num = (locals.current_pos.num > 1);
             if (T_3_1.num == true) { /* if */
 
-  LINE(589);
+  LINE(603);
                 {
                 CLUREF T_4_1;
                 T_4_1.num = locals.current_pos.num - 1;
@@ -3259,7 +3381,7 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
                 locals.current_pos.num = T_4_1.num;
                 }
 
-  LINE(590);
+  LINE(604);
                 {
                 locals.err = streamOPputs(locals.str, STR__033_133D);
                 if (locals.err != ERR_ok)
@@ -3270,16 +3392,16 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
         }
         else {
 
-  LINE(593);
+  LINE(607);
         CLUREF T_2_6;
         T_2_6.num = (locals.command.num == 10);
         if (T_2_6.num == true) { /* elseif */
 
-  LINE(594);
+  LINE(608);
             {
             CLUREF T_3_1;
             CLUREF T_3_2;
-            locals.err = delete_text(locals.str, locals.input_line, locals.current_pos, locals.current_pos, locals.current_pos, &T_3_1, &T_3_2);
+            locals.err = lineeditOPdelete_text(locals.str, locals.input_line, locals.current_pos, locals.current_pos, locals.current_pos, &T_3_1, &T_3_2);
             if (locals.err != ERR_ok)
                 goto ex_0;
             locals.input_line.num = T_3_1.num;
@@ -3288,12 +3410,12 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
         }
         else {
 
-  LINE(597);
+  LINE(611);
         CLUREF T_2_7;
         T_2_7.num = (locals.command.num == 6);
         if (T_2_7.num == true) { /* elseif */
 
-  LINE(598);
+  LINE(612);
             {
             CLUREF T_3_1;
             locals.err = stringOPrest(locals.input_line, locals.current_pos, &T_3_1);
@@ -3304,7 +3426,7 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
                 goto ex_0;
             }
 
-  LINE(600);
+  LINE(614);
             {
             CLUREF T_3_1;
             T_3_1.num = locals.line_length.num + 1;
@@ -3318,18 +3440,18 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
         }
         else {
 
-  LINE(602);
+  LINE(616);
         CLUREF T_2_8;
         T_2_8.num = (locals.command.num == 3);
         if (T_2_8.num == true) { /* elseif */
 
-  LINE(603);
+  LINE(617);
             { /* if */
             CLUREF T_3_1;
             T_3_1.num = (locals.current_pos.num <= locals.line_length.num);
             if (T_3_1.num == true) { /* if */
 
-  LINE(604);
+  LINE(618);
                 {
                 CLUREF T_4_1;
                 locals.err = stringOPsubstr(locals.input_line, locals.current_pos, CLU_1, &T_4_1);
@@ -3340,7 +3462,7 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
                     goto ex_0;
                 }
 
-  LINE(606);
+  LINE(620);
                 {
                 CLUREF T_4_1;
                 T_4_1.num = locals.current_pos.num + 1;
@@ -3356,12 +3478,12 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
         }
         else {
 
-  LINE(609);
+  LINE(623);
         CLUREF T_2_9;
         T_2_9.num = (locals.command.num == 11);
         if (T_2_9.num == true) { /* elseif */
 
-  LINE(610);
+  LINE(624);
             {
             CLUREF T_3_1;
             CLUREF T_3_2;
@@ -3384,11 +3506,11 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
             locals.kill_ring.num = T_3_3.num;
             }
 
-  LINE(612);
+  LINE(626);
             {
             CLUREF T_3_1;
             CLUREF T_3_2;
-            locals.err = delete_text(locals.str, locals.input_line, locals.current_pos, locals.current_pos, locals.line_length, &T_3_1, &T_3_2);
+            locals.err = lineeditOPdelete_text(locals.str, locals.input_line, locals.current_pos, locals.current_pos, locals.line_length, &T_3_1, &T_3_2);
             if (locals.err != ERR_ok)
                 goto ex_0;
             locals.input_line.num = T_3_1.num;
@@ -3397,16 +3519,16 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
         }
         else {
 
-  LINE(615);
+  LINE(629);
         CLUREF T_2_10;
         T_2_10.num = (locals.command.num == 12);
         if (T_2_10.num == true) { /* elseif */
 
-  LINE(616);
+  LINE(630);
             {
             CLUREF T_3_1;
             CLUREF T_3_2;
-            locals.err = insert_text(locals.str, locals.kill_ring, locals.input_line, locals.current_pos, &T_3_1, &T_3_2);
+            locals.err = lineeditOPinsert_text(locals.str, locals.kill_ring, locals.input_line, locals.current_pos, &T_3_1, &T_3_2);
             if (locals.err != ERR_ok)
                 goto ex_0;
             locals.input_line.num = T_3_1.num;
@@ -3415,18 +3537,18 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
         }
         else {
 
-  LINE(619);
+  LINE(633);
         CLUREF T_2_11;
         T_2_11.num = (locals.command.num == 9);
         if (T_2_11.num == true) { /* elseif */
 
-  LINE(620);
+  LINE(634);
             { /* if */
             CLUREF T_3_1;
             T_3_1.num = (locals.current_pos.num > 1);
             if (T_3_1.num == true) { /* if */
 
-  LINE(621);
+  LINE(635);
                 {
                 CLUREF T_4_1;
                 CLUREF T_4_2;
@@ -3444,7 +3566,7 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
                     locals.err = ERR_overflow;
                     goto ex_0;
                 }
-                locals.err = delete_text(locals.str, locals.input_line, locals.current_pos, T_4_1, T_4_2, &T_4_3, &T_4_4);
+                locals.err = lineeditOPdelete_text(locals.str, locals.input_line, locals.current_pos, T_4_1, T_4_2, &T_4_3, &T_4_4);
                 if (locals.err != ERR_ok)
                     goto ex_0;
                 locals.input_line.num = T_4_3.num;
@@ -3455,31 +3577,31 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
         }
         else {
 
-  LINE(625);
+  LINE(639);
         CLUREF T_2_12;
         T_2_12.num = (locals.command.num == 15);
         if (T_2_12.num == true) { /* elseif */
 
-  LINE(626);
+  LINE(640);
             {
             CLUREF T_3_1;
             CLUREF T_3_2;
-            locals.err = delete_text(locals.str, locals.input_line, locals.current_pos, CLU_1, locals.line_length, &T_3_1, &T_3_2);
+            locals.err = lineeditOPdelete_text(locals.str, locals.input_line, locals.current_pos, CLU_1, locals.line_length, &T_3_1, &T_3_2);
             if (locals.err != ERR_ok)
                 goto ex_0;
             locals.input_line.num = T_3_1.num;
             locals.current_pos.num = T_3_2.num;
             }
 
-  LINE(629);
+  LINE(643);
             { /* if */
             CLUREF T_3_1;
             CLUREF T_3_2;
-            T_3_1.num = lineeditOPhistory.array->ext_high;
+            T_3_1.num = locals.history.array->ext_high;
             T_3_2.num = (locals.curr_hist.num == T_3_1.num);
             if (T_3_2.num == true) { /* if */
 
-  LINE(630);
+  LINE(644);
                 {
                 CLUREF T_4_1;
                 T_4_1.num = locals.curr_hist.num + 1;
@@ -3493,14 +3615,14 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
             }
             else {
 
-  LINE(631);
+  LINE(645);
             CLUREF T_3_3;
             CLUREF T_3_4;
-            T_3_3.num = lineeditOPhistory.array->ext_high;
+            T_3_3.num = locals.history.array->ext_high;
             T_3_4.num = (locals.curr_hist.num < T_3_3.num);
             if (T_3_4.num == true) { /* elseif */
 
-  LINE(632);
+  LINE(646);
                 {
                 CLUREF T_4_1;
                 T_4_1.num = locals.curr_hist.num + 1;
@@ -3512,17 +3634,17 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
                 locals.curr_hist.num = T_4_1.num;
                 }
 
-  LINE(633);
+  LINE(647);
                 {
                 CLUREF T_4_1;
                 CLUREF T_4_2;
                 CLUREF T_4_3;
-                if (locals.curr_hist.num < lineeditOPhistory.array->ext_low || locals.curr_hist.num > lineeditOPhistory.array->ext_high) {
+                if (locals.curr_hist.num < locals.history.array->ext_low || locals.curr_hist.num > locals.history.array->ext_high) {
                     locals.err = ERR_bounds;
                     goto ex_0;
                 }
-                T_4_1.num = lineeditOPhistory.array->store->data[locals.curr_hist.num - lineeditOPhistory.array->ext_low + lineeditOPhistory.array->int_low];
-                locals.err = insert_text(locals.str, T_4_1, locals.input_line, locals.current_pos, &T_4_2, &T_4_3);
+                T_4_1.num = locals.history.array->store->data[locals.curr_hist.num - locals.history.array->ext_low + locals.history.array->int_low];
+                locals.err = lineeditOPinsert_text(locals.str, T_4_1, locals.input_line, locals.current_pos, &T_4_2, &T_4_3);
                 if (locals.err != ERR_ok)
                     goto ex_0;
                 locals.input_line.num = T_4_2.num;
@@ -3533,20 +3655,20 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
         }
         else {
 
-  LINE(637);
+  LINE(651);
         CLUREF T_2_13;
         T_2_13.num = (locals.command.num == 14);
         if (T_2_13.num == true) { /* elseif */
 
-  LINE(638);
+  LINE(652);
             { /* if */
             CLUREF T_3_1;
             CLUREF T_3_2;
-            T_3_1.num = lineeditOPhistory.array->ext_low;
+            T_3_1.num = locals.history.array->ext_low;
             T_3_2.num = (locals.curr_hist.num > T_3_1.num);
             if (T_3_2.num == true) { /* if */
 
-  LINE(639);
+  LINE(653);
                 {
                 CLUREF T_4_1;
                 T_4_1.num = locals.curr_hist.num - 1;
@@ -3558,28 +3680,28 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
                 locals.curr_hist.num = T_4_1.num;
                 }
 
-  LINE(640);
+  LINE(654);
                 {
                 CLUREF T_4_1;
                 CLUREF T_4_2;
-                locals.err = delete_text(locals.str, locals.input_line, locals.current_pos, CLU_1, locals.line_length, &T_4_1, &T_4_2);
+                locals.err = lineeditOPdelete_text(locals.str, locals.input_line, locals.current_pos, CLU_1, locals.line_length, &T_4_1, &T_4_2);
                 if (locals.err != ERR_ok)
                     goto ex_0;
                 locals.input_line.num = T_4_1.num;
                 locals.current_pos.num = T_4_2.num;
                 }
 
-  LINE(642);
+  LINE(656);
                 {
                 CLUREF T_4_1;
                 CLUREF T_4_2;
                 CLUREF T_4_3;
-                if (locals.curr_hist.num < lineeditOPhistory.array->ext_low || locals.curr_hist.num > lineeditOPhistory.array->ext_high) {
+                if (locals.curr_hist.num < locals.history.array->ext_low || locals.curr_hist.num > locals.history.array->ext_high) {
                     locals.err = ERR_bounds;
                     goto ex_0;
                 }
-                T_4_1.num = lineeditOPhistory.array->store->data[locals.curr_hist.num - lineeditOPhistory.array->ext_low + lineeditOPhistory.array->int_low];
-                locals.err = insert_text(locals.str, T_4_1, locals.input_line, locals.current_pos, &T_4_2, &T_4_3);
+                T_4_1.num = locals.history.array->store->data[locals.curr_hist.num - locals.history.array->ext_low + locals.history.array->int_low];
+                locals.err = lineeditOPinsert_text(locals.str, T_4_1, locals.input_line, locals.current_pos, &T_4_2, &T_4_3);
                 if (locals.err != ERR_ok)
                     goto ex_0;
                 locals.input_line.num = T_4_2.num;
@@ -3590,23 +3712,23 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
         }
         else {
 
-  LINE(646);
+  LINE(660);
         CLUREF T_2_14;
         T_2_14.num = (locals.command.num == 17);
         if (T_2_14.num == true) { /* elseif */
 
-  LINE(647);
+  LINE(661);
             {
             CLUREF T_3_1;
             CLUREF T_3_2;
-            locals.err = find_word(locals.input_line, locals.current_pos, STR__040_072_073_056_054_057_174, &T_3_1, &T_3_2);
+            locals.err = lineeditOPfind_word(locals.input_line, locals.current_pos, STR__040_072_073_056_054_057_174, &T_3_1, &T_3_2);
             if (locals.err != ERR_ok)
                 goto ex_0;
             locals.left.num = T_3_1.num;
             locals.right.num = T_3_2.num;
             }
 
-  LINE(648);
+  LINE(662);
             {
             CLUREF T_3_1;
             CLUREF T_3_2;
@@ -3631,7 +3753,7 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
                 goto ex_0;
             }
 
-  LINE(651);
+  LINE(665);
             {
             CLUREF T_3_1;
             T_3_1.num = locals.right.num + 1;
@@ -3645,29 +3767,29 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
         }
         else {
 
-  LINE(653);
+  LINE(667);
         CLUREF T_2_15;
         T_2_15.num = (locals.command.num == 18);
         if (T_2_15.num == true) { /* elseif */
 
-  LINE(654);
+  LINE(668);
             {
             CLUREF T_3_1;
             CLUREF T_3_2;
-            locals.err = find_word(locals.input_line, locals.current_pos, STR__040_072_073_056_054_057_174, &T_3_1, &T_3_2);
+            locals.err = lineeditOPfind_word(locals.input_line, locals.current_pos, STR__040_072_073_056_054_057_174, &T_3_1, &T_3_2);
             if (locals.err != ERR_ok)
                 goto ex_0;
             locals.left.num = T_3_1.num;
             locals.right.num = T_3_2.num;
             }
 
-  LINE(656);
+  LINE(670);
             { /* if */
             CLUREF T_3_1;
             T_3_1.num = (locals.left.num > 1);
             if (T_3_1.num == true) { /* if */
 
-  LINE(657);
+  LINE(671);
                 {
                 CLUREF T_4_1;
                 T_4_1.num = locals.left.num - 1;
@@ -3681,13 +3803,13 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
             }
             else { /* else */
 
-  LINE(659);
+  LINE(673);
                 {
                 locals.new_pos.num = 1;
                 }
             }} /* end if */
 
-  LINE(661);
+  LINE(675);
             {
             CLUREF T_3_1;
             CLUREF T_3_2;
@@ -3697,7 +3819,7 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
                 locals.err = ERR_overflow;
                 goto ex_0;
             }
-            locals.err = fill(STR__033_133D, T_3_1, &T_3_2);
+            locals.err = lineeditOPfill(STR__033_133D, T_3_1, &T_3_2);
             if (locals.err != ERR_ok)
                 goto ex_0;
             locals.err = streamOPputs(locals.str, T_3_2);
@@ -3705,30 +3827,30 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
                 goto ex_0;
             }
 
-  LINE(662);
+  LINE(676);
             {
             locals.current_pos.num = locals.new_pos.num;
             }
         }
         else {
 
-  LINE(664);
+  LINE(678);
         CLUREF T_2_16;
         T_2_16.num = (locals.command.num == 16);
         if (T_2_16.num == true) { /* elseif */
 
-  LINE(665);
+  LINE(679);
             {
             CLUREF T_3_1;
             CLUREF T_3_2;
-            locals.err = find_word(locals.input_line, locals.current_pos, STR__040_072_073_056_054_057_174, &T_3_1, &T_3_2);
+            locals.err = lineeditOPfind_word(locals.input_line, locals.current_pos, STR__040_072_073_056_054_057_174, &T_3_1, &T_3_2);
             if (locals.err != ERR_ok)
                 goto ex_0;
             locals.left.num = T_3_1.num;
             locals.right.num = T_3_2.num;
             }
 
-  LINE(666);
+  LINE(680);
             {
             CLUREF T_3_1;
             CLUREF T_3_2;
@@ -3751,11 +3873,11 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
             locals.kill_ring.num = T_3_3.num;
             }
 
-  LINE(667);
+  LINE(681);
             {
             CLUREF T_3_1;
             CLUREF T_3_2;
-            locals.err = delete_text(locals.str, locals.input_line, locals.current_pos, locals.left, locals.right, &T_3_1, &T_3_2);
+            locals.err = lineeditOPdelete_text(locals.str, locals.input_line, locals.current_pos, locals.left, locals.right, &T_3_1, &T_3_2);
             if (locals.err != ERR_ok)
                 goto ex_0;
             locals.input_line.num = T_3_1.num;
@@ -3764,12 +3886,12 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
         }
         else {
 
-  LINE(670);
+  LINE(684);
         CLUREF T_2_17;
         T_2_17.num = (locals.command.num == 0);
         if (T_2_17.num == true) { /* elseif */
 
-  LINE(671);
+  LINE(685);
             {
             locals.err = streamOPputs(locals.str, STR__007);
             if (locals.err != ERR_ok)
@@ -3792,25 +3914,25 @@ lineedit(CLUREF str, CLUREF prompt, CLUREF *ret_1)
     signal(ERR_failure);
 }
 
-/**** END PROCEDURE lineedit ****/
+/**** END PROCEDURE getline ****/
 
 
-/**** BEGIN ITERATOR BODIES for lineedit ****/
+/**** BEGIN ITERATOR BODIES for getline ****/
 
 static errcode
-lineedit_IB_1(CLUREF iv_1, lineedit_LOCALS_t *locals, errcode *iecode)
+lineeditOPgetline_IB_1(CLUREF iv_1, lineeditOPgetline_LOCALS_t *locals, errcode *iecode)
 {
     locals->ss.num = iv_1.num;
-    enter_iter_body_proc(547);
+    enter_iter_body_proc(561);
 
-  FB_LINE(547);
+  FB_LINE(561);
     {
     locals->err = streamOPrem_script(locals->str, locals->ss);
     if (locals->err != ERR_ok)
         goto ex_0;
     }
 
-  FB_LINE(548);
+  FB_LINE(562);
     {
     {
     if ((locals->scripted_streams.array->int_low + locals->scripted_streams.array->ext_size + 1) < locals->scripted_streams.array->int_size) {
@@ -3836,5 +3958,22 @@ lineedit_IB_1(CLUREF iv_1, lineedit_LOCALS_t *locals, errcode *iecode)
     signal(ERR_ok);
 }
 
-/**** END ITERATOR BODIES for lineedit ****/
+/**** END ITERATOR BODIES for getline ****/
 
+typedef struct {
+    long count;
+    OWNPTR type_owns;
+    OWNPTR op_owns;
+    struct OP_ENTRY entry[2];
+} lineedit_OPS;
+
+static CLU_proc lineedit_oe_create = { .proc = lineeditOPcreate };
+static CLU_proc lineedit_oe_getline = { .proc = lineeditOPgetline };
+
+static lineedit_OPS lineedit_ops_actual = {2, (OWNPTR)&lineedit_own_init, (OWNPTR)&lineedit_own_init, {
+    {&lineedit_oe_create, "create"},
+    {&lineedit_oe_getline, "getline"}}};
+
+struct OPS *lineedit_ops = (struct OPS *)&lineedit_ops_actual;
+
+/**** END CLUSTER lineedit ****/
